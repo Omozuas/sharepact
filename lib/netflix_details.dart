@@ -8,12 +8,12 @@ class NetflixDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Handle back button action
           },
         ),
-        title: Text('Netflix'),
+        title: const Text('Netflix'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -24,7 +24,7 @@ class NetflixDetailsScreen extends StatelessWidget {
               child: Container(
                 width: 343,
                 height: 178,
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(16.0),
@@ -43,8 +43,8 @@ class NetflixDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
-            Container(
+            const SizedBox(height: 16.0),
+            const SizedBox(
               width: double.infinity,
               child: Text(
                 'Netflix offers a diverse range of subscription plans to cater to different viewing needs and preferences. The Basic Plan allows streaming on one screen at a time, while the Standard Plan offers HD viewing on two screens.',
@@ -54,8 +54,8 @@ class NetflixDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
-            Container(
+            const SizedBox(height: 16.0),
+            const SizedBox(
               width: double.infinity,
               child: Text(
                 'For families and enthusiasts, the Premium Plan provides Ultra HD quality on up to four screens simultaneously. Enjoy unlimited access to movies, TV shows, and original content with the flexibility to cancel anytime.',
@@ -65,15 +65,15 @@ class NetflixDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            const SizedBox(height: 20.0),
+            const Text(
               'Available Subscription Plans',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             PlanCard(
               planName: 'Basic Plan',
               price: '5000 NGN/ month',
@@ -103,12 +103,12 @@ class NetflixDetailsScreen extends StatelessWidget {
                 'Cancel anytime',
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
               decoration: BoxDecoration(
-                color: Color(0xFFF8F9FA),
+                color: const Color(0xFFF8F9FA),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Row(
@@ -116,11 +116,11 @@ class NetflixDetailsScreen extends StatelessWidget {
                   Container(
                     width: 12,
                     height: 49,
-                    color: Color(0xFF007BFF),
+                    color: const Color(0xFF007BFF),
                   ),
-                  SizedBox(width: 10.0),
+                  const SizedBox(width: 10.0),
                   RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                       children: [
                         TextSpan(
                           text: 'Sharepact Handling Fee: ',
@@ -143,7 +143,7 @@ class NetflixDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Center(
               child: Column(
                 children: [
@@ -151,10 +151,10 @@ class NetflixDetailsScreen extends StatelessWidget {
                     onPressed: () {
                            Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  AvailableGroupsScreen()),
+                    MaterialPageRoute(builder: (context) =>  const AvailableGroupsScreen()),
                   );
                     },
-                    child: Text(
+                    child: const Text(
                       'Join A Group',
                       style: TextStyle(
                         fontSize: 16.0,
@@ -163,15 +163,15 @@ class NetflixDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      fixedSize: Size(339, 59),
-                      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-                      side: BorderSide(color: Color(0xFF007BFF)),
+                      fixedSize: const Size(339, 59),
+                      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                      side: const BorderSide(color: Color(0xFF007BFF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   OutlinedButton(
                     onPressed: () {
                         Navigator.push(
@@ -179,7 +179,7 @@ class NetflixDetailsScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) =>  CreateGroupScreen()),
                   );
                     },
-                    child: Text(
+                    child: const Text(
                       'Create A Group',
                       style: TextStyle(
                         fontSize: 16.0,
@@ -188,9 +188,9 @@ class NetflixDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      fixedSize: Size(339, 59),
-                      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-                      side: BorderSide(color: Color(0xFF007BFF)),
+                      fixedSize: const Size(339, 59),
+                      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                      side: const BorderSide(color: Color(0xFF007BFF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),
@@ -215,21 +215,21 @@ class PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
         elevation: 4.0,
-        margin: EdgeInsets.symmetric(vertical: 10.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 decoration: BoxDecoration(
                   color: Colors.blue[100],
                   borderRadius: BorderRadius.circular(10.0),
@@ -239,7 +239,7 @@ class PlanCard extends StatelessWidget {
                   children: [
                     Text(
                       planName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -249,7 +249,7 @@ class PlanCard extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: price.split('/')[0],
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF007BFF),
                               fontSize: 14.0,
                               fontWeight: FontWeight.w700,
@@ -257,7 +257,7 @@ class PlanCard extends StatelessWidget {
                           ),
                           TextSpan(
                             text: ' /${price.split('/')[1]}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF5D6166),
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
@@ -269,7 +269,7 @@ class PlanCard extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: features.map((feature) => FeatureItem(text: feature)).toList(),
@@ -293,15 +293,15 @@ class FeatureItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.check_circle,
             color: Colors.blue,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16.0,
               ),
             ),

@@ -29,40 +29,40 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             children: <Widget>[
               Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 32,
                     height: 32,
                     child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.black),
+                      icon: const Icon(Icons.close, color: Colors.black),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                       iconSize: 24,
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       alignment: Alignment.center,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Create a New Subscription Group',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Invite friends and family to share the cost of your favorite subscriptions. Save more by creating a group and unlocking bulk discounts together',
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Color(0xFFF8F9FA),
+                  color: const Color(0xFFF8F9FA),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Row(
@@ -71,7 +71,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     Container(
                       width: 8,
                       height: 49,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xFF007BFF),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(8.0),
@@ -79,42 +79,42 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Please note :',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           RichText(
                             text: TextSpan(
-                              style: TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               children: <TextSpan>[
-                                TextSpan(text: 'For '),
+                                const TextSpan(text: 'For '),
                                 TextSpan(
                                   text: 'spotify',
-                                  style: TextStyle(color: Colors.blue),
+                                  style: const TextStyle(color: Colors.blue),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       // Handle tap
                                     },
                                 ),
-                                TextSpan(text: ' or '),
+                                const TextSpan(text: ' or '),
                                 TextSpan(
                                   text: 'Apple music',
-                                  style: TextStyle(color: Colors.blue),
+                                  style: const TextStyle(color: Colors.blue),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       // Handle tap
                                     },
                                 ),
-                                TextSpan(
+                                const TextSpan(
                                   text:
                                       ' subscriptions, an agent will be managing the group and is counted as a member',
                                 ),
@@ -127,7 +127,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   labelText: 'Subscription Category',
@@ -148,7 +148,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   });
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   labelText: 'Subscription Service',
@@ -169,7 +169,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   });
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   labelText: 'Subscription Plan',
@@ -190,7 +190,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   });
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Group Name',
@@ -204,7 +204,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   });
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               DropdownButtonFormField<int>(
                 decoration: InputDecoration(
                   labelText: 'Number of Members',
@@ -225,19 +225,19 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                color: Color(0xFF007BFF),
-                child: Text(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                color: const Color(0xFF007BFF),
+                child: const Text(
                   'Payment Details',
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -247,53 +247,53 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ],
                 ),
               ),
-              Divider(),
-              Text(
+              const Divider(),
+              const Text(
                 'Group Privacy',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: SwitchListTile(
-                  title: Text('Public'),
+                  title: const Text('Public'),
                   value: isPublic,
                   onChanged: (value) {
                     setState(() {
                       isPublic = value;
                     });
                   },
-                  activeColor: Color(0xFF007BFF),
-                  contentPadding: EdgeInsets.all(0),
+                  activeColor: const Color(0xFF007BFF),
+                  contentPadding: const EdgeInsets.all(0),
                 ),
               ),
-              Divider(),
+              const Divider(),
               RichText(
                 text: TextSpan(
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                   children: <TextSpan>[
-                    TextSpan(
+                    const TextSpan(
                       text:
                           'By creating a new subscription group, you agree to the following terms and conditions:\n\n',
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '• Rules and Instructions: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text:
                           'Users must adhere to all guidelines and instructions provided by Sharepact.\n',
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '• Cancellation Policy: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text:
                           'Subscription groups can be canceled at any time, but users will be responsible for any outstanding fees or charges incurred up to the cancellation date. ',
                     ),
                     TextSpan(
                       text: 'Read Full Terms and Conditions',
-                      style: TextStyle(color: Colors.blue),
+                      style: const TextStyle(color: Colors.blue),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           // Handle tap
@@ -302,7 +302,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CheckboxListTile(
                 value: agreedToTerms,
                 onChanged: (value) {
@@ -310,13 +310,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     agreedToTerms = value!;
                   });
                 },
-                title: Text('I agree to the Terms and Conditions'),
+                title: const Text('I agree to the Terms and Conditions'),
                 controlAffinity: ListTileControlAffinity.leading,
-                activeColor: Color(0xFF007BFF),
+                activeColor: const Color(0xFF007BFF),
                 checkColor: Colors.white,
               ),
-              SizedBox(height: 16),
-              Container(
+              const SizedBox(height: 16),
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: agreedToTerms
@@ -324,19 +324,19 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           // Handle create group action
                         }
                       : null,
-                  child: Text('Create Group'),
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.resolveWith<Color>(
                       (Set<WidgetState> states) {
                         if (states.contains(WidgetState.disabled)) {
-                          return Color(0xFFB0D6FF);
+                          return const Color(0xFFB0D6FF);
                         }
-                        return Color(0xFF007BFF); // Use the component's default.
+                        return const Color(0xFF007BFF); // Use the component's default.
                       },
                     ),
                     padding: WidgetStateProperty.all<EdgeInsets>(
-EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0)                    ),
+const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0)                    ),
                   ),
+                  child: const Text('Create Group'),
                 ),
               ),
             ],
@@ -353,7 +353,7 @@ EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0)                    ),
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

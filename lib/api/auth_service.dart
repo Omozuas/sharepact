@@ -22,7 +22,6 @@ class AuthService {
         throw Exception(errorResponse['error'] ?? 'Failed to sign up');
       }
     } catch (e) {
-      print('Exception during signup: $e');
       rethrow;
     }
   }
@@ -42,7 +41,6 @@ class AuthService {
         throw Exception(errorResponse['error'] ?? 'Failed to sign in');
       }
     } catch (e) {
-      print('Exception during signin: $e');
       rethrow;
     }
   }

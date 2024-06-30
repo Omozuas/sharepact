@@ -60,9 +60,9 @@ class GroupsScreen extends StatelessWidget {
                 height: 77,
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(8),
                   ),
                 ),

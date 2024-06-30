@@ -18,36 +18,48 @@ class SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
 
-void _signup() async {
-  final String email = emailController.text;
-  final String password = passwordController.text;
-  final String confirmPassword = confirmPasswordController.text;
+  bool _isPasswordObscured = true;
+  bool _isConfirmPasswordObscured = true;
 
-  if (password != confirmPassword) {
-    // Show error if passwords do not match
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Passwords do not match')),
-    );
-    return;
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordObscured = !_isPasswordObscured;
+    });
   }
 
-  try {
-    final response = await _authService.signup(email, password);
-    print('Signup response: $response');
-    // Navigate to email verification screen if signup is successful
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const EmailVerificationScreen()),
-    );
-  } catch (e) {
-    // Show error if signup fails
-    print('Signup error: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-    );
+  void _toggleConfirmPasswordVisibility() {
+    setState(() {
+      _isConfirmPasswordObscured = !_isConfirmPasswordObscured;
+    });
   }
-}
 
+  void _signup() async {
+    final String email = emailController.text;
+    final String password = passwordController.text;
+    final String confirmPassword = confirmPasswordController.text;
+
+    if (password != confirmPassword) {
+      // Show error if passwords do not match
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    try {
+      final response = await _authService.signup(email, password);
+      // Navigate to email verification screen if signup is successful
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const EmailVerificationScreen()),
+      );
+    } catch (e) {
+      // Show error if signup fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +138,7 @@ void _signup() async {
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
               controller: passwordController,
-              obscureText: true,
+              obscureText: _isPasswordObscured,
               decoration: InputDecoration(
                 hintText: 'Enter password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -136,7 +148,12 @@ void _signup() async {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 contentPadding: const EdgeInsets.all(20),
-                suffixIcon: const Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: _togglePasswordVisibility,
+                ),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.02)),
@@ -149,7 +166,7 @@ void _signup() async {
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
               controller: confirmPasswordController,
-              obscureText: true,
+              obscureText: _isConfirmPasswordObscured,
               decoration: InputDecoration(
                 hintText: 'Re-type password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -159,7 +176,12 @@ void _signup() async {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 contentPadding: const EdgeInsets.all(20),
-                suffixIcon: const Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isConfirmPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: _toggleConfirmPasswordVisibility,
+                ),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.04)),

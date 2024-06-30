@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmptyGroupsScreen extends StatelessWidget {
-  const EmptyGroupsScreen({Key? key}) : super(key: key);
+  const EmptyGroupsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +51,8 @@ class EmptyGroupsScreen extends StatelessWidget {
         onPressed: () {
           // Handle the button press to create or join a group
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.add),
       ),
     );
   }

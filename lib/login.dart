@@ -18,27 +18,32 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
 
-void _login() async {
-  final String email = emailController.text;
-  final String password = passwordController.text;
+  bool _isPasswordObscured = true;
 
-  try {
-    final response = await _authService.signin(email, password);
-    print('Login response: $response');
-    // Navigate to home screen if login is successful
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
-  } catch (e) {
-    // Show error if login fails
-    print('Login error: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-    );
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordObscured = !_isPasswordObscured;
+    });
   }
-}
 
+  void _login() async {
+    final String email = emailController.text;
+    final String password = passwordController.text;
+
+    try {
+      final response = await _authService.signin(email, password);
+      // Navigate to home screen if login is successful
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      // Show error if login fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +122,7 @@ void _login() async {
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
               controller: passwordController,
-              obscureText: true,
+              obscureText: _isPasswordObscured,
               decoration: InputDecoration(
                 hintText: 'Enter password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -127,7 +132,12 @@ void _login() async {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 contentPadding: const EdgeInsets.all(20),
-                suffixIcon: const Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: _togglePasswordVisibility,
+                ),
               ),
             ),
             Align(
