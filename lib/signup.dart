@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/api/auth_service.dart';
 import 'package:sharepact_app/email_verification.dart';
 import 'package:sharepact_app/login.dart';
 import 'responsive_helpers.dart';
@@ -12,6 +13,42 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+void _signup() async {
+  final String email = emailController.text;
+  final String password = passwordController.text;
+  final String confirmPassword = confirmPasswordController.text;
+
+  if (password != confirmPassword) {
+    // Show error if passwords do not match
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Passwords do not match')),
+    );
+    return;
+  }
+
+  try {
+    final response = await _authService.signup(email, password);
+    print('Signup response: $response');
+    // Navigate to email verification screen if signup is successful
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EmailVerificationScreen()),
+    );
+  } catch (e) {
+    // Show error if signup fails
+    print('Signup error: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+    );
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +57,9 @@ class SignUpScreenState extends State<SignUpScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).primaryColor),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: Padding(
@@ -31,7 +70,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             SizedBox(height: responsiveHeight(context, 0.02)),
             Center(
               child: Image.asset(
-                'assets/sharepact_icon.png', // Add your logo image in the assets directory and update the path
+                'assets/sharepact_icon.png',
                 height: responsiveHeight(context, 0.08),
               ),
             ),
@@ -64,6 +103,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 hintText: 'Enter your email address',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -85,6 +125,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Enter password',
@@ -107,6 +148,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
+              controller: confirmPasswordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Re-type password',
@@ -124,12 +166,7 @@ class SignUpScreenState extends State<SignUpScreen> {
             SizedBox(
               height: responsiveHeight(context, 0.08),
               child: ElevatedButton(
-                onPressed: () {
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const EmailVerificationScreen()),
-                  );
-                },
+                onPressed: _signup,
                 child: const Text('Sign Up'),
               ),
             ),

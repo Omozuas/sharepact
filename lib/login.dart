@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/api/auth_service.dart';
 import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/reset_password.dart';
 import 'package:sharepact_app/signup.dart';
@@ -13,6 +14,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+void _login() async {
+  final String email = emailController.text;
+  final String password = passwordController.text;
+
+  try {
+    final response = await _authService.signin(email, password);
+    print('Login response: $response');
+    // Navigate to home screen if login is successful
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  } catch (e) {
+    // Show error if login fails
+    print('Login error: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+    );
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +94,7 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 hintText: 'Enter your email address',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -88,6 +116,7 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
             TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Enter password',
@@ -105,10 +134,11 @@ class LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                   Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
-                  );              },
+                  );
+                },
                 child: Text(
                   'Forgot Password?',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -121,12 +151,7 @@ class LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: responsiveHeight(context, 0.08),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  );
-                },
+                onPressed: _login,
                 child: const Text('Login'),
               ),
             ),
