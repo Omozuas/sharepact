@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/create_group.dart';
 import 'package:sharepact_app/signup.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'responsive_helpers.dart';
@@ -82,11 +81,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                     height: responsiveHeight(context, 0.08),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CreateGroupScreen()),
-                          // MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                              builder: (context) => const SignUpScreen()),
                         );
                       },
                       child: const Text('Get Started'),
