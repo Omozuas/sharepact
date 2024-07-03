@@ -1,238 +1,372 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:heroicons_flutter/heroicons_flutter.dart';
+import 'package:sharepact_app/screens/home/components/input_field.dart';
 
 class CreateGroupScreen extends StatefulWidget {
+  const CreateGroupScreen({super.key});
+
   @override
   _CreateGroupScreenState createState() => _CreateGroupScreenState();
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  String? selectedCategory;
-  String? selectedService;
-  String? selectedPlan;
-  String? groupName;
-  int? numberOfMembers = 5;
+  String selectedCategory = '';
+  String selectedService = '';
+  String selectedPlan = '';
+  String groupName = '';
+  String numberOfMembers = '';
   bool isPublic = true;
   bool agreedToTerms = false;
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0, // Hide the app bar
+        // toolbarHeight: 0, // Hide the app bar
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Container(
+            height: 15,
+            width: 15,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xffBBC0C3))),
+            child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Icon(Icons.close, color: Color(0xffBBC0C3))),
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: width * .05),
         child: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
+              SizedBox(height: height * .01),
+              Text(
+                'Create a New Subscription Group',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: height * .01),
+              Text(
+                'Invite friends and family to share the cost of your favorite subscriptions. Save more by creating a group and unlocking bulk discounts together',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: height * 0.02),
+              Stack(
                 children: [
-                  SizedBox(
-                    width: 32,
-                    height: 32,
-                    child: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      iconSize: 24,
-                      padding: const EdgeInsets.all(0),
-                      alignment: Alignment.center,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxHeight: height * .11, minWidth: width),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 10, bottom: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8F9FA),
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Please note :',
+                              style: GoogleFonts.lato(
+                                color: const Color(0xff343A40),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(height: height * .01),
+                            Text.rich(
+                              TextSpan(
+                                style: const TextStyle(color: Colors.black),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'For ',
+                                    style: GoogleFonts.lato(
+                                      color: const Color(0xff343A40),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'spotify',
+                                    style: GoogleFonts.lato(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Handle tap
+                                      },
+                                  ),
+                                  TextSpan(
+                                    text: ' or ',
+                                    style: GoogleFonts.lato(
+                                      color: const Color(0xff343A40),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Apple music',
+                                    style: GoogleFonts.lato(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Handle tap
+                                      },
+                                  ),
+                                  TextSpan(
+                                    style: GoogleFonts.lato(
+                                      color: const Color(0xff343A40),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    text:
+                                        ' subscriptions, an agent will be managing the group and is counted as a member',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: width * .00000001,
+                    child: Container(
+                      width: width * .03,
+                      height: height * .11,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF007BFF),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.0),
+                          bottomLeft: Radius.circular(16.0),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Create a New Subscription Group',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              SizedBox(height: height * .03),
+              AppInputField(
+                headerText: 'Subscription Category',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Invite friends and family to share the cost of your favorite subscriptions. Save more by creating a group and unlocking bulk discounts together',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 49,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF007BFF),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          bottomLeft: Radius.circular(8.0),
+                hintText: 'Select category',
+                trailing: DropdownButton<String>(
+                  icon: const Icon(HeroiconsOutline.chevronDown),
+                  padding:
+                      EdgeInsets.only(left: width * .04, right: width * .04),
+                  items: <String>[
+                    'Category 1',
+                    'Category 2',
+                    'Cateogry 3',
+                  ].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Please note :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          RichText(
-                            text: TextSpan(
-                              style: const TextStyle(color: Colors.black),
-                              children: <TextSpan>[
-                                const TextSpan(text: 'For '),
-                                TextSpan(
-                                  text: 'spotify',
-                                  style: const TextStyle(color: Colors.blue),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // Handle tap
-                                    },
-                                ),
-                                const TextSpan(text: ' or '),
-                                TextSpan(
-                                  text: 'Apple music',
-                                  style: const TextStyle(color: Colors.blue),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // Handle tap
-                                    },
-                                ),
-                                const TextSpan(
-                                  text:
-                                      ' subscriptions, an agent will be managing the group and is counted as a member',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                    );
+                  }).toList(),
+                  hint: Text(
+                    selectedCategory.isEmpty
+                        ? 'Select category'
+                        : selectedCategory,
+                    style: GoogleFonts.lato(),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  underline: const SizedBox(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        selectedCategory = value;
+                      });
+                    }
+                  },
+                ),
+              ),
+              AppInputField(
+                headerText: 'Subscription Service',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                hintText: 'Select service',
+                trailing: DropdownButton<String>(
+                  icon: const Icon(HeroiconsOutline.chevronDown),
+                  padding:
+                      EdgeInsets.only(left: width * .04, right: width * .04),
+                  items: <String>[
+                    'Service 1',
+                    'Service 2',
+                    'Service 3',
+                  ].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Subscription Category',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    selectedService.isEmpty
+                        ? 'Select service'
+                        : selectedService,
+                    style: GoogleFonts.lato(),
                   ),
+                  borderRadius: BorderRadius.circular(10),
+                  underline: const SizedBox(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        selectedService = value;
+                      });
+                    }
+                  },
                 ),
-                value: selectedCategory,
-                items: ['Category 1', 'Category 2', 'Category 3']
-                    .map((category) => DropdownMenuItem<String>(
-                          value: category,
-                          child: Text(category),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value;
-                  });
-                },
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Subscription Service',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+              AppInputField(
+                headerText: 'Subscription Plan',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                hintText: 'Select plan',
+                trailing: DropdownButton<String>(
+                  icon: const Icon(HeroiconsOutline.chevronDown),
+                  padding:
+                      EdgeInsets.only(left: width * .04, right: width * .04),
+                  items: <String>[
+                    'Plan 1',
+                    'Plan 2',
+                    'Plan 3',
+                  ].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    selectedPlan.isEmpty ? 'Select plan' : selectedPlan,
+                    style: GoogleFonts.lato(),
                   ),
+                  borderRadius: BorderRadius.circular(10),
+                  underline: const SizedBox(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        selectedPlan = value;
+                      });
+                    }
+                  },
                 ),
-                value: selectedService,
-                items: ['Service 1', 'Service 2', 'Service 3']
-                    .map((service) => DropdownMenuItem<String>(
-                          value: service,
-                          child: Text(service),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedService = value;
-                  });
-                },
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Subscription Plan',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+              AppInputField(
+                headerText: 'Group Name',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                hintText: 'e.g Spotify family',
+              ),
+              AppInputField(
+                headerText: 'Number of Members',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                hintText: 'Select plan',
+                trailing: DropdownButton<String>(
+                  icon: const Icon(HeroiconsOutline.chevronDown),
+                  padding:
+                      EdgeInsets.only(left: width * .04, right: width * .04),
+                  items: <String>['1', '2', '3', '4'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    numberOfMembers.isEmpty ? 'Choose number' : numberOfMembers,
+                    style: GoogleFonts.lato(),
                   ),
+                  borderRadius: BorderRadius.circular(10),
+                  underline: const SizedBox(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        numberOfMembers = value;
+                      });
+                    }
+                  },
                 ),
-                value: selectedPlan,
-                items: ['Plan 1', 'Plan 2', 'Plan 3']
-                    .map((plan) => DropdownMenuItem<String>(
-                          value: plan,
-                          child: Text(plan),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedPlan = value;
-                  });
-                },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Group Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    groupName = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<int>(
-                decoration: InputDecoration(
-                  labelText: 'Number of Members',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                value: numberOfMembers,
-                items: [1, 2, 3, 4, 5]
-                    .map((number) => DropdownMenuItem<int>(
-                          value: number,
-                          child: Text(number.toString()),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    numberOfMembers = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
+              SizedBox(height: height * .01),
               Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                width: width,
+                padding: const EdgeInsets.all(12),
                 color: const Color(0xFF007BFF),
-                child: const Text(
+                child: Text(
                   'Payment Details',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: GoogleFonts.lato(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400),
                 ),
               ),
               Container(
@@ -241,81 +375,156 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildPaymentDetailRow('Subscription Cost', '5,000 NGN/Year'),
-                    buildPaymentDetailRow('Handling Fee', '500 NGN'),
-                    buildPaymentDetailRow('Individual Share', '1,100 NGN'),
+                    buildPaymentDetailRow(
+                        'Subscription Cost', '5,000 NGN/', 'Year'),
+                    const Divider(),
+                    buildPaymentDetailRow('Handling Fee', '500 NGN', ''),
+                    const Divider(),
+                    buildPaymentDetailRow('Individual Share', '1,100 NGN', ''),
                   ],
                 ),
               ),
               const Divider(),
-              const Text(
+              SizedBox(height: height * .02),
+              Text(
                 'Group Privacy',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: GoogleFonts.lato(
+                    color: const Color(0xff343A40),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
               ),
+              SizedBox(height: height * .01),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: SwitchListTile(
-                  title: const Text('Public'),
-                  value: isPublic,
-                  onChanged: (value) {
-                    setState(() {
-                      isPublic = value;
-                    });
-                  },
-                  activeColor: const Color(0xFF007BFF),
-                  contentPadding: const EdgeInsets.all(0),
-                ),
-              ),
-              const Divider(),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(color: Colors.black),
-                  children: <TextSpan>[
-                    const TextSpan(
-                      text:
-                          'By creating a new subscription group, you agree to the following terms and conditions:\n\n',
+                padding: const EdgeInsets.only(
+                    left: 20, right: 14, bottom: 14, top: 14),
+                decoration: BoxDecoration(
+                    color: const Color(0xffF8F9FA),
+                    borderRadius: BorderRadius.circular(16)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Public',
+                      style: GoogleFonts.lato(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xff5D6166)),
                     ),
-                    const TextSpan(
-                      text: '• Rules and Instructions: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(
-                      text:
-                          'Users must adhere to all guidelines and instructions provided by Sharepact.\n',
-                    ),
-                    const TextSpan(
-                      text: '• Cancellation Policy: ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(
-                      text:
-                          'Subscription groups can be canceled at any time, but users will be responsible for any outstanding fees or charges incurred up to the cancellation date. ',
-                    ),
-                    TextSpan(
-                      text: 'Read Full Terms and Conditions',
-                      style: const TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          // Handle tap
+                    Transform.scale(
+                      scaleX: .85,
+                      scaleY: .85,
+                      child: CupertinoSwitch(
+                        activeColor: const Color(0xFF007BFF),
+                        value: isPublic,
+                        onChanged: (value) {
+                          setState(() {
+                            isPublic = !isPublic;
+                          });
                         },
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              CheckboxListTile(
-                value: agreedToTerms,
-                onChanged: (value) {
-                  setState(() {
-                    agreedToTerms = value!;
-                  });
-                },
-                title: const Text('I agree to the Terms and Conditions'),
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: const Color(0xFF007BFF),
-                checkColor: Colors.white,
+              SizedBox(height: height * .02),
+              const Divider(),
+              SizedBox(height: height * .02),
+              Text(
+                'By creating a new subscription group, you agree to the following terms and conditions:',
+                style: GoogleFonts.lato(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xff5D6166)),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: height * .01),
+              Text.rich(
+                TextSpan(
+                    text: '• Rules and Instructions: ',
+                    style: GoogleFonts.lato(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xff5D6166)),
+                    children: [
+                      TextSpan(
+                        text:
+                            'Users must adhere to all guidelines and instructions provided by Sharepact.\n\n',
+                        style: GoogleFonts.lato(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff5D6166)),
+                      ),
+                      TextSpan(
+                        text: '• Cancellation Policy:',
+                        style: GoogleFonts.lato(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xff5D6166)),
+                      ),
+                      TextSpan(
+                        text:
+                            ' Subscription groups can be canceled at any time, but users will be responsible for any outstanding fees or charges incurred up to the cancellation date... ',
+                        style: GoogleFonts.lato(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xff5D6166)),
+                      ),
+                      TextSpan(
+                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        text: ' Read Full Terms and Conditions',
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF007BFF),
+                        ),
+                      ),
+                    ]),
+              ),
+              SizedBox(height: height * .02),
+              const Divider(),
+              SizedBox(height: height * .02),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        agreedToTerms = !agreedToTerms;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(1),
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          color: agreedToTerms
+                              ? const Color(0xFF007BFF)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            width: 2,
+                            color: agreedToTerms
+                                ? const Color(0xFF007BFF)
+                                : const Color(0xffC0C0C0),
+                          )),
+                      child: Icon(
+                        Icons.check,
+                        size: 14,
+                        color:
+                            agreedToTerms ? Colors.white : Colors.transparent,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: width * .02),
+                  Text(
+                    'I agree to the Terms and Conditions',
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff5D6166),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: height * .03),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -330,15 +539,27 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         if (states.contains(WidgetState.disabled)) {
                           return const Color(0xFFB0D6FF);
                         }
-                        return const Color(0xFF007BFF); // Use the component's default.
+                        return const Color(
+                            0xFF007BFF); // Use the component's default.
                       },
                     ),
                     padding: WidgetStateProperty.all<EdgeInsets>(
-const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0)                    ),
+                        const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 16.0)),
                   ),
-                  child: const Text('Create Group'),
+                  child: Text(
+                    'Create Group',
+                    style: GoogleFonts.lato(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: agreedToTerms
+                          ? Colors.white
+                          : const Color(0xffA2A4A7),
+                    ),
+                  ),
                 ),
               ),
+              SizedBox(height: height * .03)
             ],
           ),
         ),
@@ -346,14 +567,36 @@ const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0)                    
     );
   }
 
-  Widget buildPaymentDetailRow(String label, String value) {
+  Widget buildPaymentDetailRow(String? label, price, duration) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            label ?? '',
+            style: GoogleFonts.lato(
+                color: const Color(0xff343A40),
+                fontSize: 14,
+                fontWeight: FontWeight.w400),
+          ),
+          Text.rich(
+            TextSpan(
+                text: price ?? '',
+                style: GoogleFonts.lato(
+                    color: const Color(0xff343A40),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700),
+                children: [
+                  TextSpan(
+                    text: duration ?? '',
+                    style: GoogleFonts.lato(
+                        color: const Color(0xff343A40),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ]),
+          ),
         ],
       ),
     );

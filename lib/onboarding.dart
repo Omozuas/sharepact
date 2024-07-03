@@ -26,22 +26,28 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               ResponsiveOnboardingPage(
                 image: 'assets/onboarding11.png',
                 title: 'Welcome to SharePact!',
-                description: 'Join forces with friends and family to save on your favorite subscriptions. Discover how SharePact makes it easy and affordable!',
+                description:
+                    'Join forces with friends and family to save on your favorite subscriptions. Discover how SharePact makes it easy and affordable!',
               ),
               ResponsiveOnboardingPage(
                 image: 'assets/onboarding12.png',
                 title: 'Easy Group Management',
-                description: 'Create or join groups effortlessly. Manage shared subscriptions with real-time updates and secure payments.',
+                description:
+                    'Create or join groups effortlessly. Manage shared subscriptions with real-time updates and secure payments.',
               ),
               ResponsiveOnboardingPage(
                 image: 'assets/onboarding13.png',
                 title: 'Enjoy More for Less',
-                description: 'Unlock bulk discounts and shared costs. Enjoy premium services without the premium price tag.',
+                description:
+                    'Unlock bulk discounts and shared costs. Enjoy premium services without the premium price tag.',
               ),
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: responsiveHeight(context, 0.10), left: 20, right: 20), // Adjusted bottom padding
+            padding: EdgeInsets.only(
+                bottom: responsiveHeight(context, 0.10),
+                left: 20,
+                right: 20), // Adjusted bottom padding
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Column(
@@ -67,15 +73,18 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       spacing: 6.0,
                     ),
                   ),
-                  SizedBox(height: responsiveHeight(context, 0.05)), // Space between indicator and button
+                  SizedBox(
+                      height: responsiveHeight(
+                          context, 0.05)), // Space between indicator and button
                   SizedBox(
                     width: double.infinity,
                     height: responsiveHeight(context, 0.08),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const SignUpScreen()),
                         );
                       },
                       child: const Text('Get Started'),
