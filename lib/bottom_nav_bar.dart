@@ -23,11 +23,7 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.home),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Browse',
-        ),
-        BottomNavigationBarItem(
+      BottomNavigationBarItem(
           icon: Icon(Icons.subscriptions),
           label: 'My Subscriptions',
         ),

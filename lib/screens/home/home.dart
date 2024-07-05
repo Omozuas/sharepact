@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/browse.dart';
 import 'package:sharepact_app/groups.dart';
 import 'package:sharepact_app/screens/home/components/service_widget.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
@@ -41,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Define the screens for each index
     List<Widget> _screens = [
       _homeScreenContent(context),
-      BrowseScreen(),
       SubscriptionsScreen(),
       GroupsScreen(),
       SettingsScreen(),
