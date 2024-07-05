@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/available_groups.dart';
 import 'package:sharepact_app/create_group.dart';
 
 class NetflixDetailsScreen extends StatelessWidget {
@@ -151,7 +150,7 @@ class NetflixDetailsScreen extends StatelessWidget {
                     onPressed: () {
                            Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  const AvailableGroupsScreen()),
+                    MaterialPageRoute(builder: (context) =>  const CreateGroupScreen()),
                   );
                     },
                     child: const Text(

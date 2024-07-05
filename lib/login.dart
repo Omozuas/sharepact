@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sharepact_app/api/auth_service.dart';
+import 'package:sharepact_app/create_group.dart';
 import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/reset_password.dart';
 import 'package:sharepact_app/signup.dart';
@@ -153,7 +154,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ResetPasswordScreen()),
+                          builder: (context) => const HomeScreen()),
                     );
                   },
                   child: Text(

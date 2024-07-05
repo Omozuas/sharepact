@@ -60,7 +60,6 @@ class SubscriptionsScreen extends StatelessWidget {
                     members: '5/5 members',
                     nextpayment: '12/01/25',
                     createdby: 'JohnDoe1',
-                    isRecomended: false,
                   );
                 },
               ),

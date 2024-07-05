@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/available_groups.dart';
 import 'package:sharepact_app/browse.dart';
 import 'package:sharepact_app/groups.dart';
-import 'package:sharepact_app/screens/home/components/recommended.dart';
 import 'package:sharepact_app/screens/home/components/service_widget.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
 import 'package:sharepact_app/screens/home/header.dart';
@@ -29,12 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _navigateToAvailableGroups(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AvailableGroupsScreen()),
-    );
-  }
+
 
   void _navigateToStreamingServices(BuildContext context) {
     Navigator.push(
@@ -174,31 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 maxHeight: MediaQuery.of(context).size.height / 2.5,
               ),
               child: SubscriptionGrid(),
+              
             ),
-            const SizedBox(height: 30),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Recommended Subscriptions",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Show All",
-                  style: TextStyle(color: Colors.blue),
-                )
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height / 2.5,
-              ),
-              child: RecommendedGrid(),
-            ),
-            const SizedBox(height: 80),
-          ],
+             const SizedBox(height: 30),
+                      ],        
         ),
+        
       ),
     );
   }

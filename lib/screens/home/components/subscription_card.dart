@@ -6,7 +6,6 @@ class SubscriptionCard extends StatelessWidget {
   final String members;
   final String nextpayment;
   final String createdby;
-  final bool isRecomended;
 
   const SubscriptionCard({
     super.key,
@@ -15,7 +14,6 @@ class SubscriptionCard extends StatelessWidget {
     required this.members,
     required this.nextpayment,
     required this.createdby,
-    this.isRecomended = false,
   });
 
   @override
@@ -111,32 +109,7 @@ class SubscriptionCard extends StatelessWidget {
             ),
           ),
           const Spacer(), // Add a Spacer to push the button to the bottom
-          if (isRecomended)
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(left: 13, bottom: 8), // Adjusted margin to avoid overflow
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                width: 138,
-                height: 22,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(16),
-                  ),
-                  border: Border.all(color: Colors.blue, width: 1),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Join Group',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          if (!isRecomended)
+            
             Container(
               alignment: Alignment.centerLeft,
               width: double.infinity,
