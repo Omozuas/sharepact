@@ -148,10 +148,7 @@ class NetflixDetailsScreen extends StatelessWidget {
                 children: [
                   OutlinedButton(
                     onPressed: () {
-                           Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>  const CreateGroupScreen()),
-                  );
+                      _showJoinGroupDialog(context);
                     },
                     child: const Text(
                       'Join A Group',
@@ -173,10 +170,10 @@ class NetflixDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 10.0),
                   OutlinedButton(
                     onPressed: () {
-                        Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>  CreateGroupScreen()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreateGroupScreen()),
+                      );
                     },
                     child: const Text(
                       'Create A Group',
@@ -201,6 +198,41 @@ class NetflixDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showJoinGroupDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String groupCode = '';
+        return AlertDialog(
+          title: const Text('Join Group'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  groupCode = value;
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Enter Group Code',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Handle group code submission
+              },
+              child: const Text('Next'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
