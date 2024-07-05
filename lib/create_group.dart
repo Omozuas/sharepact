@@ -1,11 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:sharepact_app/screens/home/components/input_field.dart';
+import 'package:intl/intl.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -20,8 +19,58 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   String selectedPlan = '';
   String groupName = '';
   String numberOfMembers = '';
-  bool isPublic = true;
+  String existingGroup = 'No';
   bool agreedToTerms = false;
+  bool showDatePickerFlag = false;
+  DateTime? selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        showDatePickerFlag = true;
+      });
+    }
+  }
+
+  void _showPrivacyDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you have an Existing Group?'),
+          content: Text('Do you have an Existing Group?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _proceedWithGroupCreation();
+              },
+            ),
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _selectDate(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _proceedWithGroupCreation() {
+    // Handle the creation of group without showing date picker
+    // For example, navigate to the next screen or show a confirmation message
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +78,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        // toolbarHeight: 0, // Hide the app bar
         backgroundColor: Colors.white,
         leading: Padding(
           padding: const EdgeInsets.only(left: 15.0),
@@ -84,77 +132,75 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         color: const Color(0xFFF8F9FA),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
-                      child: Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Please note :',
-                              style: GoogleFonts.lato(
-                                color: const Color(0xff343A40),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Please note :',
+                            style: GoogleFonts.lato(
+                              color: const Color(0xff343A40),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
                             ),
-                            SizedBox(height: height * .01),
-                            Text.rich(
-                              TextSpan(
-                                style: const TextStyle(color: Colors.black),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: 'For ',
-                                    style: GoogleFonts.lato(
-                                      color: const Color(0xff343A40),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                          ),
+                          SizedBox(height: height * .01),
+                          Text.rich(
+                            TextSpan(
+                              style: const TextStyle(color: Colors.black),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: 'For ',
+                                  style: GoogleFonts.lato(
+                                    color: const Color(0xff343A40),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  TextSpan(
-                                    text: 'spotify',
-                                    style: GoogleFonts.lato(
-                                      color: Colors.blue,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // Handle tap
-                                      },
+                                ),
+                                TextSpan(
+                                  text: 'spotify',
+                                  style: GoogleFonts.lato(
+                                    color: Colors.blue,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  TextSpan(
-                                    text: ' or ',
-                                    style: GoogleFonts.lato(
-                                      color: const Color(0xff343A40),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Handle tap
+                                    },
+                                ),
+                                TextSpan(
+                                  text: ' or ',
+                                  style: GoogleFonts.lato(
+                                    color: const Color(0xff343A40),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  TextSpan(
-                                    text: 'Apple music',
-                                    style: GoogleFonts.lato(
-                                      color: Colors.blue,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // Handle tap
-                                      },
+                                ),
+                                TextSpan(
+                                  text: 'Apple music',
+                                  style: GoogleFonts.lato(
+                                    color: Colors.blue,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  TextSpan(
-                                    style: GoogleFonts.lato(
-                                      color: const Color(0xff343A40),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    text:
-                                        ' subscriptions, an agent will be managing the group and is counted as a member',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // Handle tap
+                                    },
+                                ),
+                                TextSpan(
+                                  style: GoogleFonts.lato(
+                                    color: const Color(0xff343A40),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                ],
-                              ),
+                                  text:
+                                      ' subscriptions, an agent will be managing the group and is counted as a member',
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -190,7 +236,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   items: <String>[
                     'Category 1',
                     'Category 2',
-                    'Cateogry 3',
+                    'Category 3',
                   ].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -356,6 +402,89 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   },
                 ),
               ),
+              AppInputField(
+                headerText: 'Do you have an Existing Group?',
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                hintText: 'Select Yes or No',
+                trailing: DropdownButton<String>(
+                  icon: const Icon(HeroiconsOutline.chevronDown),
+                  padding:
+                      EdgeInsets.only(left: width * .04, right: width * .04),
+                  items: <String>['Yes', 'No'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  hint: Text(
+                    existingGroup,
+                    style: GoogleFonts.lato(),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  underline: const SizedBox(),
+                  isExpanded: true,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        existingGroup = value;
+                        if (existingGroup == 'Yes') {
+                          _selectDate(context);
+                        } else {
+                          showDatePickerFlag = false;
+                          selectedDate = null;
+                          _proceedWithGroupCreation();
+                        }
+                      });
+                    }
+                  },
+                ),
+              ),
+              if (showDatePickerFlag)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: height * .02),
+                    Text(
+                      'Next Subscription Date',
+                      style: GoogleFonts.lato(
+                        color: const Color(0xff343A40),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: height * .01),
+                    GestureDetector(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8F9FA),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          DateFormat.yMd().format(selectedDate!),
+                          style: GoogleFonts.lato(
+                            color: const Color(0xff343A40),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               SizedBox(height: height * .01),
               Container(
                 width: width,
@@ -376,7 +505,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     buildPaymentDetailRow(
-                        'Subscription Cost', '5,000 NGN/', 'Year'),
+                        'Subscription Cost', '5,000 NGN/', 'Month'),
                     const Divider(),
                     buildPaymentDetailRow('Handling Fee', '500 NGN', ''),
                     const Divider(),
@@ -384,49 +513,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ],
                 ),
               ),
-              const Divider(),
-              SizedBox(height: height * .02),
-              Text(
-                'Group Privacy',
-                style: GoogleFonts.lato(
-                    color: const Color(0xff343A40),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
-              ),
-              SizedBox(height: height * .01),
-              Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 14, bottom: 14, top: 14),
-                decoration: BoxDecoration(
-                    color: const Color(0xffF8F9FA),
-                    borderRadius: BorderRadius.circular(16)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Public',
-                      style: GoogleFonts.lato(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff5D6166)),
-                    ),
-                    Transform.scale(
-                      scaleX: .85,
-                      scaleY: .85,
-                      child: CupertinoSwitch(
-                        activeColor: const Color(0xFF007BFF),
-                        value: isPublic,
-                        onChanged: (value) {
-                          setState(() {
-                            isPublic = !isPublic;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: height * .02),
               const Divider(),
               SizedBox(height: height * .02),
               Text(
@@ -530,20 +616,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 child: ElevatedButton(
                   onPressed: agreedToTerms
                       ? () {
-                          // Handle create group action
+                          _showPrivacyDialog();
                         }
                       : null,
                   style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.disabled)) {
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.disabled)) {
                           return const Color(0xFFB0D6FF);
                         }
                         return const Color(
                             0xFF007BFF); // Use the component's default.
                       },
                     ),
-                    padding: WidgetStateProperty.all<EdgeInsets>(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
                         const EdgeInsets.symmetric(
                             vertical: 20.0, horizontal: 16.0)),
                   ),
@@ -559,7 +645,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: height * .03)
+              SizedBox(height: height * .03),
             ],
           ),
         ),
