@@ -15,8 +15,7 @@ class SignUpScreen extends StatefulWidget {
 class SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
 
   bool _isPasswordObscured = true;
@@ -41,9 +40,7 @@ class SignUpScreenState extends State<SignUpScreen> {
 
     if (password != confirmPassword) {
       // Show error if passwords do not match
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      _showErrorPopup('Passwords do not match');
       return;
     }
 
@@ -57,10 +54,50 @@ class SignUpScreenState extends State<SignUpScreen> {
       );
     } catch (e) {
       // Show error if signup fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-      );
+      _showErrorPopup(e.toString().replaceAll('Exception: ', ''));
     }
+  }
+
+  void _showErrorPopup(String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 50.0,
+        left: 0.0,
+        right: 0.0,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            margin: EdgeInsets.symmetric(horizontal: 20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red),
+                SizedBox(width: 10),
+                Expanded(child: Text(message, style: TextStyle(color: Colors.black))),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+    
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
   }
 
   @override

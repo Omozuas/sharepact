@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sharepact_app/app_theme.dart';
 import 'splash.dart';
 import 'onboarding.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MyApp());
 }
 
@@ -21,8 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SharePact',
       theme: AppTheme.theme, // Apply the custom theme
-      home:
-          const SplashScreenWithDelay(), // Use SplashScreenWithDelay as the home
+      home: const SplashScreenWithDelay(), // Use SplashScreenWithDelay as the home
     );
   }
 }
@@ -46,9 +40,7 @@ class SplashScreenWithDelayState extends State<SplashScreenWithDelay> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  const OnboardingScreen()), // Navigate to OnboardingScreen
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
         );
       }
     }); // Set the delay here

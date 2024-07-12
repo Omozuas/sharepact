@@ -22,7 +22,7 @@ class AuthService {
         throw Exception(errorResponse['error'] ?? 'Failed to sign up');
       }
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to sign up: $e');
     }
   }
 
@@ -41,7 +41,7 @@ class AuthService {
         throw Exception(errorResponse['error'] ?? 'Failed to sign in');
       }
     } catch (e) {
-      rethrow;
+      throw Exception('Failed to sign in: $e');
     }
   }
 }

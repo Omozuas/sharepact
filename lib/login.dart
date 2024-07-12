@@ -1,9 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/create_group.dart';
 import 'package:sharepact_app/screens/home/home.dart';
-import 'package:sharepact_app/reset_password.dart';
 import 'package:sharepact_app/signup.dart';
 import 'responsive_helpers.dart';
 
@@ -40,11 +38,55 @@ class LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       // Show error if login fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-      );
+      _showErrorPopup(e.toString().replaceAll('Exception: ', ''));
     }
   }
+
+  void _showErrorPopup(String message) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 50.0,
+        left: 0.0,
+        right: 0.0,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            margin: EdgeInsets.symmetric(horizontal: 20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red),
+                SizedBox(width: 10),
+                Expanded(child: Text(message, style: TextStyle(color: Colors.black))),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+    
+    Future.delayed(Duration(seconds: 3), () {
+      overlayEntry.remove();
+    });
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
