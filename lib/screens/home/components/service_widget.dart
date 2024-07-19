@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ServiceWidget extends StatelessWidget {
   final String imgaeURL;
   final String title;
   final VoidCallback onTap;
+  final Color backgroundColor;
 
   const ServiceWidget({
     super.key,
     required this.imgaeURL,
     required this.title,
     required this.onTap,
+    required this.backgroundColor,
   });
 
   @override
@@ -25,20 +28,15 @@ class ServiceWidget extends StatelessWidget {
             Container(
               width: 64,
               height: 64,
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(1000),
-                  topRight: Radius.circular(0),
-                  bottomLeft: Radius.circular(0),
-                  bottomRight: Radius.circular(0),
-                ),
-                color: Colors.transparent,
+              padding: const EdgeInsets.all(15),
+              decoration:  BoxDecoration(
+               shape: BoxShape.circle,
+                color: backgroundColor,
               ),
-              child: Image.asset(
+              child: SvgPicture.asset(
                 imgaeURL,
-                width: 48,
-                height: 48,
+                width: 24,
+                height: 24,
               ),
             ),
             const SizedBox(height: 4),

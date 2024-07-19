@@ -68,24 +68,46 @@ class SignUpScreenState extends State<SignUpScreen> {
         child: Material(
           color: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            margin: EdgeInsets.symmetric(horizontal: 20.0),
+            margin: const EdgeInsets.symmetric(horizontal: 20.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
-                BoxShadow(
+                const BoxShadow(
                   color: Colors.black26,
                   blurRadius: 10.0,
                   offset: Offset(0, 10),
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
               children: [
-                Icon(Icons.error_outline, color: Colors.red),
-                SizedBox(width: 10),
-                Expanded(child: Text(message, style: TextStyle(color: Colors.black))),
+                Container(
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.red),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          message,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -94,8 +116,8 @@ class SignUpScreenState extends State<SignUpScreen> {
     );
 
     overlay.insert(overlayEntry);
-    
-    Future.delayed(Duration(seconds: 3), () {
+
+    Future.delayed(const Duration(seconds: 3), () {
       overlayEntry.remove();
     });
   }

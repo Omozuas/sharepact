@@ -6,7 +6,9 @@ import 'package:sharepact_app/screens/home/header.dart';
 import 'package:sharepact_app/bottom_nav_bar.dart';
 import 'package:sharepact_app/settings.dart';
 import 'package:sharepact_app/streaming_services.dart'; // Import the StreamingServicesScreen
-import 'package:sharepact_app/subscriptions.dart'; // Import MySubscriptionsScreen
+import 'package:sharepact_app/subscriptions.dart';
+import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart'; // Import MySubscriptionsScreen
 
 
 
@@ -108,39 +110,45 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              height: 100,
+              height: 110,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
+                    imgaeURL: AppImages.streamingService,
                     title: 'Streaming Services',
                     onTap: () => _navigateToStreamingServices(context),
+                    backgroundColor: AppColors.lightBlue,
                   ),
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
-                    title: 'Streaming Services',
+                   imgaeURL: AppImages.musicService,
+                    title: 'Music Services',
                     onTap: () => _navigateToStreamingServices(context),
+                      backgroundColor: AppColors.orange,
                   ),
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
-                    title: 'Streaming Services',
+                   imgaeURL: AppImages.productivityService,
+                    title: 'Productivity & Software',
                     onTap: () => _navigateToStreamingServices(context),
+                      backgroundColor: AppColors.lightGreen,
                   ),
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
-                    title: 'Streaming Services',
+                   imgaeURL: AppImages.learningService,
+                    title: 'Learning & Education',
                     onTap: () => _navigateToStreamingServices(context),
+                      backgroundColor: AppColors.lightPink,
                   ),
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
-                    title: 'Streaming Services',
+                   imgaeURL: AppImages.gamingService,
+                    title: 'Gaming',
                     onTap: () => _navigateToStreamingServices(context),
+                      backgroundColor: AppColors.yellow,
                   ),
                   ServiceWidget(
-                    imgaeURL: 'assets/streaming.png',
-                    title: 'Streaming Services',
+                   imgaeURL: AppImages.vpnService,
+                    title: 'VPNs',
                     onTap: () => _navigateToStreamingServices(context),
+                      backgroundColor: AppColors.accent,
                   ),
                 ],
               ),
@@ -155,7 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Text(
                   "Show All",
-                  style: TextStyle(color: Colors.blue),
+                  
+                  style: TextStyle(color: AppColors.primaryColor, decoration: TextDecoration.underline),
                 )
               ],
             ),
@@ -217,7 +226,7 @@ class SubscriptionGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 5,
-        childAspectRatio: 220 / 207,
+        // childAspectRatio: 220 / 207,
       ),
       itemCount: subscriptionData.length,
       itemBuilder: (context, index) {

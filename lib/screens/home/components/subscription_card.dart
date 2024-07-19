@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart';
 
 class SubscriptionCard extends StatelessWidget {
   final String service;
@@ -24,6 +26,7 @@ class SubscriptionCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(8),
+            topRight:  Radius.circular(8),
         ),
         border: Border.all(width: 1, color: Colors.grey[300]!),
       ),
@@ -35,15 +38,16 @@ class SubscriptionCard extends StatelessWidget {
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 13),
             decoration: BoxDecoration(
-              color: Colors.lightBlue[100],
+              color: AppColors.lightBlue01,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
+                topRight:  Radius.circular(8),
               ),
             ),
             child: Row(
               children: [
                 Image.asset(
-                  'assets/profile.png', // Replace with actual image URL or asset
+                  AppImages.avatarImage5, // Replace with actual image URL or asset
                   width: 16,
                   height: 16,
                 ),

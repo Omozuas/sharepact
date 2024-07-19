@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/screens/group_details/screen/group_details_screen.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -54,6 +55,10 @@ class ChatScreen extends StatelessWidget {
               switch (value) {
                 case 'Group details':
                   // Handle group details action
+                         Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>  GroupDetailsScreen()));
+                 
+                  
                   break;
                 case 'Mute Notifications':
                   // Handle mute notifications action
@@ -85,24 +90,26 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                const Center(child: Text('Today', style: TextStyle(color: Colors.grey))),
-                const SizedBox(height: 10),
-                _buildReceivedMessage(context, 'John Doe1', 'Hi, have you joined the Spotify group yet?', '11:02'),
-                _buildSentMessage(context, 'Hey! Not yet. How do I join?', '11:10'),
-                _buildReceivedMessage(context, 'John Doe1', 'Just click on the invite link I sent you.', '11:15'),
-                _buildSentMessage(context, 'Got it, thanks! I’ll join now.', '11:15'),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  const Center(child: Text('Today', style: TextStyle(color: Colors.grey))),
+                  const SizedBox(height: 10),
+                  _buildReceivedMessage(context, 'John Doe1', 'Hi, have you joined the Spotify group yet?', '11:02'),
+                  _buildSentMessage(context, 'Hey! Not yet. How do I join?', '11:10'),
+                  _buildReceivedMessage(context, 'John Doe1', 'Just click on the invite link I sent you.', '11:15'),
+                  _buildSentMessage(context, 'Got it, thanks! I’ll join now.', '11:15'),
+                ],
+              ),
             ),
-          ),
-          _buildMessageInput(),
-          const SizedBox(height: 50), // Add some space below the input box
-        ],
+            _buildMessageInput(),
+            // const SizedBox(height: 50), // Add some space below the input box
+          ],
+        ),
       ),
     );
   }
