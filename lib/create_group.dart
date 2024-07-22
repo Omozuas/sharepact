@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:sharepact_app/screens/home/components/input_field.dart';
 import 'package:intl/intl.dart';
+import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -24,19 +28,63 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   bool showDatePickerFlag = false;
   DateTime? selectedDate;
 
+  final dateformat = DateFormat('dd MMMM, yyyy');
+
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    // final DateTime? picked = await showDatePicker(
+    //   context: context,
+    //   initialDate: selectedDate ?? DateTime.now(),
+    //   firstDate: DateTime(2000),
+    //   lastDate: DateTime(2101),
+    // );
+    // if (picked != null && picked != selectedDate) {
+    //   setState(() {
+    //     selectedDate = picked;
+    //     showDatePickerFlag = true;
+    //   });
+    // }
+    DateTime? dateTime = await showOmniDateTimePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      type: OmniDateTimePickerType.date,
+      // firstDate: Date,
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
+      constraints: const BoxConstraints(
+        maxWidth: 350,
+        maxHeight: 650,
+      ),
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1.drive(
+            Tween(
+              begin: 0,
+              end: 1,
+            ),
+          ),
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+      barrierDismissible: true,
+      theme: Theme.of(context).copyWith(
+        useMaterial3: false,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.primaryColor,
+          onPrimary: Colors.white,
+          onSurface: Colors.black, // body text color
+        ),
+        dialogBackgroundColor: Colors.white,
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.primaryColor, // button text color
+          ),
+        ),
+      ),
     );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        showDatePickerFlag = true;
-      });
-    }
+    setState(() {
+      selectedDate = dateTime;
+      showDatePickerFlag = true;
+    });
   }
 
   void _showPrivacyDialog() {
@@ -454,7 +502,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   children: [
                     SizedBox(height: height * .02),
                     Text(
-                      'Next Subscription Date',
+                      'Select Date of Next Subscription',
                       style: GoogleFonts.lato(
                         color: const Color(0xff343A40),
                         fontSize: 16,
@@ -462,27 +510,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       ),
                     ),
                     SizedBox(height: height * .01),
-                    GestureDetector(
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FA),
-                          borderRadius: BorderRadius.circular(10),
+                    ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: AppColors.borderColor, width: 1),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Text(
-                          DateFormat.yMd().format(selectedDate!),
-                          style: GoogleFonts.lato(
-                            color: const Color(0xff343A40),
+                        title: Text(
+                          selectedDate == null
+                              ? ""
+                              : "${dateformat.format(selectedDate!)}",
+                          style: TextStyle(
+                            fontFamily: "Inter",
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
+                            // color: selectedDate == null
+                            //     ? AppColors.hintTextColor
+                            //     : AppColors.black,
                           ),
                         ),
-                      ),
-                    ),
+                        trailing: SvgPicture.asset(AppImages.calenderIcon),
+                        onTap: () async {
+                       await   _selectDate(context);
+                        }),
                   ],
                 ),
               SizedBox(height: height * .01),

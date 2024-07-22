@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/screens/notification/screen/notification_screen.dart';
 
 class Header extends StatelessWidget {
   const Header({
@@ -8,7 +9,8 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22), // Match search bar padding
+      padding: const EdgeInsets.symmetric(
+          horizontal: 22), // Match search bar padding
       child: SizedBox(
         width: double.infinity,
         height: 48,
@@ -17,14 +19,24 @@ class Header extends StatelessWidget {
           children: [
             const Text(
               'Hi Jane Doe',
-              style: TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600),
             ),
             Row(
               children: [
-                Image.asset(
-                  'assets/notification.png', // Replace with actual image path
-                  width: 24,
-                  height: 24,
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ));
+                  },
+                  child: Image.asset(
+                    'assets/notification.png', // Replace with actual image path
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 const CircleAvatar(

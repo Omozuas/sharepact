@@ -12,9 +12,9 @@ class AppColors {
   static const Color lightGrey = Color(0xffF8F9FA);
   static const Color checkBorderColor = Color(0xffC0C0C0);
 
-static const Color borderColor = Color(0xffD1D4D7);
-static const Color borderColor01 = Color(0xffBBC0C3);
-  
+  static const Color borderColor = Color(0xffD1D4D7);
+  static const Color borderColor01 = Color(0xffBBC0C3);
+    
   static const Color lightBlue01 = Color(0xffB0D6FF);
   static const Color green = Color(0xff6FC482);
   static const Color pink = Color(0xffFF7FAB);

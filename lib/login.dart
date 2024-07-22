@@ -30,7 +30,7 @@ class LoginScreenState extends State<LoginScreen> {
     final String password = passwordController.text;
 
     try {
-      final response = await _authService.signin(email, password);
+      // final response = await _authService.signin(email, password);
       // Navigate to home screen if login is successful
       Navigator.push(
         context,

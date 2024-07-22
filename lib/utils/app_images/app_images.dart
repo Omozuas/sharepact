@@ -9,13 +9,15 @@ class AppImages {
   // Warning Icon
   static const String warningIcon = "assets/warning_icon.svg";
 
-    // Share Icon
+  // Share Icon
   static const String shareIcon = "assets/share.svg";
-   // Check Icon
+  // Check Icon
   static const String checkIcon = "assets/prime_check-circle.svg";
-    // EXIT Icon
+  // EXIT Icon
   static const String exitIcon = "assets/logout.svg";
-  
+
+  // Calender Icon
+static const String calenderIcon = "assets/calendar-2.svg";
   
 
   // Avatar Pics
@@ -36,4 +38,18 @@ class AppImages {
   static const String learningService = "assets/book.svg";
   static const String gamingService = "assets/computing.svg";
   static const String vpnService = "assets/wifi.svg";
+
+  // Notification
+  static const String emptyNotification = "assets/empty_notification.svg";
+  static const String personTick = "assets/user-tick.svg";
+  static const String lock = "assets/lock.svg";
+  static const String peopleIcon = "assets/people.svg";
+
+  static const String sendIcon = "assets/send-2.svg";
+  static const String messageIcon = "assets/messages-2.svg";
+  static const String walletIcon = "assets/wallet-check.svg";
+
+  // Popup
+  static const String invalidIcon = "assets/bxs_error.svg";
+  static const String successIcon = "assets/icon-park-solid_success.svg";
 }

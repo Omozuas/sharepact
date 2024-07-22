@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:sharepact_app/create_group.dart';
+import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart';
+import 'package:sharepact_app/widgets/popup_content.dart';
+import 'package:sharepact_app/widgets/popup_input_widget.dart';
 
-class NetflixDetailsScreen extends StatelessWidget {
+class NetflixDetailsScreen extends StatefulWidget {
+  NetflixDetailsScreen({super.key});
+
+  @override
+  State<NetflixDetailsScreen> createState() => _NetflixDetailsScreenState();
+}
+
+class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
+  final TextEditingController messageController = TextEditingController();
+
+  final TextEditingController codeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +175,8 @@ class NetflixDetailsScreen extends StatelessWidget {
                     ),
                     style: OutlinedButton.styleFrom(
                       fixedSize: const Size(339, 59),
-                      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 16.0),
                       side: const BorderSide(color: Color(0xFF007BFF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
@@ -172,7 +188,9 @@ class NetflixDetailsScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CreateGroupScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const CreateGroupScreen(),
+                        ),
                       );
                     },
                     child: const Text(
@@ -185,7 +203,8 @@ class NetflixDetailsScreen extends StatelessWidget {
                     ),
                     style: OutlinedButton.styleFrom(
                       fixedSize: const Size(339, 59),
-                      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 16.0),
                       side: const BorderSide(color: Color(0xFF007BFF)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
@@ -205,32 +224,74 @@ class NetflixDetailsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String groupCode = '';
         return AlertDialog(
-          title: const Text('Join Group'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) {
-                  groupCode = value;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Enter Group Code',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Handle group code submission
-              },
-              child: const Text('Next'),
-            ),
-          ],
+          content: PopupInputWidget(
+            textController: codeController,
+            title: "Group Code",
+            subtext:
+                "Please enter the group code provided by the group creator to join the subscription group",
+            hintText: 'Enter code',
+            btnText: 'Proceed',
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      // contentPadding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      content: codeController.text == "123456"
+                          ? PopupInputWidget(
+                              title: "Message",
+                              subtext:
+                                  "Please send a message to the group creator about your intention to join the group",
+                              minLines: 5,
+                              btnText: 'Send Message',
+                              textController: messageController,
+                              height: 310,
+                              hintText:
+                                  'Hi creator, I’d like to become a member of this group ',
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          // contentPadding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                          content: PopupContentWidget(
+                                            icon: AppImages.successIcon,
+                                            title: "Request Sent!",
+                                            subtext:
+                                                "Your request to join the group has been sent successfully",
+                                            actionBtnText: "Join More Groups",
+                                            buttonColor: AppColors.primaryColor,
+                                            closeBtnText: 'Close',
+                                            onPressed: () {},
+                                          ));
+                                    });
+                              })
+                          : PopupContentWidget(
+                              icon: AppImages.invalidIcon,
+                              title: "Invalid Group Code!",
+                              subtext:
+                                  "The group code you entered is incorrect. Please try again or reach out to the group creator if you believe the code provided is incorrect",
+                              actionBtnText: "Try Again",
+                              buttonColor: AppColors.primaryColor,
+                              onPressed: () {},
+                            ),
+                    );
+                  });
+            },
+          ),
         );
       },
     );
@@ -242,7 +303,8 @@ class PlanCard extends StatelessWidget {
   final String price;
   final List<String> features;
 
-  PlanCard({required this.planName, required this.price, required this.features});
+  PlanCard(
+      {required this.planName, required this.price, required this.features});
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +322,8 @@ class PlanCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 decoration: BoxDecoration(
                   color: Colors.blue[100],
                   borderRadius: BorderRadius.circular(10.0),
@@ -303,7 +366,9 @@ class PlanCard extends StatelessWidget {
               const SizedBox(height: 16.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: features.map((feature) => FeatureItem(text: feature)).toList(),
+                children: features
+                    .map((feature) => FeatureItem(text: feature))
+                    .toList(),
               ),
             ],
           ),
