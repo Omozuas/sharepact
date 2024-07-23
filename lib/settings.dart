@@ -83,14 +83,14 @@ class SettingsScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.feedback_outlined,
-                      title: 'Feedback',
-                      onTap: () {
-                        // Handle Feedback action
-                      },
-                    ),
+                    // const Divider(),
+                    // SettingsTile(
+                    //   icon: Icons.feedback_outlined,
+                    //   title: 'Feedback',
+                    //   onTap: () {
+                    //     // Handle Feedback action
+                    //   },
+                    // ),
                     const Divider(),
                     SettingsTile(
                       icon: Icons.support_agent_outlined,

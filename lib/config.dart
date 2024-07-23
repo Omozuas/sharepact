@@ -1,5 +1,5 @@
 class Config {
-  static const String baseUrl = 'https://6659-78-18-216-210.ngrok-free.app';
+  static const String baseUrl = 'https://0df3-51-6-13-185.ngrok-free.app';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';
