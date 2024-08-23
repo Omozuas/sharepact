@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService();
 
   bool _isPasswordObscured = true;
 
@@ -39,7 +39,6 @@ class LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       // Show error if login fails
       _showErrorPopup(e.toString().replaceAll('Exception: ', ''));
-    
     }
   }
 
@@ -78,8 +77,8 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10.0),
                   child: Row(
                     children: [
                       const Icon(Icons.error_outline, color: Colors.red),
@@ -87,7 +86,8 @@ class LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: Text(
                           message,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
                     ],

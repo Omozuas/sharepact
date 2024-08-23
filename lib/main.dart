@@ -6,7 +6,7 @@ import 'onboarding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child:MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SharePact',
       theme: AppTheme.theme, // Apply the custom theme
-      home: const SplashScreenWithDelay(), // Use SplashScreenWithDelay as the home
+      home:
+          const SplashScreenWithDelay(), // Use SplashScreenWithDelay as the home
     );
   }
 }

@@ -1,22 +1,28 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:sharepact_app/api/auth_service.dart';
+import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/email_verification.dart';
 import 'package:sharepact_app/login.dart';
 import 'responsive_helpers.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => SignUpScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => SignUpScreenState();
 }
 
-class SignUpScreenState extends State<SignUpScreen> {
+class SignUpScreenState extends ConsumerState<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool _isPasswordObscured = true;
   bool _isConfirmPasswordObscured = true;
@@ -33,97 +39,84 @@ class SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void _signup() async {
+  Future<void> _signup() async {
     final String email = emailController.text;
     final String password = passwordController.text;
     final String confirmPassword = confirmPasswordController.text;
+    if (email.isEmpty) {
+      showErrorPopup(message: "email is required", context: context);
+      return;
+    }
+    if (password.isEmpty) {
+      showErrorPopup(message: "password is required", context: context);
+      return;
+    }
 
     if (password != confirmPassword) {
       // Show error if passwords do not match
-      _showErrorPopup('Passwords do not match');
+      showErrorPopup(message: 'Passwords do not match', context: context);
       return;
     }
 
     try {
-      final response = await _authService.signup(email, password);
-      // Navigate to email verification screen if signup is successful
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const EmailVerificationScreen()),
-      );
+      await ref
+          .read(profileProvider.notifier)
+          .createUser(email: email, password: password);
+
+      final pUpdater = ref.read(profileProvider).generalrespond;
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          print({"message1": message});
+
+          // Check if the response code is 201
+          if (pUpdater.value!.code == 201) {
+            showSuccess(message: message!, context: context);
+            // Navigate to email verification screen if signup is successful
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EmailVerificationScreen(
+                        email: email,
+                      )),
+            );
+          }
+          // Safely check for errors
+          final passwordErrors = pUpdater.value?.errors?.password;
+          if (passwordErrors != null && passwordErrors.isNotEmpty) {
+            showErrorPopup(message: passwordErrors[0], context: context);
+            return;
+          }
+          // Additional error handling based on the presence of errors
+          final emailErrors = pUpdater.value?.data;
+          if (emailErrors == null) {
+            showErrorPopup(message: message, context: context);
+            return;
+          }
+        } else {
+          showErrorPopup(
+              message: "An unknown error occurred", context: context);
+        }
+      }
+    } on GeneralResponseModel catch (e) {
+      if (mounted) {
+        showErrorPopup(message: e.message!, context: context);
+        return;
+      }
     } catch (e) {
-      // Show error if signup fails
-      _showErrorPopup(e.toString().replaceAll('Exception: ', ''));
+      if (mounted) {
+        // Show error if signup fails
+        showErrorPopup(message: 'an err occored $e ', context: context);
+        return;
+      }
     }
-  }
-
-  void _showErrorPopup(String message) {
-    final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: 50.0,
-        left: 0.0,
-        right: 0.0,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                const BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  height: 7,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.error_outline, color: Colors.red),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          message,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    overlay.insert(overlayEntry);
-
-    Future.delayed(const Duration(seconds: 3), () {
-      overlayEntry.remove();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(profileProvider).generalrespond.isLoading;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -257,8 +250,10 @@ class SignUpScreenState extends State<SignUpScreen> {
               SizedBox(
                 height: responsiveHeight(context, 0.08),
                 child: ElevatedButton(
-                  onPressed: _signup,
-                  child: const Text('Sign Up'),
+                  onPressed: isLoading ? () {} : _signup,
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Sign Up'),
                 ),
               ),
               SizedBox(height: responsiveHeight(context, 0.02)),

@@ -1,18 +1,106 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/verfication_successful.dart';
 import 'responsive_helpers.dart';
-class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({super.key});
 
+class EmailVerificationScreen extends ConsumerStatefulWidget {
+  const EmailVerificationScreen({super.key, this.email});
+  final email;
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      EmailVerificationScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class EmailVerificationScreenState
+    extends ConsumerState<EmailVerificationScreen> {
+  List<TextEditingController> otpControllers =
+      List.generate(6, (index) => TextEditingController());
+  @override
+  void dispose() {
+    // Dispose of the controllers to avoid memory leaks.
+    for (var controller in otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> verfyOtp() async {
+    String otp = otpControllers.map((controller) => controller.text).join();
+    print(otp);
+
+    try {
+      await ref
+          .read(profileProvider.notifier)
+          .veryifyOtp(email: widget.email, code: otp);
+      final pUpdater = ref.read(profileProvider).otp;
+      if (pUpdater.value != null) {
+        // Safely access message
+        final message = pUpdater.value?.message;
+        print({"message1": message});
+
+        // Check if the response code is 200
+        if (pUpdater.value!.code == 200) {
+          showSuccess(message: message!, context: context);
+          // Navigate to email verification screen if signup is successful
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const VerificationSuccessfulScreen()),
+          );
+        }
+        final emailErrors = pUpdater.value?.code;
+        if (emailErrors == 400) {
+          showErrorPopup(message: message, context: context);
+          return;
+        }
+      } else {
+        showErrorPopup(message: "An unknown error occurred", context: context);
+      }
+    } catch (e) {
+      // Show error if signup fails
+      showErrorPopup(message: 'an err occored $e ', context: context);
+    }
+  }
+
+  Future<void> resendOtp() async {
+    try {
+      await ref.read(profileProvider.notifier).resendOtp(
+            email: widget.email,
+          );
+      final pUpdater = ref.read(profileProvider).resendOtp;
+      if (pUpdater.value != null) {
+        // Safely access message
+        final message = pUpdater.value?.message;
+        print({"message1": message});
+
+        // Check if the response code is 201
+        if (pUpdater.value!.code == 200) {
+          showSuccess(message: message!, context: context);
+          // Navigate to email verification screen if signup is successful
+          return;
+        }
+        final emailErrors = pUpdater.value?.code;
+        if (emailErrors == 400) {
+          showErrorPopup(message: message, context: context);
+          return;
+        }
+      } else {
+        showErrorPopup(message: "An unknown error occurred", context: context);
+      }
+    } catch (e) {
+      // Show error if signup fails
+      showErrorPopup(message: 'an err occored $e ', context: context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(profileProvider).otp.isLoading;
+    final isLoading1 = ref.watch(profileProvider).resendOtp.isLoading;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -25,7 +113,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
+        padding:
+            EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -33,9 +122,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               child: Text(
                 'Email Verification',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xff343A40),
-                ),
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xff343A40),
+                    ),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.02)),
@@ -43,28 +132,26 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               child: Text(
                 'A 6-digit verification code has been sent to your email address. Enter the 6-digit code below to continue',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xff5D6166),
-                ),
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff5D6166),
+                    ),
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.04)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) => _buildOTPBox(context)),
+              children: List.generate(
+                  6, (index) => _buildOTPBox(context, index, otpControllers)),
             ),
             SizedBox(height: responsiveHeight(context, 0.05)),
             SizedBox(
               height: responsiveHeight(context, 0.08),
               child: ElevatedButton(
-                onPressed: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const VerificationSuccessfulScreen()),
-                  );
-                },
-                child: const Text('Verify OTP'),
+                onPressed: isLoading ? () {} : verfyOtp,
+                child: isLoading
+                    ? CircularProgressIndicator()
+                    : const Text('Verify OTP'),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.02)),
@@ -73,20 +160,22 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 text: TextSpan(
                   text: 'Didn’t receive any code? ',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xff343A40),
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xff343A40),
+                      ),
                   children: [
                     TextSpan(
-                      text: 'Resend',
+                      text: isLoading1 ? 'resending....' : 'Resend',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.w400,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          // Handle resend action
-                        },
+                        ..onTap = isLoading1
+                            ? () {
+                                // Handle resend action
+                              }
+                            : resendOtp,
                     ),
                   ],
                 ),
@@ -98,7 +187,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 
-  Widget _buildOTPBox(BuildContext context) {
+  Widget _buildOTPBox(BuildContext context, index, controller) {
     return Container(
       width: responsiveWidth(context, 0.12),
       height: responsiveWidth(context, 0.12),
@@ -108,10 +197,21 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       ),
       child: Center(
         child: TextField(
+          controller: controller[index],
+          autofocus: index == 0,
           decoration: const InputDecoration(
             border: InputBorder.none,
-            counterText: '', // Hide the counter text
+            counterText: '',
+            // Hide the counter text
           ),
+          onChanged: (value) {
+            if (value.length == 1 && index < 5) {
+              FocusScope.of(context).nextFocus();
+            }
+            if (value.isEmpty && index > 0) {
+              FocusScope.of(context).previousFocus();
+            }
+          },
           style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
