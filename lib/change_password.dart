@@ -47,11 +47,13 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     color: const Color(0xff5D6166),
                   ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Divider(),
-            SizedBox(height: 10,),
+            const Divider(),
+            const SizedBox(
+              height: 10,
+            ),
             Text(
               'Current Password',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -59,20 +61,23 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
-           TextField(
+            TextField(
               decoration: InputDecoration(
                 hintText: 'Enter password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xff5D6166),
-                ),
+                      color: const Color(0xff5D6166),
+                    ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                  borderSide:
+                      const BorderSide(color: Color(0xffBBC0C3), width: 1),
                 ),
                 contentPadding: const EdgeInsets.all(20),
               ),
             ),
-            SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Text(
               'New Password',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -80,20 +85,23 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
-           TextField(
+            TextField(
               decoration: InputDecoration(
                 hintText: 'Re-type password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xff5D6166),
-                ),
+                      color: const Color(0xff5D6166),
+                    ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                  borderSide:
+                      const BorderSide(color: Color(0xffBBC0C3), width: 1),
                 ),
                 contentPadding: const EdgeInsets.all(20),
               ),
             ),
-            SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Text(
               'Confirm New Password',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -101,28 +109,27 @@ class ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
             ),
             SizedBox(height: responsiveHeight(context, 0.005)),
-           TextField(
+            TextField(
               decoration: InputDecoration(
                 hintText: 'Re-type password',
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xff5D6166),
-                ),
+                      color: const Color(0xff5D6166),
+                    ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                  borderSide:
+                      const BorderSide(color: Color(0xffBBC0C3), width: 1),
                 ),
                 contentPadding: const EdgeInsets.all(20),
               ),
             ),
-               SizedBox(height: responsiveHeight(context, 0.04)),
+            SizedBox(height: responsiveHeight(context, 0.04)),
             SizedBox(
-                height: responsiveHeight(context, 0.08),
-            
+              height: responsiveHeight(context, 0.08),
               child: ElevatedButton(
-                  onPressed: () {
-                       },
-                  child: const Text('Save New Password'),
-                ),
+                onPressed: () {},
+                child: const Text('Save New Password'),
+              ),
             ),
           ],
         ),

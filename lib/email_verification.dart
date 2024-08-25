@@ -9,7 +9,7 @@ import 'responsive_helpers.dart';
 
 class EmailVerificationScreen extends ConsumerStatefulWidget {
   const EmailVerificationScreen({super.key, this.email});
-  final email;
+  final String? email;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       EmailVerificationScreenState();
@@ -30,70 +30,87 @@ class EmailVerificationScreenState
 
   Future<void> verfyOtp() async {
     String otp = otpControllers.map((controller) => controller.text).join();
-    print(otp);
-
+    // Check if OTP is empty
+    if (otp.isEmpty) {
+      showErrorPopup(message: "Please Enter Your OTP PIN", context: context);
+      return; // Exit the function if OTP is empty
+    }
     try {
       await ref
           .read(profileProvider.notifier)
-          .veryifyOtp(email: widget.email, code: otp);
+          .veryifyOtp(email: widget.email!, code: otp);
       final pUpdater = ref.read(profileProvider).otp;
-      if (pUpdater.value != null) {
-        // Safely access message
-        final message = pUpdater.value?.message;
-        print({"message1": message});
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          print({"message1": message});
 
-        // Check if the response code is 200
-        if (pUpdater.value!.code == 200) {
-          showSuccess(message: message!, context: context);
-          // Navigate to email verification screen if signup is successful
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const VerificationSuccessfulScreen()),
-          );
-        }
-        final emailErrors = pUpdater.value?.code;
-        if (emailErrors == 400) {
-          showErrorPopup(message: message, context: context);
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+            showSuccess(message: message!, context: context);
+            // Navigate to email verification screen if signup is successful
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const VerificationSuccessfulScreen()),
+            );
+          }
+          final emailErrors = pUpdater.value?.code;
+          if (emailErrors == 400) {
+            showErrorPopup(message: message, context: context);
+            return;
+          }
+        } else {
+          showErrorPopup(
+              message: "An unknown error occurred", context: context);
           return;
         }
-      } else {
-        showErrorPopup(message: "An unknown error occurred", context: context);
       }
     } catch (e) {
       // Show error if signup fails
-      showErrorPopup(message: 'an err occored $e ', context: context);
+      if (mounted) {
+        showErrorPopup(message: 'an err occored $e ', context: context);
+        return;
+      }
     }
   }
 
   Future<void> resendOtp() async {
     try {
       await ref.read(profileProvider.notifier).resendOtp(
-            email: widget.email,
+            email: widget.email!,
           );
       final pUpdater = ref.read(profileProvider).resendOtp;
-      if (pUpdater.value != null) {
-        // Safely access message
-        final message = pUpdater.value?.message;
-        print({"message1": message});
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          print({"message1": message});
 
-        // Check if the response code is 201
-        if (pUpdater.value!.code == 200) {
-          showSuccess(message: message!, context: context);
-          // Navigate to email verification screen if signup is successful
+          // Check if the response code is 201
+          if (pUpdater.value!.code == 200) {
+            showSuccess(message: message!, context: context);
+            // Navigate to email verification screen if signup is successful
+            return;
+          }
+          final emailErrors = pUpdater.value?.code;
+          if (emailErrors == 400) {
+            showErrorPopup(message: message, context: context);
+            return;
+          }
+        } else {
+          showErrorPopup(
+              message: "An unknown error occurred", context: context);
           return;
         }
-        final emailErrors = pUpdater.value?.code;
-        if (emailErrors == 400) {
-          showErrorPopup(message: message, context: context);
-          return;
-        }
-      } else {
-        showErrorPopup(message: "An unknown error occurred", context: context);
       }
     } catch (e) {
       // Show error if signup fails
-      showErrorPopup(message: 'an err occored $e ', context: context);
+      if (mounted) {
+        showErrorPopup(message: 'an err occored $e ', context: context);
+        return;
+      }
     }
   }
 
@@ -150,7 +167,7 @@ class EmailVerificationScreenState
               child: ElevatedButton(
                 onPressed: isLoading ? () {} : verfyOtp,
                 child: isLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : const Text('Verify OTP'),
               ),
             ),
@@ -205,7 +222,7 @@ class EmailVerificationScreenState
             // Hide the counter text
           ),
           onChanged: (value) {
-            if (value.length == 1 && index < 5) {
+            if (value.length == 1 && index < 6) {
               FocusScope.of(context).nextFocus();
             }
             if (value.isEmpty && index > 0) {

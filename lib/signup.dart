@@ -1,9 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
-import 'package:sharepact_app/api/auth_service.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -68,8 +65,6 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
         if (pUpdater.value != null) {
           // Safely access message
           final message = pUpdater.value?.message;
-          print({"message1": message});
-
           // Check if the response code is 201
           if (pUpdater.value!.code == 201) {
             showSuccess(message: message!, context: context);

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,10 +13,10 @@ class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
 
   @override
-  _CreateGroupScreenState createState() => _CreateGroupScreenState();
+  CreateGroupScreenState createState() => CreateGroupScreenState();
 }
 
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
+class CreateGroupScreenState extends State<CreateGroupScreen> {
   String selectedCategory = '';
   String selectedService = '';
   String selectedPlan = '';
@@ -531,7 +530,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         ),
                         trailing: SvgPicture.asset(AppImages.calenderIcon),
                         onTap: () async {
-                       await   _selectDate(context);
+                          await _selectDate(context);
                         }),
                   ],
                 ),

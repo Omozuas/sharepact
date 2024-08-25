@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
@@ -54,25 +54,69 @@ class AuthService {
     }
   }
 
-  Future<GeneralResponseModel> signin(String email, String password) async {
+  Future<GeneralResponseModel> signin(
+      {required String email, required String password}) async {
     try {
-      final response = await http
-          .post(
-            Uri.parse(Config.signinEndpoint),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'email': email, 'password': password}),
-          )
-          .timeout(Config.requestTimeout);
-
-      if (response.statusCode == 200) {
-        saveToken(response);
-        return generalResponseModelFromJson(response.body);
-      } else {
-        final errorResponse = jsonDecode(response.body);
-        throw Exception(errorResponse['error'] ?? 'Failed to sign in');
-      }
+      final response = await apiService.post(
+        endpoint: Config.signinEndpoint,
+        body: {'email': email, 'password': password},
+      );
+      saveToken(response);
+      return response!;
     } catch (e) {
-      throw Exception('Failed to sign in: $e');
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> reSetPassword({required String email}) async {
+    try {
+      final response = await apiService.post(
+        endpoint: Config.reSetPasswordEndpoint,
+        body: {'email': email},
+      );
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> confirmReSetPassword(
+      {required String email, required String code}) async {
+    try {
+      final response = await apiService.post(
+        endpoint: Config.confirmreSetPasswordEndpoint,
+        body: {'email': email, 'code': code},
+      );
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> changePassword(
+      {required String email,
+      required String code,
+      required String password}) async {
+    try {
+      final response = await apiService.patch(
+        endpoint: Config.changePasswordEndpoint,
+        body: {"email": email, "code": code, "password": password},
+      );
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> logout({required String token}) async {
+    try {
+      final response = await apiService.post2(
+        token: token,
+        endpoint: Config.logoutEndpoint,
+      );
+      return response!;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -83,7 +127,7 @@ class AuthService {
         // Return an error response or handle it accordingly
         throw Exception("Invalid or expired token. Please log in again.");
       }
-      final token = await _getToken();
+      final token = await getToken();
       final response = await http.get(
         Uri.parse(Config.signinEndpoint),
         headers: {
@@ -103,23 +147,25 @@ class AuthService {
     }
   }
 
-  void saveToken(Response response) async {
-    var jsonres = jsonDecode(response.body);
+  void saveToken(GeneralResponseModel? response) async {
+    if (response!.data == null) return;
     final preferences = await SharedPreferences.getInstance();
-    preferences.setString('token', jsonres["data"]["token"]);
+    preferences.setString('token', response.data!["token"]);
     return;
   }
 
   Future<bool> isTokenValid() async {
     final preferences = await SharedPreferences.getInstance();
     final token = preferences.getString('token');
+
     if (token == null) {
       return false; // No token stored
+    } else {
+      return !JwtDecoder.isExpired(token);
     }
-    return !JwtDecoder.isExpired(preferences.getString('token')!);
   }
 
-  Future<String> _getToken() async {
+  Future<String> getToken() async {
     final preferences = await SharedPreferences.getInstance();
     return preferences.getString('token') ?? '';
   }

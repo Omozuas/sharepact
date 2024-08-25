@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/app_theme.dart';
+import 'package:sharepact_app/screens/home/home.dart';
 import 'splash.dart';
 import 'onboarding.dart';
 
@@ -24,27 +26,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SplashScreenWithDelay extends StatefulWidget {
+class SplashScreenWithDelay extends ConsumerStatefulWidget {
   const SplashScreenWithDelay({super.key});
 
   @override
-  SplashScreenWithDelayState createState() => SplashScreenWithDelayState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      SplashScreenWithDelayState();
 }
 
-class SplashScreenWithDelayState extends State<SplashScreenWithDelay> {
+class SplashScreenWithDelayState extends ConsumerState<SplashScreenWithDelay> {
   @override
   void initState() {
     super.initState();
-    _navigateToOnboarding();
+    Future.microtask(() => _navigateToOnboarding());
   }
 
-  _navigateToOnboarding() async {
+  Future<void> _navigateToOnboarding() async {
+    final bool isTokenValid =
+        await ref.read(profileProvider.notifier).validateToken();
+
     await Future.delayed(const Duration(seconds: 3), () {}).then((_) {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-        );
+        if (isTokenValid == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+          );
+        }
       }
     }); // Set the delay here
   }

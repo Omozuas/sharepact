@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/bank_details/screen/bank_details_screen.dart';
 import 'package:sharepact_app/change_password.dart';
 import 'package:sharepact_app/edit_profile.dart';
@@ -9,9 +14,82 @@ import 'package:sharepact_app/support_screen.dart';
 import 'package:sharepact_app/terms_and_conditions.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  ConsumerState createState() => SettingsScreenState();
+}
+
+class SettingsScreenState extends ConsumerState<SettingsScreen> {
+  Future<void> logOut() async {
+    try {
+      final tokenValid =
+          await ref.read(profileProvider.notifier).validateToken();
+      if (tokenValid != false) {
+        await ref.read(profileProvider.notifier).getToken();
+        final myToken = ref.read(profileProvider).getToken.value;
+
+        if (myToken!.isNotEmpty) {
+          await ref.read(profileProvider.notifier).logOut(token: myToken);
+          final pUpdater = ref.read(profileProvider).logout;
+
+          // Safely check for value and data
+          if (pUpdater.value != null) {
+            final message = pUpdater.value?.message;
+
+            // Safely check for code
+            if (pUpdater.value?.code == 200) {
+              final preferences = await SharedPreferences.getInstance();
+              preferences.remove('token');
+
+              if (mounted) {
+                showSuccess(message: message!, context: context);
+
+                // Navigate to LoginScreen if logout is successful
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
+            } else {
+              if (mounted) {
+                showErrorPopup(
+                    message: message ?? 'An error occurred', context: context);
+              }
+            }
+          } else {
+            if (mounted) {
+              showErrorPopup(
+                  message: 'Logout failed. Please try again.',
+                  context: context);
+            }
+          }
+        }
+      } else {
+        if (mounted) {
+          showErrorPopup(message: 'Session expired', context: context);
+
+          // Navigate to LoginScreen if session expired
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      // Show error if login fails
+      if (mounted) {
+        showErrorPopup(
+            message: e.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // final isLoading = ref.watch(profileProvider).logout.isLoading;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -64,7 +142,7 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () {
                         // Handle Manage Bank details
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>  BankDetailsScreen()));
+                            builder: (context) => BankDetailsScreen()));
 
                         //
                       },
@@ -149,7 +227,7 @@ class SettingsScreen extends StatelessWidget {
                         content: PopupContentWidget(
                           title: "Are you sure you want to log out?",
                           actionBtnText: "Proceed",
-                          onPressed: () {},
+                          onPressed: logOut,
                         ),
                       );
                     });
@@ -187,7 +265,7 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class PopupContentWidget extends StatelessWidget {
+class PopupContentWidget extends ConsumerStatefulWidget {
   final String title, actionBtnText;
   final VoidCallback onPressed;
   final Color buttonColor;
@@ -200,7 +278,13 @@ class PopupContentWidget extends StatelessWidget {
   });
 
   @override
+  ConsumerState createState() => PopupContentWidgetState();
+}
+
+class PopupContentWidgetState extends ConsumerState<PopupContentWidget> {
+  @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(profileProvider).logout.isLoading;
     return Container(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -213,7 +297,7 @@ class PopupContentWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            title,
+            widget.title,
             textAlign: TextAlign.center,
             style: GoogleFonts.lato(
               color: AppColors.textColor02,
@@ -228,10 +312,10 @@ class PopupContentWidget extends StatelessWidget {
             height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
+                backgroundColor: widget.buttonColor,
               ),
-              onPressed: onPressed,
-              child: Text(actionBtnText),
+              onPressed: isLoading ? () {} : widget.onPressed,
+              child: Text(isLoading ? "logging Out" : widget.actionBtnText),
             ),
           ),
           const SizedBox(
@@ -245,8 +329,10 @@ class PopupContentWidget extends StatelessWidget {
                 elevation: 1,
                 backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                    color: AppColors.primaryColor,
+                  side: BorderSide(
+                    color: isLoading
+                        ? AppColors.textColor02
+                        : AppColors.primaryColor,
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),

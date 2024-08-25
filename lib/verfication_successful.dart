@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/login.dart';
 import 'responsive_helpers.dart';
 
 class VerificationSuccessfulScreen extends StatefulWidget {
   const VerificationSuccessfulScreen({super.key});
 
   @override
-  VerificationSuccessfulScreenState createState() => VerificationSuccessfulScreenState();
+  VerificationSuccessfulScreenState createState() =>
+      VerificationSuccessfulScreenState();
 }
 
-class VerificationSuccessfulScreenState extends State<VerificationSuccessfulScreen> {
+class VerificationSuccessfulScreenState
+    extends State<VerificationSuccessfulScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
+        padding:
+            EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -29,8 +33,8 @@ class VerificationSuccessfulScreenState extends State<VerificationSuccessfulScre
               child: Text(
                 'Verification Successful!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.01)),
@@ -38,9 +42,9 @@ class VerificationSuccessfulScreenState extends State<VerificationSuccessfulScre
               child: Text(
                 'Your email has been successfully verified. Login to access your SharePact account',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xff5D6166),
-                ),
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff5D6166),
+                    ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -49,7 +53,10 @@ class VerificationSuccessfulScreenState extends State<VerificationSuccessfulScre
               height: responsiveHeight(context, 0.08),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
                 },
                 child: const Text('Login'),
               ),

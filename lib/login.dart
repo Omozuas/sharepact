@@ -1,18 +1,21 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/api/auth_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/reset_password.dart';
 import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/signup.dart';
 import 'responsive_helpers.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  LoginScreenState createState() => LoginScreenState();
+  ConsumerState createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   // final AuthService _authService = AuthService();
@@ -25,90 +28,55 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _login() async {
+  Future<void> _login() async {
     final String email = emailController.text;
     final String password = passwordController.text;
-
+    if (email.isEmpty) {
+      showErrorPopup(message: "email is required", context: context);
+      return;
+    }
+    if (password.isEmpty) {
+      showErrorPopup(message: "password is required", context: context);
+      return;
+    }
     try {
-      // final response = await _authService.signin(email, password);
+      await ref
+          .read(profileProvider.notifier)
+          .loginUser(email: email, password: password);
+
+      final pUpdater = ref.read(profileProvider).login;
       // Navigate to home screen if login is successful
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+            // Navigate to homescreen if signin is successful
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+            showSuccess(message: message!, context: context);
+          } else {
+            showErrorPopup(message: message, context: context);
+          }
+        }
+      }
     } catch (e) {
       // Show error if login fails
-      _showErrorPopup(e.toString().replaceAll('Exception: ', ''));
+      if (mounted) {
+        showErrorPopup(
+            message: e.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
     }
-  }
-
-  void _showErrorPopup(String message) {
-    final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: 50.0,
-        left: 0.0,
-        right: 0.0,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                const BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  height: 7,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.error_outline, color: Colors.red),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          message,
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    overlay.insert(overlayEntry);
-
-    Future.delayed(const Duration(seconds: 3), () {
-      overlayEntry.remove();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(profileProvider).login.isLoading;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -215,7 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const HomeScreen()),
+                          builder: (context) => const ResetPasswordScreen()),
                     );
                   },
                   child: Text(
@@ -230,8 +198,10 @@ class LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: responsiveHeight(context, 0.08),
                 child: ElevatedButton(
-                  onPressed: _login,
-                  child: const Text('Login'),
+                  onPressed: isLoading ? () {} : _login,
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Login'),
                 ),
               ),
               SizedBox(height: responsiveHeight(context, 0.02)),

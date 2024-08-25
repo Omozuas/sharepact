@@ -13,18 +13,36 @@ class ApiService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     }).timeout(Config.requestTimeout);
+
     return generalResponseModelFromJson(response.body);
   }
 
   Future<GeneralResponseModel?> post(
       {required String endpoint,
-      required Map<String, dynamic> body,
+      Map<String, dynamic>? body,
       String? token}) async {
     var response = await http
         .post(
           Uri.parse('$baseUrl$endpoint'),
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(body),
+        )
+        .timeout(Config.requestTimeout);
+
+    return generalResponseModelFromJson(response.body);
+  }
+
+  Future<GeneralResponseModel?> post2(
+      {required String endpoint,
+      Map<String, dynamic>? body,
+      String? token}) async {
+    var response = await http
+        .post(
+          Uri.parse('$baseUrl$endpoint'),
+          headers: {
             'Authorization': 'Bearer $token',
           },
           body: jsonEncode(body),
@@ -50,7 +68,9 @@ class ApiService {
   }
 
   Future<GeneralResponseModel?> put(
-      String endpoint, Map<String, dynamic> body, String? token) async {
+      {required String endpoint,
+      required Map<String, dynamic> body,
+      String? token}) async {
     var response = await http
         .put(
           Uri.parse('$baseUrl$endpoint'),
@@ -65,7 +85,9 @@ class ApiService {
   }
 
   Future<GeneralResponseModel?> patch(
-      String endpoint, Map<String, dynamic> body, String? token) async {
+      {required String endpoint,
+      required Map<String, dynamic> body,
+      String? token}) async {
     var response = await http
         .patch(
           Uri.parse('$baseUrl$endpoint'),
