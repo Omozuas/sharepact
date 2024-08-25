@@ -10,8 +10,6 @@ import 'package:sharepact_app/subscriptions.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart'; // Import MySubscriptionsScreen
 
-
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -27,8 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
   }
-
-
 
   void _navigateToStreamingServices(BuildContext context) {
     Navigator.push(
@@ -47,22 +43,28 @@ class _HomeScreenState extends State<HomeScreen> {
       SettingsScreen(),
     ];
 
-    return Scaffold(
-      body: SafeArea(
-        child: _screens[_selectedIndex],
+    return WillPopScope(
+      onWillPop: () async {
+        print("object");
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: _screens[_selectedIndex],
+        ),
+        bottomNavigationBar: BottomNavBar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -121,34 +123,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: AppColors.lightBlue,
                   ),
                   ServiceWidget(
-                   imgaeURL: AppImages.musicService,
+                    imgaeURL: AppImages.musicService,
                     title: 'Music Services',
                     onTap: () => _navigateToStreamingServices(context),
-                      backgroundColor: AppColors.orange,
+                    backgroundColor: AppColors.orange,
                   ),
                   ServiceWidget(
-                   imgaeURL: AppImages.productivityService,
+                    imgaeURL: AppImages.productivityService,
                     title: 'Productivity & Software',
                     onTap: () => _navigateToStreamingServices(context),
-                      backgroundColor: AppColors.lightGreen,
+                    backgroundColor: AppColors.lightGreen,
                   ),
                   ServiceWidget(
-                   imgaeURL: AppImages.learningService,
+                    imgaeURL: AppImages.learningService,
                     title: 'Learning & Education',
                     onTap: () => _navigateToStreamingServices(context),
-                      backgroundColor: AppColors.lightPink,
+                    backgroundColor: AppColors.lightPink,
                   ),
                   ServiceWidget(
-                   imgaeURL: AppImages.gamingService,
+                    imgaeURL: AppImages.gamingService,
                     title: 'Gaming',
                     onTap: () => _navigateToStreamingServices(context),
-                      backgroundColor: AppColors.yellow,
+                    backgroundColor: AppColors.yellow,
                   ),
                   ServiceWidget(
-                   imgaeURL: AppImages.vpnService,
+                    imgaeURL: AppImages.vpnService,
                     title: 'VPNs',
                     onTap: () => _navigateToStreamingServices(context),
-                      backgroundColor: AppColors.accent,
+                    backgroundColor: AppColors.accent,
                   ),
                 ],
               ),
@@ -163,8 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Text(
                   "Show All",
-                  
-                  style: TextStyle(color: AppColors.primaryColor, decoration: TextDecoration.underline),
+                  style: TextStyle(
+                      color: AppColors.primaryColor,
+                      decoration: TextDecoration.underline),
                 )
               ],
             ),
@@ -174,12 +177,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 maxHeight: MediaQuery.of(context).size.height / 2.5,
               ),
               child: SubscriptionGrid(),
-              
             ),
-             const SizedBox(height: 30),
-                      ],        
+            const SizedBox(height: 30),
+          ],
         ),
-        
       ),
     );
   }
