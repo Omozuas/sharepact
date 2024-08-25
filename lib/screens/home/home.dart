@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SettingsScreen(),
     ];
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         print("object");
