@@ -19,16 +19,16 @@ class GeneralResponseModel {
     this.resource,
   });
 
-  factory GeneralResponseModel.fromJson(Map<String, dynamic> json) =>
-      GeneralResponseModel(
-        code: json["code"],
-        message: json["message"],
-        data: json['data'],
-        errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
-        status: json["status"],
-        resource: json["resource"],
-      );
-
+  factory GeneralResponseModel.fromJson(Map<String, dynamic> json) {
+    return GeneralResponseModel(
+      code: json["code"],
+      message: json["message"],
+      data: json['data'],
+      errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
+      status: json["status"],
+      resource: json["resource"],
+    );
+  }
   Map<String, dynamic> toJson() => {
         "code": code,
         "message": message,

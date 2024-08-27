@@ -5,14 +5,14 @@ import 'package:sharepact_app/netflix_details.dart';
 // Import other screens similarly
 
 class StreamingServicesScreen extends StatelessWidget {
-  const StreamingServicesScreen({super.key});
-
+  const StreamingServicesScreen({super.key, this.id});
+  final String? id;
   void _navigateToScreen(BuildContext context, String imagePath) {
     switch (imagePath) {
       case 'assets/netflix.png':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  NetflixDetailsScreen()),
+          MaterialPageRoute(builder: (context) => NetflixDetailsScreen()),
         );
         break;
       // case 'assets/primevideo.png':

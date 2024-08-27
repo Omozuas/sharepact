@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/app_theme.dart';
-import 'package:sharepact_app/screens/home/home.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'splash.dart';
 import 'onboarding.dart';
 
@@ -50,7 +50,8 @@ class SplashScreenWithDelayState extends ConsumerState<SplashScreenWithDelay> {
         if (isTokenValid == true) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(
+                builder: (context) => const ControllerNavScreen()),
           );
         } else {
           Navigator.pushReplacement(

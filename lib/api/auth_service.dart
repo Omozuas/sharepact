@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
+import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
 import '../config.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -13,6 +13,8 @@ class AuthService {
 
   AuthService(this.ref);
   final Ref ref;
+  //Authflow
+
   Future<GeneralResponseModel> signup(
       {required String email, required String password}) async {
     try {
@@ -120,32 +122,107 @@ class AuthService {
     }
   }
 
-  Future<GeneralResponseModel> getUser() async {
+//user flow
+  Future<UserModel> getUser() async {
+    final token = await getToken();
     try {
-      bool valid = await isTokenValid();
-      if (!valid) {
-        // Return an error response or handle it accordingly
-        throw Exception("Invalid or expired token. Please log in again.");
-      }
-      final token = await getToken();
-      final response = await http.get(
-        Uri.parse(Config.signinEndpoint),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(Config.requestTimeout);
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getUserEndpoint,
+      );
 
-      if (response.statusCode == 200) {
-        return generalResponseModelFromJson(response.body);
-      } else {
-        final errorResponse = jsonDecode(response.body);
-        throw Exception(errorResponse['error'] ?? 'Failed to sign in');
-      }
+      return UserModel.fromJson(response?.data);
     } catch (e) {
-      throw Exception('Failed to sign in: $e');
+      rethrow;
     }
   }
+
+  ///category flow
+  Future<List<CategoriesModel>> getListCategories() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getCategoriesEndpoint,
+      );
+      if (response?.data != null && response?.data.isNotEmpty) {
+        List<dynamic> usersJson = response!.data;
+        List<CategoriesModel> categories =
+            usersJson.map((e) => CategoriesModel.fromJson(e)).toList();
+        return categories;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  ///subscription flow
+  Future<List<SubscriptionModel>> getListActiveSub() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getActiveSubscriptionsEndpoint,
+      );
+
+      // Check if data is not null and is not empty
+      if (response?.data != null && response?.data.isNotEmpty) {
+        List<dynamic> usersJson = response?.data;
+        List<SubscriptionModel> subscription =
+            usersJson.map((json) => SubscriptionModel.fromJson(json)).toList();
+        return subscription;
+      } else {
+        // Handle empty or null response data
+        return [];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SubscriptionModel>> getListInActiveSub() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getCategoriesEndpoint,
+      );
+      List<dynamic> usersJson = response!.data;
+      List<SubscriptionModel> subscription =
+          usersJson.map((e) => SubscriptionModel.fromJson(e)).toList();
+      return subscription;
+    } catch (e) {
+      rethrow;
+    }
+  }
+  // Future<GeneralResponseModel> getUser() async {
+  //   try {
+  //     bool valid = await isTokenValid();
+  //     if (!valid) {
+  //       // Return an error response or handle it accordingly
+  //       throw Exception("Invalid or expired token. Please log in again.");
+  //     }
+  //     final token = await getToken();
+  //     final response = await http.get(
+  //       Uri.parse(Config.signinEndpoint),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     ).timeout(Config.requestTimeout);
+
+  //     if (response.statusCode == 200) {
+  //       return generalResponseModelFromJson(response.body);
+  //     } else {
+  //       final errorResponse = jsonDecode(response.body);
+  //       throw Exception(errorResponse['error'] ?? 'Failed to sign in');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Failed to sign in: $e');
+  //   }
+  // }
 
   void saveToken(GeneralResponseModel? response) async {
     if (response!.data == null) return;

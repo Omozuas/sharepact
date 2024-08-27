@@ -90,176 +90,168 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     // final isLoading = ref.watch(profileProvider).logout.isLoading;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 16.0),
-        padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color(0xffD1D4D7),
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    SettingsTile(
-                      icon: Icons.person_outline,
-                      title: 'Edit Profile',
-                      onTap: () {
-                        // Handle Edit Profile action
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const EditProfile()));
-                      },
-                    ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.lock_outline,
-                      title: 'Manage Passwords',
-                      onTap: () {
-                        // Handle Manage Passwords action
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                const ChangePasswordScreen()));
-
-                        //
-                      },
-                    ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.lock_outline,
-                      title: 'Manage Bank Details',
-                      onTap: () {
-                        // Handle Manage Bank details
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => BankDetailsScreen()));
-
-                        //
-                      },
-                      // ChangePasswordScreen()
-                    ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.notifications_outlined,
-                      title: 'Notifications & Reminders',
-                      onTap: () {
-                        // Handle Notifications & Reminders action
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationSettings(),
-                          ),
-                        );
-                      },
-                    ),
-                    // const Divider(),
-                    // SettingsTile(
-                    //   icon: Icons.feedback_outlined,
-                    //   title: 'Feedback',
-                    //   onTap: () {
-                    //     // Handle Feedback action
-                    //   },
-                    // ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.support_agent_outlined,
-                      title: 'Support',
-                      onTap: () {
-                        // Handle Support action
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const SupportScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: 'Privacy Policy',
-                      onTap: () {
-                        // Handle Privacy Policy action
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const PrivacyPolicy(),
-                          ),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                    SettingsTile(
-                      icon: Icons.article_outlined,
-                      title: 'Terms & Conditions',
-                      onTap: () {
-                        // Handle Terms & Conditions action
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const TermsAndConditions(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+    return Container(
+      margin: const EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color(0xffD1D4D7),
               ),
+              borderRadius: BorderRadius.circular(16),
             ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.black),
-              title: const Text('LogOut'),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        content: PopupContentWidget(
-                          title: "Are you sure you want to log out?",
-                          actionBtnText: "Proceed",
-                          onPressed: logOut,
-                        ),
-                      );
-                    });
-              },
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: [
+                SettingsTile(
+                  icon: Icons.person_outline,
+                  title: 'Edit Profile',
+                  onTap: () {
+                    // Handle Edit Profile action
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const EditProfile()));
+                  },
+                ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.lock_outline,
+                  title: 'Manage Passwords',
+                  onTap: () {
+                    // Handle Manage Passwords action
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const ChangePasswordScreen()));
+
+                    //
+                  },
+                ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.lock_outline,
+                  title: 'Manage Bank Details',
+                  onTap: () {
+                    // Handle Manage Bank details
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BankDetailsScreen()));
+
+                    //
+                  },
+                  // ChangePasswordScreen()
+                ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.notifications_outlined,
+                  title: 'Notifications & Reminders',
+                  onTap: () {
+                    // Handle Notifications & Reminders action
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationSettings(),
+                      ),
+                    );
+                  },
+                ),
+                // const Divider(),
+                // SettingsTile(
+                //   icon: Icons.feedback_outlined,
+                //   title: 'Feedback',
+                //   onTap: () {
+                //     // Handle Feedback action
+                //   },
+                // ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.support_agent_outlined,
+                  title: 'Support',
+                  onTap: () {
+                    // Handle Support action
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const SupportScreen(),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.privacy_tip_outlined,
+                  title: 'Privacy Policy',
+                  onTap: () {
+                    // Handle Privacy Policy action
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicy(),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(),
+                SettingsTile(
+                  icon: Icons.article_outlined,
+                  title: 'Terms & Conditions',
+                  onTap: () {
+                    // Handle Terms & Conditions action
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const TermsAndConditions(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('Delete Account',
-                  style: TextStyle(color: Colors.red)),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        // contentPadding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        content: PopupContentWidget(
-                          title:
-                              "Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost",
-                          actionBtnText: "Yes, Delete",
-                          buttonColor: Colors.red,
-                          onPressed: () {},
-                        ),
-                      );
-                    });
-              },
-            ),
-          ],
-        ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.black),
+            title: const Text('LogOut'),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      content: PopupContentWidget(
+                        title: "Are you sure you want to log out?",
+                        actionBtnText: "Proceed",
+                        onPressed: logOut,
+                      ),
+                    );
+                  });
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.delete_outline, color: Colors.red),
+            title: const Text('Delete Account',
+                style: TextStyle(color: Colors.red)),
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      // contentPadding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      content: PopupContentWidget(
+                        title:
+                            "Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost",
+                        actionBtnText: "Yes, Delete",
+                        buttonColor: Colors.red,
+                        onPressed: () {},
+                      ),
+                    );
+                  });
+            },
+          ),
+        ],
       ),
     );
   }

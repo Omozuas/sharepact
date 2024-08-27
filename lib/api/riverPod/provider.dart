@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
+import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
 
 class AuthServiceProvider
     extends AutoDisposeNotifier<AuthServiceProviderStates> {
@@ -16,9 +21,14 @@ class AuthServiceProvider
         changePassword: AsyncData(null),
         logout: AsyncData(null),
         getToken: AsyncData(null),
-        isTokenValid: AsyncData(null));
+        isTokenValid: AsyncData(null),
+        getListCategories: AsyncData(null),
+        getUser: AsyncData(null),
+        getListActiveSub: AsyncData(null),
+        getListInactiveSub: AsyncData(null));
   }
 
+//auth flow
   Future<void> createUser(
       {required String email, required String password}) async {
     final auth = ref.read(authServiceProvider);
@@ -141,6 +151,68 @@ class AuthServiceProvider
       state = state.copyWith(getToken: AsyncError(e, StackTrace.current));
     }
   }
+
+//user flow
+  Future<void> getUserDetails() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(getUser: const AsyncLoading());
+      final response = await auth.getUser();
+      state = state.copyWith(getUser: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getUser: AsyncError(e, StackTrace.current));
+    }
+  }
+
+//category flow
+  Future<void> getListCategories() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(getListCategories: const AsyncLoading());
+      final response = await auth.getListCategories();
+      if (response.isEmpty) {
+        state = state.copyWith(getListCategories: const AsyncData([]));
+      } else {
+        state = state.copyWith(getListCategories: AsyncData(response));
+      }
+    } catch (e) {
+      state =
+          state.copyWith(getListCategories: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  //cub flow
+  Future<void> getListActiveSub() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(getListActiveSub: const AsyncLoading());
+      final response = await auth.getListActiveSub();
+      // Check if the response is null or empty and handle it accordingly
+
+      if (response.isEmpty) {
+        state = state.copyWith(
+            getListActiveSub:
+                const AsyncData([])); // Handle null or empty response
+      } else {
+        state = state.copyWith(getListActiveSub: AsyncData(response));
+      }
+    } catch (e) {
+      state =
+          state.copyWith(getListActiveSub: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> getListInActiveSub() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(getListInactiveSub: const AsyncLoading());
+      final response = await auth.getListInActiveSub();
+      state = state.copyWith(getListInactiveSub: AsyncData(response));
+    } catch (e) {
+      state =
+          state.copyWith(getListInactiveSub: AsyncError(e, StackTrace.current));
+    }
+  }
 }
 
 final profileProvider =
@@ -159,7 +231,10 @@ class AuthServiceProviderStates {
   final AsyncValue<GeneralResponseModel?> changePassword;
   final AsyncValue<GeneralResponseModel?> logout;
   final AsyncValue<bool?> isTokenValid;
-  // final AsyncValue<NotificationModel?> notificationUpdater;
+  final AsyncValue<UserModel?> getUser;
+  final AsyncValue<List<CategoriesModel>?> getListCategories;
+  final AsyncValue<List<SubscriptionModel>?> getListActiveSub;
+  final AsyncValue<List<SubscriptionModel>?> getListInactiveSub;
   // final AsyncValue<NotificationModel?> notificationFetch;
   // final AsyncValue<SubscriptionModel?> fetchSubcription;
   // final AsyncValue<SubscriptionModel?> fetchSubcriptionbyUserId;
@@ -181,7 +256,10 @@ class AuthServiceProviderStates {
     required this.isTokenValid,
     required this.logout,
     required this.getToken,
-    // required this.notificationFetch,
+    required this.getUser,
+    required this.getListCategories,
+    required this.getListActiveSub,
+    required this.getListInactiveSub,
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -202,7 +280,10 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? changePassword,
     AsyncValue<bool?>? isTokenValid,
     AsyncValue<GeneralResponseModel?>? logout,
-    // AsyncValue<NotificationModel?>? notificationUpdater,
+    AsyncValue<UserModel?>? getUser,
+    AsyncValue<List<CategoriesModel>?>? getListCategories,
+    AsyncValue<List<SubscriptionModel>?>? getListActiveSub,
+    AsyncValue<List<SubscriptionModel>?>? getListInactiveSub,
     // AsyncValue<NotificationModel?>? notificationFetch,
     // AsyncValue<SubscriptionModel?>? fetchSubcription,
 
@@ -214,29 +295,34 @@ class AuthServiceProviderStates {
     // AsyncValue<UpdatePasswordModel?>? updatePassword
   }) {
     return AuthServiceProviderStates(
-        // pickedImage: pickedImage ?? this.pickedImage,
-        // user: user ?? this.user,
-        // profileUpdater: profileUpdater ?? this.profileUpdater,
-        generalrespond: generalrespond ?? this.generalrespond,
-        otp: otp ?? this.otp,
-        resendOtp: resendOtp ?? this.resendOtp,
-        login: login ?? this.login,
-        resetPassword: resetPassword ?? this.resetPassword,
-        confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
-        changePassword: changePassword ?? this.changePassword,
-        isTokenValid: isTokenValid ?? this.isTokenValid,
-        logout: logout ?? this.logout,
-        getToken: getToken ?? this.getToken
-        // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
-        // notificationFetch: notificationFetch ?? this.notificationFetch,
-        // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
+      // pickedImage: pickedImage ?? this.pickedImage,
+      // user: user ?? this.user,
+      // profileUpdater: profileUpdater ?? this.profileUpdater,
+      generalrespond: generalrespond ?? this.generalrespond,
+      otp: otp ?? this.otp,
+      resendOtp: resendOtp ?? this.resendOtp,
+      login: login ?? this.login,
+      resetPassword: resetPassword ?? this.resetPassword,
+      confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
+      changePassword: changePassword ?? this.changePassword,
+      isTokenValid: isTokenValid ?? this.isTokenValid,
+      logout: logout ?? this.logout,
+      getToken: getToken ?? this.getToken,
+      getUser: getUser ?? this.getUser,
+      getListCategories: getListCategories ?? this.getListCategories,
+      getListActiveSub: getListActiveSub ?? this.getListActiveSub,
+      getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
 
-        // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
+      // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
+      // notificationFetch: notificationFetch ?? this.notificationFetch,
+      // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
 
-        // inviteLink: inviteLink ?? this.inviteLink,
-        // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+      // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
 
-        // updatePassword: updatePassword ?? this.updatePassword
-        );
+      // inviteLink: inviteLink ?? this.inviteLink,
+      // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+
+      // updatePassword: updatePassword ?? this.updatePassword
+    );
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart';
 
 class ServiceWidget extends StatelessWidget {
-  final String imgaeURL;
   final String title;
   final VoidCallback onTap;
   final Color backgroundColor;
-
+  final ImageProvider<Object> imgaeURL;
   const ServiceWidget({
     super.key,
     required this.imgaeURL,
@@ -29,15 +29,10 @@ class ServiceWidget extends StatelessWidget {
               width: 64,
               height: 64,
               padding: const EdgeInsets.all(15),
-              decoration:  BoxDecoration(
-               shape: BoxShape.circle,
-                color: backgroundColor,
-              ),
-              child: SvgPicture.asset(
-                imgaeURL,
-                width: 24,
-                height: 24,
-              ),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: backgroundColor,
+                  image: DecorationImage(image: imgaeURL, scale: .7)),
             ),
             const SizedBox(height: 4),
             Text(

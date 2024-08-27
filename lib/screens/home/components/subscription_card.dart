@@ -3,20 +3,22 @@ import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 
 class SubscriptionCard extends StatelessWidget {
-  final String service;
-  final String price;
-  final String members;
-  final String nextpayment;
-  final String createdby;
-
-  const SubscriptionCard({
-    super.key,
-    required this.service,
-    required this.price,
-    required this.members,
-    required this.nextpayment,
-    required this.createdby,
-  });
+  final String? service;
+  final price;
+  final members;
+  final String? nextpayment;
+  final String? createdby;
+  final Widget? image, profile, profile1;
+  const SubscriptionCard(
+      {super.key,
+      this.service,
+      this.price,
+      this.members,
+      this.nextpayment,
+      this.createdby,
+      this.profile,
+      this.profile1,
+      this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class SubscriptionCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(8),
-            topRight:  Radius.circular(8),
+          topRight: Radius.circular(8),
         ),
         border: Border.all(width: 1, color: Colors.grey[300]!),
       ),
@@ -37,24 +39,27 @@ class SubscriptionCard extends StatelessWidget {
             width: double.infinity,
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 13),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.lightBlue01,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8),
-                topRight:  Radius.circular(8),
+                topRight: Radius.circular(8),
               ),
             ),
             child: Row(
               children: [
-                Image.asset(
-                  AppImages.avatarImage5, // Replace with actual image URL or asset
-                  width: 16,
-                  height: 16,
-                ),
+                image ??
+                    Image.asset(
+                      AppImages
+                          .avatarImage5, // Replace with actual image URL or asset
+                      width: 16,
+                      height: 16,
+                    ),
                 const SizedBox(width: 8),
                 Text(
                   'Created by : $createdby',
-                  style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                  style:
+                      const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -64,15 +69,17 @@ class SubscriptionCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Image.asset(
-                  "assets/profile.png",
-                  width: 24,
-                  height: 24,
-                ),
+                profile ??
+                    Image.asset(
+                      "assets/profile.png",
+                      width: 24,
+                      height: 24,
+                    ),
                 const SizedBox(width: 8),
                 Text(
-                  service,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  "${service}",
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -82,13 +89,16 @@ class SubscriptionCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: RichText(
               text: TextSpan(
-                text: price,
+                text: "$price",
                 style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue),
                 children: const [
                   TextSpan(
                     text: ' / month',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                    style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                   ),
                 ],
               ),
@@ -99,34 +109,35 @@ class SubscriptionCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                Image.asset(
-                  'assets/profile.png', // Replace with the actual path to the members image
-                  width: 16,
-                  height: 16,
-                ),
+                profile1 ??
+                    Image.asset(
+                      'assets/profile.png', // Replace with the actual path to the members image
+                      width: 16,
+                      height: 16,
+                    ),
                 const SizedBox(width: 4),
                 Text(
-                  members,
+                  "$members/5 members",
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
           ),
-          const Spacer(), // Add a Spacer to push the button to the bottom
-            
-            Container(
-              alignment: Alignment.centerLeft,
-              width: double.infinity,
-              height: 28,
-              padding: const EdgeInsets.symmetric(horizontal: 13),
-              decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0XFFD1D4D7))),
-              ),
-              child: Text(
-                'Next payment: $nextpayment',
-                style: const TextStyle(fontSize: 8, color: Colors.grey),
-              ),
+          // const Spacer(), // Add a Spacer to push the button to the bottom
+
+          Container(
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            height: 28,
+            padding: const EdgeInsets.symmetric(horizontal: 13),
+            decoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: Color(0XFFD1D4D7))),
             ),
+            child: Text(
+              'Next payment: $nextpayment',
+              style: const TextStyle(fontSize: 8, color: Colors.grey),
+            ),
+          ),
         ],
       ),
     );

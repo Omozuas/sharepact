@@ -1,5 +1,5 @@
 class Config {
-  static const String baseUrl = 'https://f30a-51-6-13-158.ngrok-free.app';
+  static const String baseUrl = 'https://a8c4-51-6-13-158.ngrok-free.app';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';
@@ -15,4 +15,16 @@ class Config {
       '/auth/password-reset/verify-otp';
   static const String changePasswordEndpoint = '/auth/change-password';
   static const String logoutEndpoint = '/auth/logout';
+
+  //user Endpoint
+  static const String getUserEndpoint = '/auth/user';
+
+  //categories Endpoint
+  static const String getCategoriesEndpoint = '/api/categories';
+
+  //subscription Endpoint
+  static const String getActiveSubscriptionsEndpoint =
+      '/api/groups?subscriptionStatus=active';
+  static const String getInActiveSubscriptionsEndpoint =
+      '/api/groups?subscriptionStatus=inactive';
 }
