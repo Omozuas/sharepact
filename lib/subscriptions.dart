@@ -38,7 +38,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
     if (isTokenValid == true) {
       await ref.read(profileProvider.notifier).getListActiveSub();
       final categories = ref.watch(profileProvider).getListActiveSub;
-      print(categories);
+      print(categories.value);
     } else {
       if (mounted) {
         showErrorPopup(context: context, message: 'Session Expired');
@@ -187,8 +187,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                                   mainAxisSpacing: 18,
                                   crossAxisSpacing: 12,
                                   mainAxisExtent: 170),
-                          itemCount:
-                              filterSub.length > 6 ? 6 : filterSub.length,
+                          itemCount: filterSub.length,
                           itemBuilder: (context, index) {
                             final item = filterSub[index];
 
