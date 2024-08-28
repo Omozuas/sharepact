@@ -111,7 +111,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 SettingsTile(
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
-                  onTap: () {
+                  onTap: () async {
                     // Handle Edit Profile action
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const EditProfile()));

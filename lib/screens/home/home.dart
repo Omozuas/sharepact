@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
+import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
@@ -25,76 +27,122 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<SubscriptionModel> filterSub = [];
   List<SubscriptionModel> subscriptionModel = [];
   List<CategoriesModel> category = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    filterSub = subscriptionModel;
+    // filterSub = subscriptionModel;
     searchController.addListener(filterMembers);
     Future.microtask(() => getAll());
-    // searchController.addListener();
   }
 
   Future<void> getAll() async {
-    final bool isTokenValid =
-        await ref.read(profileProvider.notifier).validateToken();
-    if (isTokenValid == true) {
-      await ref.read(profileProvider.notifier).getUserDetails();
-      await ref.read(profileProvider.notifier).getListCategories();
-      await ref.read(profileProvider.notifier).getListActiveSub();
-      //  final categories = ref.watch(profileProvider).getListCategories;
-    } else {
-      if (mounted) {
-        showErrorPopup(context: context, message: 'Session Expired');
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+    try {
+      final isTokenValid =
+          await ref.read(profileProvider.notifier).validateToken();
+
+      if (!isTokenValid) {
+        _handleSessionExpired();
+        return;
       }
-      //      final isLoading = ref.watch(profileProvider).fetchSubcription.isLoading;
-      // final currentPlan =
-      //     ref.watch(profileProvider).fetchSubcription.sureValue?.plan;
+
+      await _fetchUserData();
+      await _fetchCategories();
+      await _fetchActiveSubscriptions();
+    } catch (e, stackTrace) {
+      _handleUnexpectedError(e, stackTrace);
     }
   }
 
-  final List<Map<String, String>> subscriptionData = [
-    {
-      'service': 'Canva',
-      'price': '10,000 NGN',
-      'members': '5/5 members',
-      'nextpayment': '12/01/2025',
-      'createdby': 'JohnDoe1'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-  ];
+  Future<void> _fetchUserData() async {
+    await ref.read(profileProvider.notifier).getUserDetails();
+    final user = ref.watch(profileProvider).getUser.value;
+    if (user?.code != 200) {
+      _handleError(user?.message, user?.code);
+      return;
+    }
+  }
+
+  Future<void> _fetchCategories() async {
+    await ref.read(profileProvider.notifier).getListCategories();
+    final categories = ref.watch(profileProvider).getListCategories.value;
+
+    if (categories?.code == 200) {
+      if (categories?.data != null) {
+        category = categories!.data!;
+        return;
+      } else {
+        category = [];
+        return;
+      }
+    } else {
+      _handleError(categories?.message, categories?.code);
+    }
+  }
+
+  void _handleError(String? message, int? code) {
+    if (code != 200 && mounted) {
+      showErrorPopup(context: context, message: message);
+      return;
+    }
+  }
+
+  Future<void> _fetchActiveSubscriptions() async {
+    await ref.read(profileProvider.notifier).getListActiveSub();
+    final activeSub = ref.watch(profileProvider).getListActiveSub.value;
+
+    if (activeSub?.code == 200) {
+      if (activeSub?.data != null) {
+        subscriptionModel = activeSub!.data!;
+        filterSub = activeSub.data!;
+      } else {
+        subscriptionModel = [];
+      }
+    } else {
+      _handleError(activeSub?.message, activeSub?.code);
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+  }
+
+  void _handleUnexpectedError(Object e, StackTrace stackTrace) {
+    if (mounted) {
+      print('Unexpected Error: $e');
+      print('StackTrace: $stackTrace');
+      showErrorPopup(
+          context: context, message: 'An unexpected error occurred.');
+    }
+  }
+
   void filterMembers() {
     final filter = searchController.text.toLowerCase();
     setState(() {
       filterSub = subscriptionModel.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
         final planName = (member.planName ?? '').toLowerCase();
+        final adminName = (member.admin?.username ?? '').toLowerCase();
 
-        return planName.contains(filter) || groupName.contains(filter);
+        return planName.contains(filter) ||
+            groupName.contains(filter) ||
+            adminName.contains(filter);
       }).toList();
     });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -102,12 +150,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // final isLoading = ref.watch(profileProvider).getListCategories.isLoading;
     final categories = ref.watch(profileProvider).getListCategories;
     final activeSub = ref.watch(profileProvider).getListActiveSub;
+    final getUser = ref.watch(profileProvider).getUser;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Header(),
+          Header(userModel: getUser.value?.data),
           const SizedBox(height: 20),
           Container(
             width: double.infinity,
@@ -166,23 +215,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               error: (e, st) {
                 return Center(
-                  child: Text('Error: $e'),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Error loading categories: $e'),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Add retry logic here
+                          ref
+                              .read(profileProvider.notifier)
+                              .getListCategories();
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 );
               },
               data: (categories) {
-                if (category.isEmpty) {
-                  setState(() {
-                    category = categories ?? [];
-                  });
-                }
                 return category.isEmpty
                     ? const Center(
                         child: Text("No Active Category"),
                       )
                     : ListView.builder(
-                        itemCount: categories?.length,
+                        itemCount: category.length,
                         itemBuilder: (context, index) {
                           final item = category[index];
+
                           return ServiceWidget(
                             imgaeURL: NetworkImage('${item.imageUrl}'),
                             title: '${item.categoryName}',
@@ -230,34 +289,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     mainAxisSpacing: 18,
                     crossAxisSpacing: 12,
                     mainAxisExtent: 170),
-                itemCount: subscriptionData.length,
+                itemCount: 6,
                 itemBuilder: (context, index) {
-                  final data = subscriptionData[index];
                   return Opacity(
                     opacity: 1.0,
                     child: SubscriptionCard(
-                      service: data['service']!,
+                      service: 'loading...',
                       price: 10,
                       members: 3,
-                      nextpayment: data['nextpayment']!,
-                      createdby: data['createdby']!,
+                      nextpayment: '',
+                      createdby: '',
                     ),
                   );
                 },
               ),
             ),
             error: (
-              error,
+              e,
               stackTrace,
             ) {
-              print({error, stackTrace});
-              return Center(child: Text(error.toString()));
+              print('Error loading subscriptions: $e');
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Error loading subscriptions: $e'),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add retry logic here
+                        ref.read(profileProvider.notifier).getListActiveSub();
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
             },
-            skipLoadingOnReload: true,
+            // skipLoadingOnReload: true,
             data: (activeSub) {
               if (subscriptionModel.isEmpty) {
                 setState(() {
-                  subscriptionModel = activeSub ?? [];
+                  subscriptionModel = activeSub?.data ?? [];
                   filterSub = subscriptionModel;
                 });
               }
@@ -284,11 +356,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             return Opacity(
                               opacity: 1.0,
                               child: SubscriptionCard(
-                                service: item.planName,
+                                image: Image.network(
+                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                profile: Image.network(
+                                  '${item.service!.logoUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                profile1: Image.network(
+                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                service: item.service!.serviceName,
                                 price: item.totalCost,
                                 members: item.numberOfMembers,
                                 nextpayment: '',
-                                createdby: item.groupName,
+                                createdby: item.admin!.username,
                               ),
                             );
                           },

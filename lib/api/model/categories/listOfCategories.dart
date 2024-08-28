@@ -1,3 +1,53 @@
+import 'dart:convert';
+
+import 'package:sharepact_app/api/model/error_model.dart';
+
+class CategoriesResponseModel {
+  final int code;
+  final String? message;
+  final List<CategoriesModel>? data;
+  final Errors? errors;
+  final bool? status;
+  final String? resource;
+
+  CategoriesResponseModel({
+    required this.code,
+    this.message,
+    this.data,
+    this.errors,
+    this.status,
+    this.resource,
+  });
+
+  factory CategoriesResponseModel.fromJson(Map<String, dynamic> json) {
+    return CategoriesResponseModel(
+      code: json["code"],
+      message: json["message"],
+      data: json['data'] != null
+          ? List<CategoriesModel>.from(
+              json['data'].map((x) => CategoriesModel.fromJson(x)))
+          : [],
+      errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
+      status: json["status"],
+      resource: json["resource"],
+    );
+  }
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "message": message,
+        "data": data,
+        "errors": errors?.toJson(),
+        "status": status,
+        "resource": resource,
+      };
+}
+
+CategoriesResponseModel categoriesResponseModelFromJson(String str) =>
+    CategoriesResponseModel.fromJson(json.decode(str));
+
+String categoriesResponseModelToJson(CategoriesResponseModel data) =>
+    json.encode(data.toJson());
+
 class CategoriesModel {
   String? id;
   String? categoryName;

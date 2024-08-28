@@ -5,6 +5,7 @@ import 'package:sharepact_app/api/auth_service.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 
 class AuthServiceProvider
@@ -21,11 +22,14 @@ class AuthServiceProvider
         changePassword: AsyncData(null),
         logout: AsyncData(null),
         getToken: AsyncData(null),
+        updateAvater: AsyncData(null),
+        updateUserNameAndEmail: AsyncData(null),
         isTokenValid: AsyncData(null),
         getListCategories: AsyncData(null),
         getUser: AsyncData(null),
         getListActiveSub: AsyncData(null),
-        getListInactiveSub: AsyncData(null));
+        getListInactiveSub: AsyncData(null),
+        getAllAvater: AsyncData(null));
   }
 
 //auth flow
@@ -156,11 +160,58 @@ class AuthServiceProvider
   Future<void> getUserDetails() async {
     final auth = ref.read(authServiceProvider);
     try {
-      state = state.copyWith(getUser: const AsyncLoading());
+      state = state.copyWith(
+        getUser: const AsyncLoading(),
+      );
       final response = await auth.getUser();
+      print(response.data?.email);
       state = state.copyWith(getUser: AsyncData(response));
     } catch (e) {
       state = state.copyWith(getUser: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> updatAvater({required String avaterUrl}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        updateAvater: const AsyncLoading(),
+      );
+      final response = await auth.updateAvater(avaterurl: avaterUrl);
+
+      state = state.copyWith(updateAvater: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(updateAvater: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> updatUserNameAndEmail(
+      {required String userName, required String email}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        updateUserNameAndEmail: const AsyncLoading(),
+      );
+      final response =
+          await auth.updateUserNameAndEmailr(userName: userName, email: email);
+
+      state = state.copyWith(updateUserNameAndEmail: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          updateUserNameAndEmail: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> getAllAvater() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        getAllAvater: const AsyncLoading(),
+      );
+      final response = await auth.getAllAvater();
+      state = state.copyWith(getAllAvater: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getAllAvater: AsyncError(e, StackTrace.current));
     }
   }
 
@@ -170,11 +221,8 @@ class AuthServiceProvider
     try {
       state = state.copyWith(getListCategories: const AsyncLoading());
       final response = await auth.getListCategories();
-      if (response.isEmpty) {
-        state = state.copyWith(getListCategories: const AsyncData([]));
-      } else {
-        state = state.copyWith(getListCategories: AsyncData(response));
-      }
+
+      state = state.copyWith(getListCategories: AsyncData(response));
     } catch (e) {
       state =
           state.copyWith(getListCategories: AsyncError(e, StackTrace.current));
@@ -189,13 +237,7 @@ class AuthServiceProvider
       final response = await auth.getListActiveSub();
       // Check if the response is null or empty and handle it accordingly
 
-      if (response.isEmpty) {
-        state = state.copyWith(
-            getListActiveSub:
-                const AsyncData([])); // Handle null or empty response
-      } else {
-        state = state.copyWith(getListActiveSub: AsyncData(response));
-      }
+      state = state.copyWith(getListActiveSub: AsyncData(response));
     } catch (e) {
       state =
           state.copyWith(getListActiveSub: AsyncError(e, StackTrace.current));
@@ -230,11 +272,15 @@ class AuthServiceProviderStates {
   final AsyncValue<GeneralResponseModel?> confirmReSetPassword;
   final AsyncValue<GeneralResponseModel?> changePassword;
   final AsyncValue<GeneralResponseModel?> logout;
+  final AsyncValue<GeneralResponseModel?> updateAvater;
+  final AsyncValue<GeneralResponseModel?> updateUserNameAndEmail;
   final AsyncValue<bool?> isTokenValid;
-  final AsyncValue<UserModel?> getUser;
-  final AsyncValue<List<CategoriesModel>?> getListCategories;
-  final AsyncValue<List<SubscriptionModel>?> getListActiveSub;
-  final AsyncValue<List<SubscriptionModel>?> getListInactiveSub;
+  final AsyncValue<UserResponseModel?> getUser;
+  final AsyncValue<CategoriesResponseModel?> getListCategories;
+  final AsyncValue<SubscriptionResponseModel?> getListActiveSub;
+  final AsyncValue<SubscriptionResponseModel?> getListInactiveSub;
+  final AsyncValue<AvaterResponseModel?> getAllAvater;
+
   // final AsyncValue<NotificationModel?> notificationFetch;
   // final AsyncValue<SubscriptionModel?> fetchSubcription;
   // final AsyncValue<SubscriptionModel?> fetchSubcriptionbyUserId;
@@ -260,6 +306,9 @@ class AuthServiceProviderStates {
     required this.getListCategories,
     required this.getListActiveSub,
     required this.getListInactiveSub,
+    required this.updateAvater,
+    required this.updateUserNameAndEmail,
+    required this.getAllAvater,
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -280,10 +329,14 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? changePassword,
     AsyncValue<bool?>? isTokenValid,
     AsyncValue<GeneralResponseModel?>? logout,
-    AsyncValue<UserModel?>? getUser,
-    AsyncValue<List<CategoriesModel>?>? getListCategories,
-    AsyncValue<List<SubscriptionModel>?>? getListActiveSub,
-    AsyncValue<List<SubscriptionModel>?>? getListInactiveSub,
+    AsyncValue<GeneralResponseModel?>? updateAvater,
+    AsyncValue<GeneralResponseModel?>? updateUserNameAndEmail,
+    AsyncValue<UserResponseModel?>? getUser,
+    AsyncValue<CategoriesResponseModel?>? getListCategories,
+    AsyncValue<SubscriptionResponseModel?>? getListActiveSub,
+    AsyncValue<SubscriptionResponseModel?>? getListInactiveSub,
+    AsyncValue<AvaterResponseModel?>? getAllAvater,
+
     // AsyncValue<NotificationModel?>? notificationFetch,
     // AsyncValue<SubscriptionModel?>? fetchSubcription,
 
@@ -312,6 +365,10 @@ class AuthServiceProviderStates {
       getListCategories: getListCategories ?? this.getListCategories,
       getListActiveSub: getListActiveSub ?? this.getListActiveSub,
       getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
+      updateAvater: updateAvater ?? this.updateAvater,
+      updateUserNameAndEmail:
+          updateUserNameAndEmail ?? this.updateUserNameAndEmail,
+      getAllAvater: getAllAvater ?? this.getAllAvater,
 
       // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
       // notificationFetch: notificationFetch ?? this.notificationFetch,

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:sharepact_app/utils/app_images/app_images.dart';
 
 class ServiceWidget extends StatelessWidget {
   final String title;

@@ -18,6 +18,9 @@ class Config {
 
   //user Endpoint
   static const String getUserEndpoint = '/auth/user';
+  static const String updateAvaterEndpoint = '/api/profile/update-avatar';
+  static const String updateUserName = '/api/profile/update-username-email';
+  static const String getAllAvaters = '/api/profile/avatars';
 
   //categories Endpoint
   static const String getCategoriesEndpoint = '/api/categories';

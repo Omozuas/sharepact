@@ -2,26 +2,96 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/change_avatar.dart';
-import 'package:sharepact_app/providers/settings_provider.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
-import 'package:sharepact_app/utils/constants/constants.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
   const EditProfile({super.key});
 
   @override
-  ConsumerState<EditProfile> createState() => _EditProfileState();
+  ConsumerState<ConsumerStatefulWidget> createState() => EditProfileState();
 }
 
-class _EditProfileState extends ConsumerState<EditProfile> {
-  final TextEditingController usernameController =
-      TextEditingController(text: "Jane Doe1");
+class EditProfileState extends ConsumerState<EditProfile> {
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  Future<void> update() async {
+    if (usernameController.text.isEmpty) {
+      showErrorPopup(context: context, message: 'userName Required');
+    }
+    if (emailController.text.isEmpty) {
+      showErrorPopup(context: context, message: 'email Required');
+    }
+    try {
+      await ref.read(profileProvider.notifier).updatUserNameAndEmail(
+          email: emailController.text, userName: usernameController.text);
+
+      final pUpdater = ref.read(profileProvider).updateUserNameAndEmail;
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+            showSuccess(message: message!, context: context);
+            await ref.read(profileProvider.notifier).getUserDetails();
+          } else {
+            showErrorPopup(message: message, context: context);
+          }
+        }
+      }
+    } catch (er) {
+      // Show error if login fails
+      if (mounted) {
+        showErrorPopup(
+            message: er.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO: implement initState
+    Future.microtask(() => _fetchUserData());
+  }
+
+  UserModel? _userModel;
+  Future<void> _fetchUserData() async {
+    await ref.read(profileProvider.notifier).getUserDetails();
+    final user = ref.watch(profileProvider).getUser.value;
+    if (user?.code != 200) {
+      _handleError(user?.message, user?.code);
+      return;
+    } else {
+      setState(() {
+        _userModel = user?.data;
+        // Populate the controllers with the fetched user data
+        emailController.text = _userModel?.email ?? '';
+        usernameController.text = _userModel?.username ?? '';
+      });
+    }
+  }
+
+  void _handleError(String? message, int? code) {
+    if (code != 200 && mounted) {
+      showErrorPopup(context: context, message: message);
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var avatar = ref.watch(avatarProvider);
+    final isLoading = ref.watch(profileProvider).getUser.isLoading;
+    final isLoading1 =
+        ref.watch(profileProvider).updateUserNameAndEmail.isLoading;
+    final userDetails = ref.watch(profileProvider).getUser;
     return Scaffold(
       backgroundColor: const Color(0xffE6F2FF),
       body: SafeArea(
@@ -38,7 +108,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.arrow_back_ios),
+                      InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(Icons.arrow_back_ios)),
                       Text(
                         "Edit Profile",
                         style: GoogleFonts.lato(
@@ -58,7 +132,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ChangeAvatarScreen(),
+                        builder: (context) => const ChangeAvatarScreen(),
                       ),
                     );
                   },
@@ -75,10 +149,46 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             shape: BoxShape.circle),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: Image.asset(
-                            allAvatars[avatar],
-                            fit: BoxFit.cover,
-                          ),
+                          child: userDetails.when(
+                              data: (userDetails) {
+                                if (_userModel?.avatarUrl == null) {
+                                  return Image.asset(
+                                    'assets/avatars/image4.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                }
+                                return Image.network(
+                                  "${_userModel?.avatarUrl}",
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                              error: (e, st) {
+                                return Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('Error loading categories: $e'),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          // Add retry logic here
+                                          ref
+                                              .read(profileProvider.notifier)
+                                              .getUserDetails();
+                                        },
+                                        child: const Text('Retry'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              loading: () => Shimmer.fromColors(
+                                    baseColor: AppColors.accent,
+                                    highlightColor: AppColors.primaryColor,
+                                    child: Image.asset(
+                                      'assets/avatars/image4.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
                         ),
                       ),
                       Positioned(
@@ -108,7 +218,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   ),
                 ),
                 Text(
-                  "Janedoe@gmail.com",
+                  isLoading ? "Janedoe@gmail.com" : "${_userModel?.email}",
                   style: GoogleFonts.lato(
                     color: AppColors.textColor,
                     fontSize: 14,
@@ -177,7 +287,9 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       TextField(
                         controller: emailController,
                         decoration: InputDecoration(
-                          hintText: 'Janedoe@gmail.com',
+                          hintText: isLoading
+                              ? 'Janedoe@gmail.com'
+                              : "${_userModel?.email}",
                           hintStyle:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: const Color(0xff5D6166),
@@ -195,8 +307,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         width: double.infinity,
                         height: 59,
                         child: ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('Save Changes'),
+                          onPressed: isLoading1 ? () {} : update,
+                          child: isLoading1
+                              ? const CircularProgressIndicator()
+                              : const Text('Save Changes'),
                         ),
                       ),
                     ],

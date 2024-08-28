@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import '../config.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -123,7 +127,7 @@ class AuthService {
   }
 
 //user flow
-  Future<UserModel> getUser() async {
+  Future<UserResponseModel> getUser() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
@@ -131,35 +135,101 @@ class AuthService {
         endpoint: Config.getUserEndpoint,
       );
 
-      return UserModel.fromJson(response?.data);
+      return userResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return UserResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return UserResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
+    } catch (e) {
+      print('Error: $e');
+      return UserResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GeneralResponseModel> updateAvater({required String avaterurl}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.put(
+          token: token,
+          endpoint: Config.updateAvaterEndpoint,
+          body: {"avatarUrl": avaterurl});
+
+      return response!;
     } catch (e) {
       rethrow;
     }
   }
 
+  Future<GeneralResponseModel> updateUserNameAndEmailr(
+      {required String userName, required String email}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.put(
+          token: token,
+          endpoint: Config.updateUserName,
+          body: {"username": userName, "email": email});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<AvaterResponseModel> getAllAvater() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getAllAvaters,
+      );
+
+      return avaterResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return AvaterResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return AvaterResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
+    } catch (e) {
+      print('Error: $e');
+      return AvaterResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
   ///category flow
-  Future<List<CategoriesModel>> getListCategories() async {
+  Future<CategoriesResponseModel> getListCategories() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
         token: token,
         endpoint: Config.getCategoriesEndpoint,
       );
-      if (response?.data != null && response?.data.isNotEmpty) {
-        List<dynamic> usersJson = response!.data;
-        List<CategoriesModel> categories =
-            usersJson.map((e) => CategoriesModel.fromJson(e)).toList();
-        return categories;
-      } else {
-        return [];
-      }
+      return categoriesResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return CategoriesResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return CategoriesResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      rethrow;
+      print('Error: $e');
+      return CategoriesResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
 
   ///subscription flow
-  Future<List<SubscriptionModel>> getListActiveSub() async {
+  Future<SubscriptionResponseModel> getListActiveSub() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
@@ -167,34 +237,42 @@ class AuthService {
         endpoint: Config.getActiveSubscriptionsEndpoint,
       );
 
-      // Check if data is not null and is not empty
-      if (response?.data != null && response?.data.isNotEmpty) {
-        List<dynamic> usersJson = response?.data;
-        List<SubscriptionModel> subscription =
-            usersJson.map((json) => SubscriptionModel.fromJson(json)).toList();
-        return subscription;
-      } else {
-        // Handle empty or null response data
-        return [];
-      }
+      return subscriptionResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return SubscriptionResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return SubscriptionResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      rethrow;
+      print('Error: $e');
+      return SubscriptionResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
 
-  Future<List<SubscriptionModel>> getListInActiveSub() async {
+  Future<SubscriptionResponseModel> getListInActiveSub() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
         token: token,
         endpoint: Config.getCategoriesEndpoint,
       );
-      List<dynamic> usersJson = response!.data;
-      List<SubscriptionModel> subscription =
-          usersJson.map((e) => SubscriptionModel.fromJson(e)).toList();
-      return subscription;
+      return subscriptionResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return SubscriptionResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return SubscriptionResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      rethrow;
+      print('Error: $e');
+      return SubscriptionResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
   // Future<GeneralResponseModel> getUser() async {
@@ -238,7 +316,12 @@ class AuthService {
     if (token == null) {
       return false; // No token stored
     } else {
-      return !JwtDecoder.isExpired(token);
+      bool isExpired = JwtDecoder.isExpired(token);
+      if (isExpired == true) {
+        return false;
+      } else {
+        return true;
+      }
     }
   }
 

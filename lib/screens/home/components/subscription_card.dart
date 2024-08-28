@@ -38,7 +38,7 @@ class SubscriptionCard extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 13),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: const BoxDecoration(
               color: AppColors.lightBlue01,
               borderRadius: BorderRadius.only(
@@ -58,6 +58,7 @@ class SubscriptionCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Created by : $createdby',
+                  softWrap: true,
                   style:
                       const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                 ),

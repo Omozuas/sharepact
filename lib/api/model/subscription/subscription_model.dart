@@ -1,10 +1,61 @@
+import 'dart:convert';
+
+import 'package:sharepact_app/api/model/error_model.dart';
+import 'package:sharepact_app/api/model/subscription/admin.dart';
 import 'package:sharepact_app/api/model/subscription/joinRequest_model.dart';
+import 'package:sharepact_app/api/model/subscription/ServiceModel.dart';
 import 'package:sharepact_app/api/model/subscription/subMembers_model.dart';
+
+class SubscriptionResponseModel {
+  final int code;
+  final String? message;
+  final List<SubscriptionModel>? data;
+  final Errors? errors;
+  final bool? status;
+  final String? resource;
+
+  SubscriptionResponseModel({
+    required this.code,
+    this.message,
+    this.data,
+    this.errors,
+    this.status,
+    this.resource,
+  });
+
+  factory SubscriptionResponseModel.fromJson(Map<String, dynamic> json) {
+    return SubscriptionResponseModel(
+      code: json["code"],
+      message: json["message"],
+      data: json['data'] != null
+          ? List<SubscriptionModel>.from(
+              json['data'].map((x) => SubscriptionModel.fromJson(x)))
+          : [],
+      errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
+      status: json["status"],
+      resource: json["resource"],
+    );
+  }
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "message": message,
+        "data": data,
+        "errors": errors?.toJson(),
+        "status": status,
+        "resource": resource,
+      };
+}
+
+SubscriptionResponseModel subscriptionResponseModelFromJson(String str) =>
+    SubscriptionResponseModel.fromJson(json.decode(str));
+
+String subscriptionResponseModelToJson(SubscriptionResponseModel data) =>
+    json.encode(data.toJson());
 
 class SubscriptionModel {
   String? id;
   String? planName;
-  String? service;
+
   String? groupName;
   String? subscriptionPlan;
   final numberOfMembers;
@@ -13,7 +64,8 @@ class SubscriptionModel {
   final individualShare;
   final totalCost;
   String? groupCode;
-  String? admin;
+  ServiceModel? service;
+  AdmineModel? admin;
   List<SubmembersModel>? members;
   List<JoinRequest>? joinRequests;
   bool? existingGroup;
@@ -48,7 +100,7 @@ class SubscriptionModel {
       SubscriptionModel(
         id: json["_id"],
         planName: json["planName"],
-        service: json["service"],
+        service: ServiceModel.fromJson(json["service"]),
         groupName: json["groupName"],
         subscriptionPlan: json["subscriptionPlan"],
         numberOfMembers: json["numberOfMembers"],
@@ -57,7 +109,7 @@ class SubscriptionModel {
         individualShare: json["individualShare"],
         totalCost: json["totalCost"],
         groupCode: json["groupCode"],
-        admin: json["admin"],
+        admin: AdmineModel.fromJson(json["admin"]),
         members: json["members"] != null
             ? List<SubmembersModel>.from(
                 json["members"].map((x) => SubmembersModel.fromJson(x)))

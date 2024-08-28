@@ -33,64 +33,82 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   }
 
   Future<void> getAll() async {
-    final bool isTokenValid =
-        await ref.read(profileProvider.notifier).validateToken();
-    if (isTokenValid == true) {
-      await ref.read(profileProvider.notifier).getListActiveSub();
-      final categories = ref.watch(profileProvider).getListActiveSub;
-      print(categories.value);
-    } else {
-      if (mounted) {
-        showErrorPopup(context: context, message: 'Session Expired');
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+    try {
+      final isTokenValid =
+          await ref.read(profileProvider.notifier).validateToken();
+
+      if (!isTokenValid) {
+        _handleSessionExpired();
+        return;
       }
-      //      final isLoading = ref.watch(profileProvider).fetchSubcription.isLoading;
-      // final currentPlan =
-      //     ref.watch(profileProvider).fetchSubcription.sureValue?.plan;
+      await _fetchActiveSubscriptions();
+    } catch (e, stackTrace) {
+      _handleUnexpectedError(e, stackTrace);
     }
   }
 
-  final List<Map<String, String>> subscriptionData = [
-    {
-      'service': 'Canva',
-      'price': '10,000 NGN',
-      'members': '5/5 members',
-      'nextpayment': '12/01/2025',
-      'createdby': 'JohnDoe1'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-    {
-      'service': 'Netflix',
-      'price': '5,000 NGN',
-      'members': '3/4 members',
-      'nextpayment': '15/01/2025',
-      'createdby': 'JaneDoe2'
-    },
-  ];
+  Future<void> _fetchActiveSubscriptions() async {
+    await ref.read(profileProvider.notifier).getListActiveSub();
+    final activeSub = ref.watch(profileProvider).getListActiveSub.value;
+
+    if (activeSub?.code == 200) {
+      if (activeSub?.data != null) {
+        subscriptionModel = activeSub!.data!;
+        filterSub = activeSub.data!;
+      } else {
+        subscriptionModel = [];
+      }
+    } else {
+      _handleError(activeSub?.message, activeSub?.code);
+    }
+  }
+
+  void _handleError(String? message, int? code) {
+    if (code != 200 && mounted) {
+      showErrorPopup(context: context, message: message);
+      return;
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+  }
+
+  void _handleUnexpectedError(Object e, StackTrace stackTrace) {
+    if (mounted) {
+      print('Unexpected Error: $e');
+      print('StackTrace: $stackTrace');
+      showErrorPopup(
+          context: context, message: 'An unexpected error occurred.');
+    }
+  }
+
   void filterMembers() {
     final filter = searchController.text.toLowerCase();
     setState(() {
       filterSub = subscriptionModel.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
         final planName = (member.planName ?? '').toLowerCase();
+        final adminName = (member.admin?.username ?? '').toLowerCase();
 
-        return planName.contains(filter) || groupName.contains(filter);
+        return planName.contains(filter) ||
+            groupName.contains(filter) ||
+            adminName.contains(filter);
       }).toList();
     });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -142,17 +160,16 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                     mainAxisSpacing: 18,
                     crossAxisSpacing: 12,
                     mainAxisExtent: 170),
-                itemCount: subscriptionData.length,
+                itemCount: 5,
                 itemBuilder: (context, index) {
-                  final data = subscriptionData[index];
                   return Opacity(
                     opacity: 1.0,
                     child: SubscriptionCard(
-                      service: data['service']!,
+                      service: ' loading...',
                       price: 10,
                       members: 3,
-                      nextpayment: data['nextpayment']!,
-                      createdby: data['createdby']!,
+                      nextpayment: '',
+                      createdby: ' ',
                     ),
                   );
                 },
@@ -168,8 +185,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
             data: (activeSub) {
               if (subscriptionModel.isEmpty) {
                 setState(() {
-                  subscriptionModel = activeSub ?? [];
+                  subscriptionModel = activeSub?.data ?? [];
                   filterSub = subscriptionModel;
+                  print(filterSub);
                 });
               }
               return subscriptionModel.isEmpty
@@ -194,11 +212,26 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                             return Opacity(
                               opacity: 1.0,
                               child: SubscriptionCard(
-                                service: item.planName,
+                                image: Image.network(
+                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                profile: Image.network(
+                                  '${item.service!.logoUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                profile1: Image.network(
+                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  width: 16,
+                                  height: 16,
+                                ),
+                                service: item.service!.serviceName,
                                 price: item.totalCost,
                                 members: item.numberOfMembers,
                                 nextpayment: '',
-                                createdby: item.groupName,
+                                createdby: item.admin!.username,
                               ),
                             );
                           },
