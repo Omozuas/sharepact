@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/providers/settings_provider.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/constants/constants.dart';
@@ -25,6 +26,15 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
   }
 
   Future<void> _fetechAlAvaters() async {
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+    if (isTokenValid!.code != 200) {
+      _handleSessionExpired();
+      return;
+    }
     await ref.read(profileProvider.notifier).getAllAvater();
     final allAvaters = ref.read(profileProvider).getAllAvater.value;
     if (allAvaters?.code != 200) {
@@ -37,6 +47,17 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
     }
   }
 
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+  }
+
   void _handleError(String? message, int? code) {
     if (code != 200 && mounted) {
       showErrorPopup(context: context, message: message);
@@ -45,6 +66,15 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
   }
 
   Future<void> update() async {
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+    if (isTokenValid!.code != 200) {
+      _handleSessionExpired();
+      return;
+    }
     var avatarIndex = ref.watch(avatarProvider);
 
     if (avaters1 != null && avatarIndex < avaters1!.length) {

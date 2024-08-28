@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
-import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
-import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
@@ -39,10 +37,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> getAll() async {
     try {
-      final isTokenValid =
-          await ref.read(profileProvider.notifier).validateToken();
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (!isTokenValid) {
+      if (isTokenValid!.code != 200) {
         _handleSessionExpired();
         return;
       }

@@ -24,8 +24,10 @@ class AuthServiceProvider
         getToken: AsyncData(null),
         updateAvater: AsyncData(null),
         updateUserNameAndEmail: AsyncData(null),
+        checkTokenstatus: AsyncData(null),
         isTokenValid: AsyncData(null),
         getListCategories: AsyncData(null),
+        changeProfilePassword: AsyncData(null),
         getUser: AsyncData(null),
         getListActiveSub: AsyncData(null),
         getListInactiveSub: AsyncData(null),
@@ -156,6 +158,34 @@ class AuthServiceProvider
     }
   }
 
+  Future<void> changeProfilePassword(
+      {required String currentPassword, required String newPassword}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(changeProfilePassword: const AsyncLoading());
+      final response = await auth.changeProfilePassword(
+          currentPassword: currentPassword, newPassword: newPassword);
+      state = state.copyWith(changeProfilePassword: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          changeProfilePassword: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> checkTokenStatus({
+    required String token,
+  }) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(checkTokenstatus: const AsyncLoading());
+      final response = await auth.validateInterntToken(token: token);
+      state = state.copyWith(checkTokenstatus: AsyncData(response));
+    } catch (e) {
+      state =
+          state.copyWith(checkTokenstatus: AsyncError(e, StackTrace.current));
+    }
+  }
+
 //user flow
   Future<void> getUserDetails() async {
     final auth = ref.read(authServiceProvider);
@@ -274,6 +304,8 @@ class AuthServiceProviderStates {
   final AsyncValue<GeneralResponseModel?> logout;
   final AsyncValue<GeneralResponseModel?> updateAvater;
   final AsyncValue<GeneralResponseModel?> updateUserNameAndEmail;
+  final AsyncValue<GeneralResponseModel?> changeProfilePassword;
+  final AsyncValue<GeneralResponseModel?> checkTokenstatus;
   final AsyncValue<bool?> isTokenValid;
   final AsyncValue<UserResponseModel?> getUser;
   final AsyncValue<CategoriesResponseModel?> getListCategories;
@@ -309,6 +341,8 @@ class AuthServiceProviderStates {
     required this.updateAvater,
     required this.updateUserNameAndEmail,
     required this.getAllAvater,
+    required this.changeProfilePassword,
+    required this.checkTokenstatus,
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -331,6 +365,8 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? logout,
     AsyncValue<GeneralResponseModel?>? updateAvater,
     AsyncValue<GeneralResponseModel?>? updateUserNameAndEmail,
+    AsyncValue<GeneralResponseModel?>? changeProfilePassword,
+    AsyncValue<GeneralResponseModel?>? checkTokenstatus,
     AsyncValue<UserResponseModel?>? getUser,
     AsyncValue<CategoriesResponseModel?>? getListCategories,
     AsyncValue<SubscriptionResponseModel?>? getListActiveSub,
@@ -348,38 +384,41 @@ class AuthServiceProviderStates {
     // AsyncValue<UpdatePasswordModel?>? updatePassword
   }) {
     return AuthServiceProviderStates(
-      // pickedImage: pickedImage ?? this.pickedImage,
-      // user: user ?? this.user,
-      // profileUpdater: profileUpdater ?? this.profileUpdater,
-      generalrespond: generalrespond ?? this.generalrespond,
-      otp: otp ?? this.otp,
-      resendOtp: resendOtp ?? this.resendOtp,
-      login: login ?? this.login,
-      resetPassword: resetPassword ?? this.resetPassword,
-      confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
-      changePassword: changePassword ?? this.changePassword,
-      isTokenValid: isTokenValid ?? this.isTokenValid,
-      logout: logout ?? this.logout,
-      getToken: getToken ?? this.getToken,
-      getUser: getUser ?? this.getUser,
-      getListCategories: getListCategories ?? this.getListCategories,
-      getListActiveSub: getListActiveSub ?? this.getListActiveSub,
-      getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
-      updateAvater: updateAvater ?? this.updateAvater,
-      updateUserNameAndEmail:
-          updateUserNameAndEmail ?? this.updateUserNameAndEmail,
-      getAllAvater: getAllAvater ?? this.getAllAvater,
+        // pickedImage: pickedImage ?? this.pickedImage,
+        // user: user ?? this.user,
+        // profileUpdater: profileUpdater ?? this.profileUpdater,
+        generalrespond: generalrespond ?? this.generalrespond,
+        otp: otp ?? this.otp,
+        resendOtp: resendOtp ?? this.resendOtp,
+        login: login ?? this.login,
+        resetPassword: resetPassword ?? this.resetPassword,
+        confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
+        changePassword: changePassword ?? this.changePassword,
+        isTokenValid: isTokenValid ?? this.isTokenValid,
+        logout: logout ?? this.logout,
+        getToken: getToken ?? this.getToken,
+        getUser: getUser ?? this.getUser,
+        getListCategories: getListCategories ?? this.getListCategories,
+        getListActiveSub: getListActiveSub ?? this.getListActiveSub,
+        getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
+        updateAvater: updateAvater ?? this.updateAvater,
+        updateUserNameAndEmail:
+            updateUserNameAndEmail ?? this.updateUserNameAndEmail,
+        getAllAvater: getAllAvater ?? this.getAllAvater,
+        changeProfilePassword:
+            changeProfilePassword ?? this.changeProfilePassword,
+        checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus
 
-      // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
-      // notificationFetch: notificationFetch ?? this.notificationFetch,
-      // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
+        // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
+        // notificationFetch: notificationFetch ?? this.notificationFetch,
+        // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
 
-      // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
+        // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
 
-      // inviteLink: inviteLink ?? this.inviteLink,
-      // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+        // inviteLink: inviteLink ?? this.inviteLink,
+        // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
 
-      // updatePassword: updatePassword ?? this.updatePassword
-    );
+        // updatePassword: updatePassword ?? this.updatePassword
+        );
   }
 }

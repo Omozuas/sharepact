@@ -6,6 +6,7 @@ import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/change_avatar.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';
@@ -26,6 +27,15 @@ class EditProfileState extends ConsumerState<EditProfile> {
     }
     if (emailController.text.isEmpty) {
       showErrorPopup(context: context, message: 'email Required');
+    }
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+    if (isTokenValid!.code != 200) {
+      _handleSessionExpired();
+      return;
     }
     try {
       await ref.read(profileProvider.notifier).updatUserNameAndEmail(
@@ -64,6 +74,16 @@ class EditProfileState extends ConsumerState<EditProfile> {
 
   UserModel? _userModel;
   Future<void> _fetchUserData() async {
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+    if (isTokenValid!.code != 200) {
+      _handleSessionExpired();
+      return;
+    }
+
     await ref.read(profileProvider.notifier).getUserDetails();
     final user = ref.watch(profileProvider).getUser.value;
     if (user?.code != 200) {
@@ -82,6 +102,17 @@ class EditProfileState extends ConsumerState<EditProfile> {
   void _handleError(String? message, int? code) {
     if (code != 200 && mounted) {
       showErrorPopup(context: context, message: message);
+      return;
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
       return;
     }
   }
@@ -285,7 +316,6 @@ class EditProfileState extends ConsumerState<EditProfile> {
                       ),
                       const SizedBox(height: 10),
                       TextField(
-                        controller: emailController,
                         decoration: InputDecoration(
                           hintText: isLoading
                               ? 'Janedoe@gmail.com'

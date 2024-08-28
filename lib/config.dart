@@ -15,6 +15,9 @@ class Config {
       '/auth/password-reset/verify-otp';
   static const String changePasswordEndpoint = '/auth/change-password';
   static const String logoutEndpoint = '/auth/logout';
+  static const String verifyTokenEndpoint = '/auth/verify-token';
+  static const String changeProfilePasswordEndpoint =
+      '/api/profile/change-password';
 
   //user Endpoint
   static const String getUserEndpoint = '/auth/user';

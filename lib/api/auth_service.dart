@@ -10,7 +10,6 @@ import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import '../config.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthService {
   ApiService apiService = ApiService(baseUrl: Config.baseUrl);
@@ -123,6 +122,47 @@ class AuthService {
       return response!;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> changeProfilePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.put(
+        endpoint: Config.changeProfilePasswordEndpoint,
+        token: token,
+        body: {"currentPassword": currentPassword, "newPassword": newPassword},
+      );
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> validateInterntToken(
+      {required String token}) async {
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.verifyTokenEndpoint,
+      );
+
+      return generalResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GeneralResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return GeneralResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
+    } catch (e) {
+      print('Error: $e');
+      return GeneralResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
 
@@ -316,12 +356,7 @@ class AuthService {
     if (token == null) {
       return false; // No token stored
     } else {
-      bool isExpired = JwtDecoder.isExpired(token);
-      if (isExpired == true) {
-        return false;
-      } else {
-        return true;
-      }
+      return true;
     }
   }
 

@@ -24,67 +24,81 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> logOut() async {
     try {
-      final tokenValid =
-          await ref.read(profileProvider.notifier).validateToken();
-      if (tokenValid != false) {
-        await ref.read(profileProvider.notifier).getToken();
-        final myToken = ref.read(profileProvider).getToken.value;
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-        if (myToken!.isNotEmpty) {
-          await ref.read(profileProvider.notifier).logOut(token: myToken);
-          final pUpdater = ref.read(profileProvider).logout;
+      if (isTokenValid!.code != 200) {
+        _handleSessionExpired();
+        return;
+      }
 
-          // Safely check for value and data
-          if (pUpdater.value != null) {
-            final message = pUpdater.value?.message;
+      await ref.read(profileProvider.notifier).logOut(token: myToken);
+      final pUpdater = ref.read(profileProvider).logout;
 
-            // Safely check for code
-            if (pUpdater.value?.code == 200) {
-              final preferences = await SharedPreferences.getInstance();
-              preferences.remove('token');
+      // Safely check for value and data
+      if (pUpdater.value != null) {
+        final message = pUpdater.value?.message;
 
-              if (mounted) {
-                showSuccess(message: message!, context: context);
+        // Safely check for code
+        if (pUpdater.value?.code == 200) {
+          await _clearSessionData();
 
-                // Navigate to LoginScreen if logout is successful
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              }
-            } else {
-              if (mounted) {
-                showErrorPopup(
-                    message: message ?? 'An error occurred', context: context);
-              }
-            }
-          } else {
-            if (mounted) {
-              showErrorPopup(
-                  message: 'Logout failed. Please try again.',
-                  context: context);
-            }
+          showSuccess(message: message!, context: context);
+
+          // Navigate to LoginScreen if logout is successful
+          _navigateToLoginScreen();
+        } else {
+          if (mounted) {
+            showErrorPopup(
+                message: message ?? 'An error occurred', context: context);
           }
         }
       } else {
-        if (mounted) {
-          showErrorPopup(message: 'Session expired', context: context);
-
-          // Navigate to LoginScreen if session expired
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          );
-        }
+        _showLogoutError();
       }
     } catch (e) {
       // Show error if login fails
-      if (mounted) {
-        showErrorPopup(
-            message: e.toString().replaceAll('Exception: ', ''),
-            context: context);
-      }
+      _handleError(e);
     }
+  }
+
+  void _showLogoutError() {
+    if (mounted) {
+      showErrorPopup(
+          message: 'Logout failed. Please try again.', context: context);
+    }
+  }
+
+  void _handleError(e) {
+    if (mounted) {
+      showErrorPopup(
+        message: e.toString().replaceAll('Exception: ', ''),
+        context: context,
+      );
+    }
+  }
+
+  Future<void> _clearSessionData() async {
+    final preferences = await SharedPreferences.getInstance();
+    preferences.remove('token');
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(message: 'Session expired', context: context);
+      _navigateToLoginScreen();
+    }
+  }
+
+  void _navigateToLoginScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
   @override

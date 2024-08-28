@@ -34,10 +34,14 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   Future<void> getAll() async {
     try {
-      final isTokenValid =
-          await ref.read(profileProvider.notifier).validateToken();
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (!isTokenValid) {
+      if (isTokenValid!.code != 200) {
         _handleSessionExpired();
         return;
       }

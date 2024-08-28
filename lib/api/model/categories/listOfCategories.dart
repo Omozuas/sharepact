@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'dart:convert';
 
 import 'package:sharepact_app/api/model/error_model.dart';

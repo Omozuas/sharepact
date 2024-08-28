@@ -5,7 +5,6 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/reset_password.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
-import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/signup.dart';
 import 'responsive_helpers.dart';
 

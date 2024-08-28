@@ -44,8 +44,6 @@ class EmailVerificationScreenState
         if (pUpdater.value != null) {
           // Safely access message
           final message = pUpdater.value?.message;
-          print({"message1": message});
-
           // Check if the response code is 200
           if (pUpdater.value!.code == 200) {
             showSuccess(message: message!, context: context);
@@ -86,8 +84,6 @@ class EmailVerificationScreenState
         if (pUpdater.value != null) {
           // Safely access message
           final message = pUpdater.value?.message;
-          print({"message1": message});
-
           // Check if the response code is 201
           if (pUpdater.value!.code == 200) {
             showSuccess(message: message!, context: context);
