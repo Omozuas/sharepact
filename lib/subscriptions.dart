@@ -3,7 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
+import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
@@ -21,15 +25,33 @@ class SubscriptionsScreen extends ConsumerStatefulWidget {
 class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   TextEditingController searchController = TextEditingController();
   List<SubscriptionModel> filterSub = [];
-  List<SubscriptionModel> subscriptionModel = [];
+
+  int page = 10;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    filterSub = subscriptionModel;
     searchController.addListener(filterMembers);
     Future.microtask(() => getAll());
     // searchController.addListener();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        // Trigger when the user scrolls to the bottom
+        if (loaging) return;
+        if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
+          print('Scrolled to bottom');
+          setState(() {
+            loaging = true;
+          });
+          page = page + 10;
+          ref.read(subscriptionProvider.notifier).getListActiveSub(limit: page);
+          filterMembers();
+          setState(() {
+            loaging = false;
+          });
+        }
+      });
   }
 
   Future<void> getAll() async {
@@ -41,7 +63,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid!.code != 200) {
+      if (isTokenValid!.code == 401) {
         _handleSessionExpired();
         return;
       }
@@ -52,26 +74,24 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   }
 
   Future<void> _fetchActiveSubscriptions() async {
-    await ref.read(profileProvider.notifier).getListActiveSub();
-    final activeSub = ref.watch(profileProvider).getListActiveSub.value;
+    await ref.read(subscriptionProvider.notifier).getListActiveSub(limit: page);
+    final activeSub = ref.watch(subscriptionProvider);
 
-    if (activeSub?.code == 200) {
-      if (activeSub?.data != null) {
-        subscriptionModel = activeSub!.data!;
-        filterSub = activeSub.data!;
-      } else {
-        subscriptionModel = [];
-      }
-    } else {
-      _handleError(activeSub?.message, activeSub?.code);
+    if (activeSub.error == null && activeSub.hasValue) {
+      setState(() {
+        filterSub = activeSub.value!;
+      });
+    } else if (activeSub.error != null) {
+      final e = activeSub.error as UserResponseModel;
+      _handleError(e.message.toString());
     }
   }
 
-  void _handleError(String? message, int? code) {
-    if (code != 200 && mounted) {
-      showErrorPopup(context: context, message: message);
-      return;
-    }
+  void _handleError(
+    String? message,
+  ) {
+    showErrorPopup(context: context, message: message);
+    return;
   }
 
   void _handleSessionExpired() {
@@ -96,11 +116,12 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   void filterMembers() {
     final filter = searchController.text.toLowerCase();
+    // final sub = ref.watch(subscriptionProvider).value;
     setState(() {
-      filterSub = subscriptionModel.where((member) {
+      filterSub = ref.watch(subscriptionProvider).value!.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
         final planName = (member.planName ?? '').toLowerCase();
-        final adminName = (member.admin?.username ?? '').toLowerCase();
+        final adminName = (member.service?.serviceName ?? '').toLowerCase();
 
         return planName.contains(filter) ||
             groupName.contains(filter) ||
@@ -112,107 +133,159 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   @override
   void dispose() {
     searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
+  late final ScrollController _scrollController;
+  bool loaging = false;
   @override
   Widget build(BuildContext context) {
-    final activeSub = ref.watch(profileProvider).getListActiveSub;
+    final activeSub = ref.watch(subscriptionProvider);
+    ref.watch(userProvider);
+    ref.watch(categoryProvider);
+    ref.watch(profileProvider).checkTokenstatus;
+    final isloading = ref.watch(subscriptionProvider).isLoading;
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 53,
-            padding: const EdgeInsets.symmetric(horizontal: 22),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(width: 1, color: Colors.grey),
-            ),
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/search.png', // Replace with actual image path
-                  width: 24,
-                  height: 24,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search subscriptions',
-                      border: InputBorder.none,
+      padding: const EdgeInsets.only(left: 15.0, right: 15, top: 15),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await getAll();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              height: 53,
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(width: 1, color: Colors.grey),
+              ),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/search.png', // Replace with actual image path
+                    width: 24,
+                    height: 24,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search subscriptions',
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          activeSub.when(
-            loading: () => Shimmer.fromColors(
-              baseColor: AppColors.accent,
-              highlightColor: AppColors.primaryColor,
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 18,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: 170),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Opacity(
-                    opacity: 1.0,
-                    child: SubscriptionCard(
-                      service: ' loading...',
-                      price: 10,
-                      members: 3,
-                      nextpayment: '',
-                      createdby: ' ',
-                    ),
-                  );
-                },
+                ],
               ),
             ),
-            error: (
-              error,
-              stackTrace,
-            ) {
-              print({error, stackTrace});
-              return Center(child: Text(error.toString()));
-            },
-            data: (activeSub) {
-              if (subscriptionModel.isEmpty) {
+            const SizedBox(height: 16),
+            activeSub.when(
+              skipLoadingOnReload: true,
+              loading: () => Shimmer.fromColors(
+                baseColor: AppColors.accent,
+                highlightColor: AppColors.primaryColor,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 18,
+                      crossAxisSpacing: 12,
+                      mainAxisExtent: 170),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return const Opacity(
+                      opacity: 1.0,
+                      child: SubscriptionCard(
+                        service: ' loading...',
+                        price: 10,
+                        members: 3,
+                        nextpayment: '',
+                        createdby: ' ',
+                      ),
+                    );
+                  },
+                ),
+              ),
+              error: (
+                error,
+                stackTrace,
+              ) {
+                final el = error as UserResponseModel;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: AppColors.accent,
+                      highlightColor: AppColors.primaryColor,
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 18,
+                                crossAxisSpacing: 12,
+                                mainAxisExtent: 170),
+                        itemCount: 2,
+                        itemBuilder: (context, index) {
+                          return Opacity(
+                            opacity: 1.0,
+                            child: SubscriptionCard(
+                              service: 'loading...',
+                              price: 10,
+                              members: 3,
+                              nextpayment: '',
+                              createdby: '',
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Text('Error loading subscriptions: ${el.message}'),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add retry logic here
+                        getAll();
+                        ref.read(userProvider.notifier).getUserDetails();
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                );
+              },
+              data: (activeSub) {
                 setState(() {
-                  subscriptionModel = activeSub?.data ?? [];
-                  filterSub = subscriptionModel;
-                  print(filterSub);
+                  filterSub = activeSub!;
                 });
-              }
-              return subscriptionModel.isEmpty
-                  ? const Center(child: Text('No Active Subscription'))
-                  : filterSub.isEmpty
-                      ? Center(
-                          child: Text(
-                              'No Result Found: "${searchController.text}"'))
-                      : GridView.builder(
+                if (activeSub!.isEmpty) {
+                  return const Center(child: Text('No Active Subscription'));
+                }
+                return filterSub.isEmpty
+                    ? Center(
+                        child:
+                            Text('No Result Found: "${searchController.text}"'))
+                    : Expanded(
+                        child: GridView.builder(
+                          controller: _scrollController,
                           shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
+                          // physics: const A
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 18,
                                   crossAxisSpacing: 12,
                                   mainAxisExtent: 170),
-                          itemCount: filterSub.length,
+                          itemCount: loaging
+                              ? filterSub.length + 10
+                              : filterSub.length,
                           itemBuilder: (context, index) {
                             final item = filterSub[index];
-
                             return Opacity(
                               opacity: 1.0,
                               child: SubscriptionCard(
@@ -239,10 +312,15 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                               ),
                             );
                           },
-                        );
-            },
-          ),
-        ],
+                        ),
+                      );
+              },
+            ),
+            isloading
+                ? const Center(child: CircularProgressIndicator())
+                : Container()
+          ],
+        ),
       ),
     );
   }

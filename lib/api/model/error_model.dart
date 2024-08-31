@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Errors {
   List<String>? email;
   List<String>? password;
@@ -23,4 +26,28 @@ class Errors {
             ? List<dynamic>.from(password!.map((x) => x))
             : null,
       };
+
+  Errors copyWith({
+    List<String>? email,
+    List<String>? password,
+  }) {
+    return Errors(
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
+
+  @override
+  String toString() => 'Errors(email: $email, password: $password)';
+
+  @override
+  bool operator ==(covariant Errors other) {
+    if (identical(this, other)) return true;
+
+    return listEquals(other.email, email) &&
+        listEquals(other.password, password);
+  }
+
+  @override
+  int get hashCode => email.hashCode ^ password.hashCode;
 }

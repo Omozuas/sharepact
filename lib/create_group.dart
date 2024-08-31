@@ -1,28 +1,36 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/chat.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/home/components/input_field.dart';
 import 'package:intl/intl.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 
-class CreateGroupScreen extends StatefulWidget {
-  const CreateGroupScreen({super.key});
-
+class CreateGroupScreen extends ConsumerStatefulWidget {
+  const CreateGroupScreen({super.key, this.id});
+  final String? id;
   @override
-  CreateGroupScreenState createState() => CreateGroupScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      CreateGroupScreenState();
 }
 
-class CreateGroupScreenState extends State<CreateGroupScreen> {
+class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
+  final TextEditingController groupNameController = TextEditingController();
   String selectedCategory = '';
   String selectedService = '';
   String selectedPlan = '';
   String groupName = '';
   String numberOfMembers = '';
-  String existingGroup = 'No';
+  String existingGroup = '';
+  int selectedPrice = 0;
   bool agreedToTerms = false;
   bool showDatePickerFlag = false;
   DateTime? selectedDate;
@@ -97,15 +105,15 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
             TextButton(
               child: Text('No'),
               onPressed: () {
-                Navigator.of(context).pop();
                 _proceedWithGroupCreation();
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Yes'),
               onPressed: () {
-                Navigator.of(context).pop();
                 _selectDate(context);
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -114,15 +122,114 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
 
-  void _proceedWithGroupCreation() {
+  Future<void> _proceedWithGroupCreation() async {
     // Handle the creation of group without showing date picker
     // For example, navigate to the next screen or show a confirmation message
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+    if (isTokenValid!.code == 401) {
+      _handleSessionExpired();
+      return;
+    }
+    if (groupNameController.text.isEmpty) {
+      showErrorPopup(context: context, message: 'Enter a Group Name');
+      return;
+    }
+    if (selectedPlan.isEmpty) {
+      showErrorPopup(context: context, message: 'Enter a Group Name');
+      return;
+    }
+    if (numberOfMembers.isEmpty) {
+      showErrorPopup(context: context, message: 'Enter a Group Name');
+      return;
+    }
+    int numberOfMembersString = int.parse(numberOfMembers);
+    bool isExistingGroup = existingGroup.toLowerCase() == 'yes';
+    try {
+      await ref.read(profileProvider.notifier).createGroup(
+          serviceId: widget.id!,
+          groupName: groupNameController.text,
+          subscriptionPlan: selectedPlan,
+          numberOfMembers: numberOfMembersString,
+          existingGroup: isExistingGroup);
+      final res = ref.read(profileProvider).createGroup.value;
+      if (res?.code == 201) {
+        showSuccess(message: res!.message!, context: context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ChatScreen()),
+        );
+      } else {
+        showErrorPopup(context: context, message: res?.message);
+      }
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() => getserviceById());
+  }
+
+  Future<void> getserviceById() async {
+    try {
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+      if (isTokenValid!.code != 200) {
+        _handleSessionExpired();
+        return;
+      }
+      await _fetchbyId();
+    } catch (e) {
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
+    }
+  }
+
+  Future<void> _fetchbyId() async {
+    try {
+      await ref.read(profileProvider.notifier).getServiceById(id: widget.id!);
+      final categories = ref.watch(profileProvider).getServiceById;
+      if (categories.value?.code != 200) {
+        if (mounted) {
+          showErrorPopup(context: context, message: categories.value?.message);
+          await getserviceById();
+          return;
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final services = ref.watch(profileProvider).getServiceById;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -149,7 +256,9 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
             children: <Widget>[
               SizedBox(height: height * .01),
               Text(
-                'Create a New Subscription Group',
+                services.hasValue
+                    ? 'Create a New  ${services.value?.data?.serviceName} Subscription Group'
+                    : 'loadind....',
                 style: GoogleFonts.lato(
                   color: const Color(0xff343A40),
                   fontSize: 18,
@@ -170,7 +279,7 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                 children: [
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                        maxHeight: height * .11, minWidth: width),
+                        maxHeight: height * .12, minWidth: width),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.only(
@@ -255,7 +364,7 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                     left: width * .00000001,
                     child: Container(
                       width: width * .03,
-                      height: height * .11,
+                      height: height * .12,
                       decoration: const BoxDecoration(
                         color: Color(0xFF007BFF),
                         borderRadius: BorderRadius.only(
@@ -268,96 +377,97 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                 ],
               ),
               SizedBox(height: height * .03),
-              AppInputField(
-                headerText: 'Subscription Category',
-                style: GoogleFonts.lato(
-                  color: const Color(0xff343A40),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                hintText: 'Select category',
-                trailing: DropdownButton<String>(
-                  icon: const Icon(HeroiconsOutline.chevronDown),
-                  padding:
-                      EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>[
-                    'Category 1',
-                    'Category 2',
-                    'Category 3',
-                  ].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: GoogleFonts.lato(
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(
-                    selectedCategory.isEmpty
-                        ? 'Select category'
-                        : selectedCategory,
-                    style: GoogleFonts.lato(),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                  underline: const SizedBox(),
-                  isExpanded: true,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedCategory = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-              AppInputField(
-                headerText: 'Subscription Service',
-                style: GoogleFonts.lato(
-                  color: const Color(0xff343A40),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                hintText: 'Select service',
-                trailing: DropdownButton<String>(
-                  icon: const Icon(HeroiconsOutline.chevronDown),
-                  padding:
-                      EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>[
-                    'Service 1',
-                    'Service 2',
-                    'Service 3',
-                  ].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: GoogleFonts.lato(
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(
-                    selectedService.isEmpty
-                        ? 'Select service'
-                        : selectedService,
-                    style: GoogleFonts.lato(),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                  underline: const SizedBox(),
-                  isExpanded: true,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedService = value;
-                      });
-                    }
-                  },
-                ),
-              ),
+              // AppInputField(
+              //   headerText: 'Subscription Category',
+              //   style: GoogleFonts.lato(
+              //     color: const Color(0xff343A40),
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.w600,
+              //   ),
+              //   hintText: 'Select category',
+              //   trailing: DropdownButton<String>(
+              //     icon: const Icon(HeroiconsOutline.chevronDown),
+              //     padding:
+              //         EdgeInsets.only(left: width * .04, right: width * .04),
+              //     items: <String>[
+              //       'Category 1',
+              //       'Category 2',
+              //       'Category 3',
+              //     ].map((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(
+              //           value,
+              //           style: GoogleFonts.lato(
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //     hint: Text(
+              //       selectedCategory.isEmpty
+              //           ? 'Select category'
+              //           : selectedCategory,
+              //       style: GoogleFonts.lato(),
+              //     ),
+              //     borderRadius: BorderRadius.circular(10),
+              //     underline: const SizedBox(),
+              //     isExpanded: true,
+              //     onChanged: (value) {
+              //       if (value != null) {
+              //         setState(() {
+              //           selectedCategory = value;
+              //         });
+              //       }
+              //     },
+              //   ),
+              // ),
+              // AppInputField(
+              //   headerText: 'Subscription Service',
+              //   style: GoogleFonts.lato(
+              //     color: const Color(0xff343A40),
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.w600,
+              //   ),
+              //   hintText: 'Select service',
+              //   trailing: DropdownButton<String>(
+              //     icon: const Icon(HeroiconsOutline.chevronDown),
+              //     padding:
+              //         EdgeInsets.only(left: width * .04, right: width * .04),
+              //     items: <String>[
+              //       'Service 1',
+              //       'Service 2',
+              //       'Service 3',
+              //     ].map((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(
+              //           value,
+              //           style: GoogleFonts.lato(
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //     hint: Text(
+              //       selectedService.isEmpty
+              //           ? 'Select service'
+              //           : selectedService,
+              //       style: GoogleFonts.lato(),
+              //     ),
+              //     borderRadius: BorderRadius.circular(10),
+              //     underline: const SizedBox(),
+              //     isExpanded: true,
+              //     onChanged: (value) {
+              //       if (value != null) {
+              //         setState(() {
+              //           selectedService = value;
+              //         });
+              //       }
+              //     },
+              //   ),
+              // ),
+
               AppInputField(
                 headerText: 'Subscription Plan',
                 style: GoogleFonts.lato(
@@ -370,15 +480,12 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                   icon: const Icon(HeroiconsOutline.chevronDown),
                   padding:
                       EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>[
-                    'Plan 1',
-                    'Plan 2',
-                    'Plan 3',
-                  ].map((String value) {
+                  items:
+                      services.value?.data?.subscriptionPlans?.map((toElement) {
                     return DropdownMenuItem<String>(
-                      value: value,
+                      value: toElement.planName,
                       child: Text(
-                        value,
+                        toElement.planName ?? '',
                         style: GoogleFonts.lato(
                           fontWeight: FontWeight.w400,
                         ),
@@ -396,12 +503,18 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                     if (value != null) {
                       setState(() {
                         selectedPlan = value;
+                        selectedPrice = services.value?.data?.subscriptionPlans!
+                                .firstWhere((plan) => plan.planName == value)
+                                .price ??
+                            0;
                       });
                     }
                   },
                 ),
               ),
+
               AppInputField(
+                controller: groupNameController,
                 headerText: 'Group Name',
                 style: GoogleFonts.lato(
                   color: const Color(0xff343A40),
@@ -422,7 +535,8 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                   icon: const Icon(HeroiconsOutline.chevronDown),
                   padding:
                       EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>['1', '2', '3', '4'].map((String value) {
+                  items: <String>['1', '2', '3', '4', '5', '6']
+                      .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
@@ -483,12 +597,13 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                     if (value != null) {
                       setState(() {
                         existingGroup = value;
-                        if (existingGroup == 'Yes') {
+                        print(existingGroup);
+                        if (existingGroup == 'yes') {
                           _selectDate(context);
                         } else {
                           showDatePickerFlag = false;
                           selectedDate = null;
-                          _proceedWithGroupCreation();
+                          // _proceedWithGroupCreation();
                         }
                       });
                     }
@@ -511,15 +626,15 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                     SizedBox(height: height * .01),
                     ListTile(
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(
+                          side: const BorderSide(
                               color: AppColors.borderColor, width: 1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         title: Text(
                           selectedDate == null
                               ? ""
-                              : "${dateformat.format(selectedDate!)}",
-                          style: TextStyle(
+                              : dateformat.format(selectedDate!),
+                          style: const TextStyle(
                             fontFamily: "Inter",
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -553,10 +668,11 @@ class CreateGroupScreenState extends State<CreateGroupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildPaymentDetailRow(
-                        'Subscription Cost', '5,000 NGN/', 'Month'),
+                    buildPaymentDetailRow('Subscription Cost',
+                        '${selectedPrice.toString()} NGN/', 'Month'),
                     const Divider(),
-                    buildPaymentDetailRow('Handling Fee', '500 NGN', ''),
+                    buildPaymentDetailRow('Handling Fee',
+                        '${services.value?.data?.handlingFees ?? 0} NGN', ''),
                     const Divider(),
                     buildPaymentDetailRow('Individual Share', '1,100 NGN', ''),
                   ],

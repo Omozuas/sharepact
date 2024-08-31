@@ -1,125 +1,155 @@
 import 'package:flutter/material.dart';
 import 'package:sharepact_app/screens/group_details/screen/group_details_screen.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage('assets/netflix.png'), // Replace with the path to your image
-            ),
-            SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Netflix Family', style: TextStyle(color: Colors.black)),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile.png'), // Replace with the path to your image
-                      radius: 12,
-                    ),
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile.png'), // Replace with the path to your image
-                      radius: 12,
-                    ),
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile.png'), // Replace with the path to your image
-                      radius: 12,
-                    ),
-                    Text('+ 2 More', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
-            onSelected: (String value) {
-              // Handle menu item selection here
-              switch (value) {
-                case 'Group details':
-                  // Handle group details action
-                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>  GroupDetailsScreen()));
-                 
-                  
-                  break;
-                case 'Mute Notifications':
-                  // Handle mute notifications action
-                  break;
-                case 'Exit Group':
-                  // Handle exit group action
-                  break;
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem<String>(
-                  value: 'Group details',
-                  child: Text('Group details'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Mute Notifications',
-                  child: Text('Mute Notifications'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Exit Group',
-                  child: Text(
-                    'Exit Group',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              ];
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ControllerNavScreen(
+                      initialIndex: 2,
+                    )));
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ControllerNavScreen(
+                          initialIndex: 2,
+                        )),
+              );
             },
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+          title: const Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage(
+                    'assets/netflix.png'), // Replace with the path to your image
+              ),
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(child: Text('Today', style: TextStyle(color: Colors.grey))),
-                  const SizedBox(height: 10),
-                  _buildReceivedMessage(context, 'John Doe1', 'Hi, have you joined the Spotify group yet?', '11:02'),
-                  _buildSentMessage(context, 'Hey! Not yet. How do I join?', '11:10'),
-                  _buildReceivedMessage(context, 'John Doe1', 'Just click on the invite link I sent you.', '11:15'),
-                  _buildSentMessage(context, 'Got it, thanks! I’ll join now.', '11:15'),
+                  Text('Netflix Family', style: TextStyle(color: Colors.black)),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage(
+                            'assets/profile.png'), // Replace with the path to your image
+                        radius: 12,
+                      ),
+                      CircleAvatar(
+                        backgroundImage: AssetImage(
+                            'assets/profile.png'), // Replace with the path to your image
+                        radius: 12,
+                      ),
+                      CircleAvatar(
+                        backgroundImage: AssetImage(
+                            'assets/profile.png'), // Replace with the path to your image
+                        radius: 12,
+                      ),
+                      Text('+ 2 More',
+                          style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    ],
+                  ),
                 ],
               ),
+            ],
+          ),
+          actions: [
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Colors.black),
+              onSelected: (String value) {
+                // Handle menu item selection here
+                switch (value) {
+                  case 'Group details':
+                    // Handle group details action
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => GroupDetailsScreen()));
+
+                    break;
+                  case 'Mute Notifications':
+                    // Handle mute notifications action
+                    break;
+                  case 'Exit Group':
+                    // Handle exit group action
+                    break;
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem<String>(
+                    value: 'Group details',
+                    child: Text('Group details'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'Mute Notifications',
+                    child: Text('Mute Notifications'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'Exit Group',
+                    child: Text(
+                      'Exit Group',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ];
+              },
             ),
-            _buildMessageInput(),
-            // const SizedBox(height: 50), // Add some space below the input box
           ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    const Center(
+                        child: Text('Today',
+                            style: TextStyle(color: Colors.grey))),
+                    const SizedBox(height: 10),
+                    _buildReceivedMessage(context, 'John Doe1',
+                        'Hi, have you joined the Spotify group yet?', '11:02'),
+                    _buildSentMessage(
+                        context, 'Hey! Not yet. How do I join?', '11:10'),
+                    _buildReceivedMessage(context, 'John Doe1',
+                        'Just click on the invite link I sent you.', '11:15'),
+                    _buildSentMessage(
+                        context, 'Got it, thanks! I’ll join now.', '11:15'),
+                  ],
+                ),
+              ),
+              _buildMessageInput(),
+              // const SizedBox(height: 50), // Add some space below the input box
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildReceivedMessage(BuildContext context, String sender, String message, String time) {
+  Widget _buildReceivedMessage(
+      BuildContext context, String sender, String message, String time) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const CircleAvatar(
-          backgroundImage: AssetImage('assets/profile.png'), // Replace with the path to your avatar image
+          backgroundImage: AssetImage(
+              'assets/profile.png'), // Replace with the path to your avatar image
           radius: 12,
         ),
         const SizedBox(width: 8),
@@ -162,7 +192,8 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            Text(time, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            Text(time,
+                style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ],
@@ -199,12 +230,14 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            Text(time, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            Text(time,
+                style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
         const SizedBox(width: 8),
         const CircleAvatar(
-          backgroundImage: AssetImage('assets/profile.png'), // Replace with the path to your avatar image
+          backgroundImage: AssetImage(
+              'assets/profile.png'), // Replace with the path to your avatar image
           radius: 12,
         ),
       ],
@@ -221,7 +254,8 @@ class ChatScreen extends StatelessWidget {
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24), // Make the input box fully rounded
+                borderRadius: BorderRadius.circular(
+                    24), // Make the input box fully rounded
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: const TextField(
@@ -242,7 +276,8 @@ class ChatScreen extends StatelessWidget {
             ),
             child: IconButton(
               padding: const EdgeInsets.all(0),
-              icon: Image.asset('assets/send_icon.png'), // Replace with the path to your send icon image
+              icon: Image.asset(
+                  'assets/send_icon.png'), // Replace with the path to your send icon image
               onPressed: () {
                 // Handle send message
               },

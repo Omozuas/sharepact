@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: file_names
 
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:sharepact_app/api/model/error_model.dart';
 
@@ -42,6 +45,51 @@ class CategoriesResponseModel {
         "status": status,
         "resource": resource,
       };
+
+  CategoriesResponseModel copyWith({
+    int? code,
+    String? message,
+    List<CategoriesModel>? data,
+    Errors? errors,
+    bool? status,
+    String? resource,
+  }) {
+    return CategoriesResponseModel(
+      code: code ?? this.code,
+      message: message ?? this.message,
+      data: data ?? this.data,
+      errors: errors ?? this.errors,
+      status: status ?? this.status,
+      resource: resource ?? this.resource,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'CategoriesResponseModel(code: $code, message: $message, data: $data, errors: $errors, status: $status, resource: $resource)';
+  }
+
+  @override
+  bool operator ==(covariant CategoriesResponseModel other) {
+    if (identical(this, other)) return true;
+
+    return other.code == code &&
+        other.message == message &&
+        listEquals(other.data, data) &&
+        other.errors == errors &&
+        other.status == status &&
+        other.resource == resource;
+  }
+
+  @override
+  int get hashCode {
+    return code.hashCode ^
+        message.hashCode ^
+        data.hashCode ^
+        errors.hashCode ^
+        status.hashCode ^
+        resource.hashCode;
+  }
 }
 
 CategoriesResponseModel categoriesResponseModelFromJson(String str) =>
@@ -85,4 +133,49 @@ class CategoriesModel {
         "updatedAt": updatedAt!.toIso8601String(),
         "__v": v,
       };
+
+  CategoriesModel copyWith({
+    String? id,
+    String? categoryName,
+    String? imageUrl,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? v,
+  }) {
+    return CategoriesModel(
+      id: id ?? this.id,
+      categoryName: categoryName ?? this.categoryName,
+      imageUrl: imageUrl ?? this.imageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      v: v ?? this.v,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'CategoriesModel(id: $id, categoryName: $categoryName, imageUrl: $imageUrl, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+  }
+
+  @override
+  bool operator ==(covariant CategoriesModel other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.categoryName == categoryName &&
+        other.imageUrl == imageUrl &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.v == v;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        categoryName.hashCode ^
+        imageUrl.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode ^
+        v.hashCode;
+  }
 }

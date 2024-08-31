@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/bottom_nav_bar.dart';
 import 'package:sharepact_app/groups.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/settings.dart';
 import 'package:sharepact_app/subscriptions.dart';
 
-class ControllerNavScreen extends StatefulWidget {
-  const ControllerNavScreen({super.key});
-
+class ControllerNavScreen extends ConsumerStatefulWidget {
+  const ControllerNavScreen({super.key, this.initialIndex = 0});
+  final int? initialIndex;
   @override
-  State<ControllerNavScreen> createState() => _ControllerNavScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _ControllerNavScreenState();
 }
 
-class _ControllerNavScreenState extends State<ControllerNavScreen> {
+class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -23,9 +29,62 @@ class _ControllerNavScreenState extends State<ControllerNavScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print('object');
+    _selectedIndex = widget.initialIndex!;
+    Future.microtask(() => getAll());
+  }
+
+  Future<void> getAll() async {
+    try {
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.watch(profileProvider).checkTokenstatus.value;
+
+      if (isTokenValid!.code == 401) {
+        _handleSessionExpired();
+        return;
+      }
+      await _fetchUserData();
+    } catch (e, stackTrace) {
+      _handleUnexpectedError(e, stackTrace);
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+  }
+
+  Future<void> _fetchUserData() async {
+    await ref.read(userProvider.notifier).getUserDetails();
+    final user = ref.watch(userProvider);
+    if (user.error != null) {
+      _handleError(user.error.toString());
+      return;
+    }
+  }
+
+  void _handleError([String? message]) {
+    showErrorPopup(context: context, message: message);
+    return;
+  }
+
+  void _handleUnexpectedError(Object e, StackTrace stackTrace) {
+    if (mounted) {
+      print('Unexpected Error: $e');
+      print('StackTrace: $stackTrace');
+      showErrorPopup(
+          context: context, message: 'An unexpected error occurred.');
+    }
   }
 
   final List<Widget> _screens = [
@@ -48,9 +107,7 @@ class _ControllerNavScreenState extends State<ControllerNavScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: _screens[_selectedIndex],
-          ),
+          child: _screens[_selectedIndex],
         ),
         bottomNavigationBar: BottomNavBar(
           selectedIndex: _selectedIndex,

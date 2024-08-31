@@ -1,9 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:sharepact_app/api/model/error_model.dart';
+import 'package:sharepact_app/api/model/subscription/ServiceModel.dart';
 import 'package:sharepact_app/api/model/subscription/admin.dart';
 import 'package:sharepact_app/api/model/subscription/joinRequest_model.dart';
-import 'package:sharepact_app/api/model/subscription/ServiceModel.dart';
 import 'package:sharepact_app/api/model/subscription/subMembers_model.dart';
 
 class SubscriptionResponseModel {
@@ -44,6 +47,51 @@ class SubscriptionResponseModel {
         "status": status,
         "resource": resource,
       };
+
+  SubscriptionResponseModel copyWith({
+    int? code,
+    String? message,
+    List<SubscriptionModel>? data,
+    Errors? errors,
+    bool? status,
+    String? resource,
+  }) {
+    return SubscriptionResponseModel(
+      code: code ?? this.code,
+      message: message ?? this.message,
+      data: data ?? this.data,
+      errors: errors ?? this.errors,
+      status: status ?? this.status,
+      resource: resource ?? this.resource,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'SubscriptionResponseModel(code: $code, message: $message, data: $data, errors: $errors, status: $status, resource: $resource)';
+  }
+
+  @override
+  bool operator ==(covariant SubscriptionResponseModel other) {
+    if (identical(this, other)) return true;
+
+    return other.code == code &&
+        other.message == message &&
+        listEquals(other.data, data) &&
+        other.errors == errors &&
+        other.status == status &&
+        other.resource == resource;
+  }
+
+  @override
+  int get hashCode {
+    return code.hashCode ^
+        message.hashCode ^
+        data.hashCode ^
+        errors.hashCode ^
+        status.hashCode ^
+        resource.hashCode;
+  }
 }
 
 SubscriptionResponseModel subscriptionResponseModelFromJson(String str) =>
@@ -55,7 +103,6 @@ String subscriptionResponseModelToJson(SubscriptionResponseModel data) =>
 class SubscriptionModel {
   String? id;
   String? planName;
-
   String? groupName;
   String? subscriptionPlan;
   final numberOfMembers;
@@ -147,4 +194,77 @@ class SubscriptionModel {
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
       };
+
+  SubscriptionModel copyWith({
+    String? id,
+    String? planName,
+    String? groupName,
+    String? subscriptionPlan,
+    String? groupCode,
+    ServiceModel? service,
+    AdmineModel? admin,
+    List<SubmembersModel>? members,
+    List<JoinRequest>? joinRequests,
+    bool? existingGroup,
+    bool? activated,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return SubscriptionModel(
+      id: id ?? this.id,
+      planName: planName ?? this.planName,
+      groupName: groupName ?? this.groupName,
+      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
+      groupCode: groupCode ?? this.groupCode,
+      service: service ?? this.service,
+      admin: admin ?? this.admin,
+      members: members ?? this.members,
+      joinRequests: joinRequests ?? this.joinRequests,
+      existingGroup: existingGroup ?? this.existingGroup,
+      activated: activated ?? this.activated,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'SubscriptionModel(id: $id, planName: $planName, groupName: $groupName, subscriptionPlan: $subscriptionPlan, groupCode: $groupCode, service: $service, admin: $admin, members: $members, joinRequests: $joinRequests, existingGroup: $existingGroup, activated: $activated, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
+
+  @override
+  bool operator ==(covariant SubscriptionModel other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.planName == planName &&
+        other.groupName == groupName &&
+        other.subscriptionPlan == subscriptionPlan &&
+        other.groupCode == groupCode &&
+        other.service == service &&
+        other.admin == admin &&
+        listEquals(other.members, members) &&
+        listEquals(other.joinRequests, joinRequests) &&
+        other.existingGroup == existingGroup &&
+        other.activated == activated &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        planName.hashCode ^
+        groupName.hashCode ^
+        subscriptionPlan.hashCode ^
+        groupCode.hashCode ^
+        service.hashCode ^
+        admin.hashCode ^
+        members.hashCode ^
+        joinRequests.hashCode ^
+        existingGroup.hashCode ^
+        activated.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode;
+  }
 }

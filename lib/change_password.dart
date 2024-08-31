@@ -55,7 +55,7 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid!.code != 200) {
+      if (isTokenValid!.code == 401) {
         _handleSessionExpired();
         return;
       }

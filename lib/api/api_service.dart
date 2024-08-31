@@ -35,20 +35,30 @@ class ApiService {
             body: jsonEncode(body),
           )
           .timeout(Config.requestTimeout);
-
+      print(response.body);
       return generalResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       print('Request timeout');
       return GeneralResponseModel(
-          code: 408, message: 'Request Timeout', data: null);
+        code: 408,
+        message: 'Request Timeout',
+      );
     } on SocketException catch (_) {
       print('No Internet connection');
       return GeneralResponseModel(
-          code: 503, message: 'No Internet connection', data: null);
+        code: 503,
+        message: 'No Internet connection',
+      );
     } catch (e) {
+      final err = e as Map;
+      final code = err['code'];
+      final message = err['message'];
+      final requestErr = err['error'];
       print('Error: $e');
       return GeneralResponseModel(
-          code: 500, message: 'Something went wrong', data: null);
+        code: code ?? 500,
+        message: message ?? requestErr ?? 'Something went wrong $e',
+      );
     }
   }
 
@@ -99,7 +109,7 @@ class ApiService {
       return generalResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       print('Request timeout');
-      return GeneralResponseModel(
+      throw GeneralResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
       print('No Internet connection');

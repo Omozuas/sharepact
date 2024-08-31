@@ -22,8 +22,7 @@ class BankDetailsScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon:
-              Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -43,7 +42,6 @@ class BankDetailsScreen extends ConsumerWidget {
         padding:
             EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
         child: SingleChildScrollView(
-
           child: Form(
             key: _formKey,
             child: Column(
@@ -56,11 +54,11 @@ class BankDetailsScreen extends ConsumerWidget {
                         color: const Color(0xff5D6166),
                       ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Divider(),
-                SizedBox(
+                const Divider(),
+                const SizedBox(
                   height: 10,
                 ),
                 Visibility(
@@ -93,7 +91,7 @@ class BankDetailsScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         RichText(
@@ -115,7 +113,7 @@ class BankDetailsScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         RichText(
@@ -142,7 +140,7 @@ class BankDetailsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Visibility(
@@ -160,7 +158,7 @@ class BankDetailsScreen extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SvgPicture.asset(AppImages.warningIcon),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Expanded(
@@ -207,7 +205,7 @@ class BankDetailsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Visibility(
@@ -245,7 +243,7 @@ class BankDetailsScreen extends ConsumerWidget {
                           return null;
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
@@ -256,7 +254,7 @@ class BankDetailsScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: responsiveHeight(context, 0.005)),
                       TextFormField(
-                           controller: bankDetails.bankController,
+                        controller: bankDetails.bankController,
                         decoration: InputDecoration(
                           hintText: 'Enter bank name',
                           hintStyle:
@@ -277,7 +275,7 @@ class BankDetailsScreen extends ConsumerWidget {
                           return null;
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
@@ -288,9 +286,9 @@ class BankDetailsScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: responsiveHeight(context, 0.005)),
                       TextFormField(
-                           controller: bankDetails.accountNumberController,
-                           keyboardType: TextInputType.number,
-                           maxLength: 10,
+                        controller: bankDetails.accountNumberController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
                         decoration: InputDecoration(
                           hintText: 'Enter account number',
                           hintStyle:
@@ -312,46 +310,49 @@ class BankDetailsScreen extends ConsumerWidget {
                         },
                       ),
                       SizedBox(height: responsiveHeight(context, 0.04)),
-                        SizedBox(
-                  height: responsiveHeight(context, 0.08),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ref.read(bankDetailsProvider.notifier).showBankDetails =
-                            true;
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                ),
-                SizedBox(height: responsiveHeight(context, 0.01)),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '*',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      SizedBox(
+                        height: responsiveHeight(context, 0.08),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              ref
+                                  .read(bankDetailsProvider.notifier)
+                                  .showBankDetails = true;
+                            }
+                          },
+                          child: const Text('Save'),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Please ensure your bank information is accurate. Once saved, it cannot be edited. You will have to contact support for any changes',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xff5D6166),
-                            fontSize: 12),
-                      ),
-                    ),
-                  ],
-                )
-              
+                      SizedBox(height: responsiveHeight(context, 0.01)),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '*',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 3,
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Please ensure your bank information is accurate. Once saved, it cannot be edited. You will have to contact support for any changes',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: const Color(0xff5D6166),
+                                      fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),

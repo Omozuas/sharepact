@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
+import 'package:sharepact_app/api/model/bank/bank_model.dart';
+import 'package:sharepact_app/api/model/categories/categoryByid.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
-import 'package:sharepact_app/api/model/user/user_model.dart';
 
 class AuthServiceProvider
     extends AutoDisposeNotifier<AuthServiceProviderStates> {
   @override
   AuthServiceProviderStates build() {
+    print('boyyyy');
     return const AuthServiceProviderStates(
         generalrespond: AsyncData(null),
         otp: AsyncData(null),
@@ -26,12 +28,14 @@ class AuthServiceProvider
         updateUserNameAndEmail: AsyncData(null),
         checkTokenstatus: AsyncData(null),
         isTokenValid: AsyncData(null),
-        getListCategories: AsyncData(null),
         changeProfilePassword: AsyncData(null),
-        getUser: AsyncData(null),
-        getListActiveSub: AsyncData(null),
         getListInactiveSub: AsyncData(null),
-        getAllAvater: AsyncData(null));
+        getAllAvater: AsyncData(null),
+        getBankDetails: AsyncData(null),
+        getCategoryById: AsyncData(null),
+        getServiceById: AsyncData(null),
+        createGroup: AsyncData(null),
+        postBankDetails: AsyncData(null));
   }
 
 //auth flow
@@ -179,6 +183,7 @@ class AuthServiceProvider
     try {
       state = state.copyWith(checkTokenstatus: const AsyncLoading());
       final response = await auth.validateInterntToken(token: token);
+      print(response);
       state = state.copyWith(checkTokenstatus: AsyncData(response));
     } catch (e) {
       state =
@@ -187,19 +192,6 @@ class AuthServiceProvider
   }
 
 //user flow
-  Future<void> getUserDetails() async {
-    final auth = ref.read(authServiceProvider);
-    try {
-      state = state.copyWith(
-        getUser: const AsyncLoading(),
-      );
-      final response = await auth.getUser();
-      print(response.data?.email);
-      state = state.copyWith(getUser: AsyncData(response));
-    } catch (e) {
-      state = state.copyWith(getUser: AsyncError(e, StackTrace.current));
-    }
-  }
 
   Future<void> updatAvater({required String avaterUrl}) async {
     final auth = ref.read(authServiceProvider);
@@ -245,34 +237,7 @@ class AuthServiceProvider
     }
   }
 
-//category flow
-  Future<void> getListCategories() async {
-    final auth = ref.read(authServiceProvider);
-    try {
-      state = state.copyWith(getListCategories: const AsyncLoading());
-      final response = await auth.getListCategories();
-
-      state = state.copyWith(getListCategories: AsyncData(response));
-    } catch (e) {
-      state =
-          state.copyWith(getListCategories: AsyncError(e, StackTrace.current));
-    }
-  }
-
-  //cub flow
-  Future<void> getListActiveSub() async {
-    final auth = ref.read(authServiceProvider);
-    try {
-      state = state.copyWith(getListActiveSub: const AsyncLoading());
-      final response = await auth.getListActiveSub();
-      // Check if the response is null or empty and handle it accordingly
-
-      state = state.copyWith(getListActiveSub: AsyncData(response));
-    } catch (e) {
-      state =
-          state.copyWith(getListActiveSub: AsyncError(e, StackTrace.current));
-    }
-  }
+  //scub flow
 
   Future<void> getListInActiveSub() async {
     final auth = ref.read(authServiceProvider);
@@ -285,12 +250,100 @@ class AuthServiceProvider
           state.copyWith(getListInactiveSub: AsyncError(e, StackTrace.current));
     }
   }
+
+  //categoryflow
+  Future<void> getCategoriesById({required String id}) async {
+    final auth = ref.read(authServiceProvider);
+
+    try {
+      state = state.copyWith(getCategoryById: const AsyncLoading());
+      final response = await auth.getCategoriesById(id: id);
+      // print(response.toList());
+      state = state.copyWith(getCategoryById: AsyncData(response));
+    } catch (e) {
+      state =
+          state.copyWith(getCategoryById: AsyncError(e, StackTrace.current));
+    }
+  }
+
+//bank flow
+  Future<void> getBankDetails() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        getBankDetails: const AsyncLoading(),
+      );
+      final response = await auth.getBankById();
+      state = state.copyWith(getBankDetails: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getBankDetails: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> postBankDetails(
+      {required String accountName,
+      required String bankName,
+      required String accountNumber}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        postBankDetails: const AsyncLoading(),
+      );
+      final response = await auth.postBankDetails(
+          accountName: accountName,
+          accountNumber: accountNumber,
+          bankName: bankName);
+      state = state.copyWith(postBankDetails: AsyncData(response));
+    } catch (e) {
+      state =
+          state.copyWith(postBankDetails: AsyncError(e, StackTrace.current));
+    }
+  }
+
+//service flow
+  Future<void> getServiceById({required String id}) async {
+    final auth = ref.read(authServiceProvider);
+
+    try {
+      state = state.copyWith(getServiceById: const AsyncLoading());
+      final response = await auth.getServiceById(id: id);
+      // print(response.toList());
+      state = state.copyWith(getServiceById: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getServiceById: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  //group
+  Future<void> createGroup(
+      {required String serviceId,
+      required String groupName,
+      required String subscriptionPlan,
+      required int numberOfMembers,
+      required bool existingGroup}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        createGroup: const AsyncLoading(),
+      );
+      final response = await auth.createGroup(
+          serviceId: serviceId,
+          groupName: groupName,
+          subscriptionPlan: subscriptionPlan,
+          numberOfMembers: numberOfMembers,
+          existingGroup: existingGroup);
+      state = state.copyWith(createGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(createGroup: AsyncError(e, StackTrace.current));
+    }
+  }
 }
 
 final profileProvider =
     AutoDisposeNotifierProvider<AuthServiceProvider, AuthServiceProviderStates>(
         AuthServiceProvider.new);
 
+//  AutoDisposeNotifierProvider
 class AuthServiceProviderStates {
   // final AsyncValue<UserModel?> user;
   // final AsyncValue<UserProfile?> profileUpdater;
@@ -307,16 +360,13 @@ class AuthServiceProviderStates {
   final AsyncValue<GeneralResponseModel?> changeProfilePassword;
   final AsyncValue<GeneralResponseModel?> checkTokenstatus;
   final AsyncValue<bool?> isTokenValid;
-  final AsyncValue<UserResponseModel?> getUser;
-  final AsyncValue<CategoriesResponseModel?> getListCategories;
-  final AsyncValue<SubscriptionResponseModel?> getListActiveSub;
+  final AsyncValue<BankResponseModel?> getBankDetails;
+  final AsyncValue<GeneralResponseModel?> createGroup;
+  final AsyncValue<GeneralResponseModel?> postBankDetails;
+  final AsyncValue<CategorybyidResponsModel?> getCategoryById;
+  final AsyncValue<SingleServiceResponsModel?> getServiceById;
   final AsyncValue<SubscriptionResponseModel?> getListInactiveSub;
   final AsyncValue<AvaterResponseModel?> getAllAvater;
-
-  // final AsyncValue<NotificationModel?> notificationFetch;
-  // final AsyncValue<SubscriptionModel?> fetchSubcription;
-  // final AsyncValue<SubscriptionModel?> fetchSubcriptionbyUserId;
-  // final AsyncValue<UpdatePasswordModel?> updatePassword;
   final AsyncValue<String?> getToken;
   // final AsyncValue<String?> initiateSubscription;
 
@@ -334,15 +384,17 @@ class AuthServiceProviderStates {
     required this.isTokenValid,
     required this.logout,
     required this.getToken,
-    required this.getUser,
-    required this.getListCategories,
-    required this.getListActiveSub,
     required this.getListInactiveSub,
     required this.updateAvater,
     required this.updateUserNameAndEmail,
     required this.getAllAvater,
     required this.changeProfilePassword,
     required this.checkTokenstatus,
+    required this.getBankDetails,
+    required this.postBankDetails,
+    required this.getCategoryById,
+    required this.getServiceById,
+    required this.createGroup,
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -367,11 +419,13 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? updateUserNameAndEmail,
     AsyncValue<GeneralResponseModel?>? changeProfilePassword,
     AsyncValue<GeneralResponseModel?>? checkTokenstatus,
-    AsyncValue<UserResponseModel?>? getUser,
-    AsyncValue<CategoriesResponseModel?>? getListCategories,
-    AsyncValue<SubscriptionResponseModel?>? getListActiveSub,
+    AsyncValue<BankResponseModel?>? getBankDetails,
+    AsyncValue<GeneralResponseModel?>? postBankDetails,
+    AsyncValue<GeneralResponseModel?>? createGroup,
     AsyncValue<SubscriptionResponseModel?>? getListInactiveSub,
     AsyncValue<AvaterResponseModel?>? getAllAvater,
+    AsyncValue<CategorybyidResponsModel?>? getCategoryById,
+    AsyncValue<SingleServiceResponsModel?>? getServiceById,
 
     // AsyncValue<NotificationModel?>? notificationFetch,
     // AsyncValue<SubscriptionModel?>? fetchSubcription,
@@ -384,41 +438,43 @@ class AuthServiceProviderStates {
     // AsyncValue<UpdatePasswordModel?>? updatePassword
   }) {
     return AuthServiceProviderStates(
-        // pickedImage: pickedImage ?? this.pickedImage,
-        // user: user ?? this.user,
-        // profileUpdater: profileUpdater ?? this.profileUpdater,
-        generalrespond: generalrespond ?? this.generalrespond,
-        otp: otp ?? this.otp,
-        resendOtp: resendOtp ?? this.resendOtp,
-        login: login ?? this.login,
-        resetPassword: resetPassword ?? this.resetPassword,
-        confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
-        changePassword: changePassword ?? this.changePassword,
-        isTokenValid: isTokenValid ?? this.isTokenValid,
-        logout: logout ?? this.logout,
-        getToken: getToken ?? this.getToken,
-        getUser: getUser ?? this.getUser,
-        getListCategories: getListCategories ?? this.getListCategories,
-        getListActiveSub: getListActiveSub ?? this.getListActiveSub,
-        getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
-        updateAvater: updateAvater ?? this.updateAvater,
-        updateUserNameAndEmail:
-            updateUserNameAndEmail ?? this.updateUserNameAndEmail,
-        getAllAvater: getAllAvater ?? this.getAllAvater,
-        changeProfilePassword:
-            changeProfilePassword ?? this.changeProfilePassword,
-        checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus
+      // pickedImage: pickedImage ?? this.pickedImage,
+      // user: user ?? this.user,
+      // profileUpdater: profileUpdater ?? this.profileUpdater,
+      generalrespond: generalrespond ?? this.generalrespond,
+      otp: otp ?? this.otp,
+      resendOtp: resendOtp ?? this.resendOtp,
+      login: login ?? this.login,
+      resetPassword: resetPassword ?? this.resetPassword,
+      confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
+      changePassword: changePassword ?? this.changePassword,
+      isTokenValid: isTokenValid ?? this.isTokenValid,
+      logout: logout ?? this.logout,
+      getToken: getToken ?? this.getToken,
+      getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
+      updateAvater: updateAvater ?? this.updateAvater,
+      updateUserNameAndEmail:
+          updateUserNameAndEmail ?? this.updateUserNameAndEmail,
+      getAllAvater: getAllAvater ?? this.getAllAvater,
+      changeProfilePassword:
+          changeProfilePassword ?? this.changeProfilePassword,
+      checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus,
+      getBankDetails: getBankDetails ?? this.getBankDetails,
+      postBankDetails: postBankDetails ?? this.postBankDetails,
+      getCategoryById: getCategoryById ?? this.getCategoryById,
+      getServiceById: getServiceById ?? this.getServiceById,
+      createGroup: createGroup ?? this.createGroup,
 
-        // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
-        // notificationFetch: notificationFetch ?? this.notificationFetch,
-        // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
+      // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
+      // notificationFetch: notificationFetch ?? this.notificationFetch,
+      // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
 
-        // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
+      // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
 
-        // inviteLink: inviteLink ?? this.inviteLink,
-        // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+      // inviteLink: inviteLink ?? this.inviteLink,
+      // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
 
-        // updatePassword: updatePassword ?? this.updatePassword
-        );
+      // updatePassword: updatePassword ?? this.updatePassword
+    );
   }
 }

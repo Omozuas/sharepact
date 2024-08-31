@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/chat.dart';
 
-class GroupsScreen extends StatelessWidget {
+class GroupsScreen extends ConsumerStatefulWidget {
+  @override
+  ConsumerState createState() => GroupsScreenState();
+}
+
+class GroupsScreenState extends ConsumerState<GroupsScreen> {
   final List<Map<String, String>> groupsData = [
     {
       'icon': 'assets/netflix.png',
@@ -37,6 +46,9 @@ class GroupsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(userProvider);
+    ref.watch(categoryProvider);
+    ref.watch(subscriptionProvider);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListView.builder(

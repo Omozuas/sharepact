@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/bank_details/screen/bank_details_screen.dart';
@@ -31,7 +34,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid!.code != 200) {
+      if (isTokenValid!.code == 401) {
         _handleSessionExpired();
         return;
       }
@@ -46,7 +49,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
         // Safely check for code
         if (pUpdater.value?.code == 200) {
           await _clearSessionData();
-
+          ref.invalidate(userProvider);
           showSuccess(message: message!, context: context);
 
           // Navigate to LoginScreen if logout is successful
@@ -103,7 +106,9 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final isLoading = ref.watch(profileProvider).logout.isLoading;
+    ref.watch(userProvider);
+    ref.watch(categoryProvider);
+    ref.watch(subscriptionProvider);
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),
@@ -291,6 +296,7 @@ class PopupContentWidgetState extends ConsumerState<PopupContentWidget> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(profileProvider).logout.isLoading;
+
     return Container(
       height: 200,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

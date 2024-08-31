@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sharepact_app/api/model/user/user_model.dart';
-
-import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/screens/notification/screen/notification_screen.dart';
 
 class Header extends ConsumerStatefulWidget {
-  const Header({super.key, this.userModel});
-  final UserModel? userModel;
+  const Header({
+    super.key,
+  });
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _HeaderState();
 }
@@ -17,16 +17,16 @@ class _HeaderState extends ConsumerState<Header> {
   Widget build(
     BuildContext context,
   ) {
-    final user = ref.watch(profileProvider).getUser;
-
+    final user = ref.watch(userProvider);
     return user.when(
+        skipLoadingOnReload: true,
         data: (user) {
-          if (widget.userModel?.avatarUrl == null) {
+          if (user?.avatarUrl == null) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Hi ${widget.userModel?.username}',
+                  'Hi ${user?.username}',
                   style: const TextStyle(
                       fontSize: 16,
                       color: Colors.blue,
@@ -60,7 +60,7 @@ class _HeaderState extends ConsumerState<Header> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hi ${widget.userModel?.username}',
+                'Hi ${user?.username}',
                 style: const TextStyle(
                     fontSize: 16,
                     color: Colors.blue,
@@ -82,8 +82,7 @@ class _HeaderState extends ConsumerState<Header> {
                   ),
                   const SizedBox(width: 10),
                   CircleAvatar(
-                    backgroundImage:
-                        NetworkImage("${widget.userModel?.avatarUrl}"),
+                    backgroundImage: NetworkImage("${user?.avatarUrl}"),
                     radius: 24,
                   )
                 ],
@@ -92,21 +91,38 @@ class _HeaderState extends ConsumerState<Header> {
           );
         },
         error: (e, st) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+          return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Error loading user: $e'),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add retry logic here
-                    ref.read(profileProvider.notifier).getUserDetails();
-                  },
-                  child: const Text('Retry'),
+                const Text(
+                  'Hi',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w600),
                 ),
-              ],
-            ),
-          );
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const NotificationScreen(),
+                        ));
+                      },
+                      child: Image.asset(
+                        'assets/notification.png', // Replace with actual image path
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const CircleAvatar(
+                      backgroundImage: AssetImage("assets/avatars/image2.png"),
+                      radius: 24,
+                    )
+                  ],
+                )
+              ]);
         },
         loading: () => Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

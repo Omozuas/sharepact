@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/providers/settings_provider.dart';
@@ -31,7 +32,7 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
     final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-    if (isTokenValid!.code != 200) {
+    if (isTokenValid!.code == 401) {
       _handleSessionExpired();
       return;
     }
@@ -71,7 +72,7 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
     final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-    if (isTokenValid!.code != 200) {
+    if (isTokenValid!.code == 401) {
       _handleSessionExpired();
       return;
     }
@@ -93,7 +94,7 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
             if (pUpdater.value!.code == 200) {
               showSuccess(message: message!, context: context);
               _fetechAlAvaters();
-              await ref.read(profileProvider.notifier).getUserDetails();
+              await ref.read(userProvider.notifier).getUserDetails();
             } else {
               showErrorPopup(message: message, context: context);
             }
@@ -183,7 +184,7 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
                                 onTap: () async {
                                   Navigator.pop(context);
                                   ref
-                                      .read(profileProvider.notifier)
+                                      .read(userProvider.notifier)
                                       .getUserDetails();
                                 },
                                 child: Icon(Icons.arrow_back_ios)),

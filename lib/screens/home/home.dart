@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
+import 'package:sharepact_app/api/model/user/user_model.dart';
+import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/screens/home/components/service_widget.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/home/header.dart';
 import 'package:sharepact_app/streaming_services.dart'; // Import the StreamingServicesScreen
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
@@ -42,67 +47,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+      final isTokenValid = ref.watch(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid!.code != 200) {
+      if (isTokenValid!.code == 401) {
         _handleSessionExpired();
         return;
       }
-
-      await _fetchUserData();
+      // await _fetchUserData();
       await _fetchCategories();
       await _fetchActiveSubscriptions();
-    } catch (e, stackTrace) {
-      _handleUnexpectedError(e, stackTrace);
+    } catch (e) {
+      // final e1 = e as UserResponseModel;
+      _handleError(e.toString());
     }
   }
 
-  Future<void> _fetchUserData() async {
-    await ref.read(profileProvider.notifier).getUserDetails();
-    final user = ref.watch(profileProvider).getUser.value;
-    if (user?.code != 200) {
-      _handleError(user?.message, user?.code);
-      return;
-    }
-  }
+  // Future<void> _fetchUserData() async {
+  //   await ref.read(profileProvider.notifier).getUserDetails();
+  //   final user = ref.watch(profileProvider).getUser;
+  //   if (user.error != null) {
+  //     _handleError(user.error.toString());
+  //     return;
+  //   }
+  // }
 
   Future<void> _fetchCategories() async {
-    await ref.read(profileProvider.notifier).getListCategories();
-    final categories = ref.watch(profileProvider).getListCategories.value;
+    await ref.read(categoryProvider.notifier).getListCategories();
+    final categories = ref.watch(categoryProvider);
 
-    if (categories?.code == 200) {
-      if (categories?.data != null) {
-        category = categories!.data!;
+    if (categories.hasValue) {
+      if (categories.error == null) {
+        category = categories.value!;
         return;
       } else {
         category = [];
         return;
       }
     } else {
-      _handleError(categories?.message, categories?.code);
+      final e = categories.error as UserResponseModel;
+      _handleError(e.message.toString());
     }
   }
 
-  void _handleError(String? message, int? code) {
-    if (code != 200 && mounted) {
-      showErrorPopup(context: context, message: message);
-      return;
-    }
+  void _handleError([String? message]) {
+    showErrorPopup(context: context, message: message);
+    return;
   }
 
   Future<void> _fetchActiveSubscriptions() async {
-    await ref.read(profileProvider.notifier).getListActiveSub();
-    final activeSub = ref.watch(profileProvider).getListActiveSub.value;
+    await ref.read(subscriptionProvider.notifier).getListActiveSub();
+    final activeSub = ref.watch(subscriptionProvider);
 
-    if (activeSub?.code == 200) {
-      if (activeSub?.data != null) {
-        subscriptionModel = activeSub!.data!;
-        filterSub = activeSub.data!;
+    if (activeSub.error == null) {
+      if (activeSub.hasValue) {
+        subscriptionModel = activeSub.value!;
+        filterSub = activeSub.value!;
       } else {
         subscriptionModel = [];
       }
     } else {
-      _handleError(activeSub?.message, activeSub?.code);
+      final e = activeSub.error as UserResponseModel;
+      _handleError(e.message.toString());
     }
   }
 
@@ -132,7 +137,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       filterSub = subscriptionModel.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
         final planName = (member.planName ?? '').toLowerCase();
-        final adminName = (member.admin?.username ?? '').toLowerCase();
+        final adminName = (member.service?.serviceName ?? '').toLowerCase();
 
         return planName.contains(filter) ||
             groupName.contains(filter) ||
@@ -150,198 +155,200 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // final isLoading = ref.watch(profileProvider).getListCategories.isLoading;
-    final categories = ref.watch(profileProvider).getListCategories;
-    final activeSub = ref.watch(profileProvider).getListActiveSub;
-    final getUser = ref.watch(profileProvider).getUser;
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Header(userModel: getUser.value?.data),
-          const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            height: 53,
-            padding: const EdgeInsets.symmetric(horizontal: 22),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(width: 1, color: Colors.grey),
-            ),
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/search.png',
-                  width: 24,
-                  height: 24,
+    final categories = ref.watch(categoryProvider);
+    final activeSub = ref.watch(subscriptionProvider);
+    ref.watch(profileProvider).checkTokenstatus;
+    return SingleChildScrollView(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          getAll();
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Header(),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                height: 53,
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(width: 1, color: Colors.grey),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search subscriptions',
-                      border: InputBorder.none,
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/search.png',
+                      width: 24,
+                      height: 24,
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Available Categories',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 110,
-            child: categories.when(
-              loading: () => Shimmer.fromColors(
-                baseColor: AppColors.accent,
-                highlightColor: AppColors.primaryColor,
-                child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    // final item = categories!.data![index];
-                    return ServiceWidget(
-                      title: 'Streaming',
-                      imgaeURL: const AssetImage('assets/sphere.png'),
-                      onTap: () {},
-                      backgroundColor: AppColors.lightBlue,
-                    );
-                  },
-                  scrollDirection: Axis.horizontal,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search subscriptions',
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              error: (e, st) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Error loading categories: $e'),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Add retry logic here
-                          ref
-                              .read(profileProvider.notifier)
-                              .getListCategories();
-                        },
-                        child: const Text('Retry'),
-                      ),
-                    ],
+              const SizedBox(height: 20),
+              const Text(
+                'Available Categories',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 110,
+                child: categories.when(
+                  skipLoadingOnReload: true,
+                  loading: () => Shimmer.fromColors(
+                    baseColor: AppColors.accent,
+                    highlightColor: AppColors.primaryColor,
+                    child: ListView.builder(
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        // final item = categories!.data![index];
+                        return ServiceWidget(
+                          title: 'Streaming',
+                          imgaeURL: const AssetImage('assets/sphere.png'),
+                          onTap: () {},
+                          backgroundColor: AppColors.lightBlue,
+                        );
+                      },
+                      scrollDirection: Axis.horizontal,
+                    ),
                   ),
-                );
-              },
-              data: (categories) {
-                return category.isEmpty
-                    ? const Center(
-                        child: Text("No Active Category"),
-                      )
-                    : ListView.builder(
-                        itemCount: category.length,
+                  error: (e, st) {
+                    return Shimmer.fromColors(
+                      baseColor: AppColors.accent,
+                      highlightColor: AppColors.primaryColor,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: 3,
                         itemBuilder: (context, index) {
-                          final item = category[index];
-
+                          // final item = categories!.data![index];
                           return ServiceWidget(
-                            imgaeURL: NetworkImage('${item.imageUrl}'),
-                            title: '${item.categoryName}',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => StreamingServicesScreen(
-                                        id: item.id,
-                                      )),
-                            ),
+                            title: 'loading...',
+                            imgaeURL: const AssetImage('assets/sphere.png'),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          StreamingServicesScreen()));
+                            },
                             backgroundColor: AppColors.lightBlue,
                           );
                         },
                         scrollDirection: Axis.horizontal,
-                      );
-              },
-            ),
-          ),
-          const SizedBox(height: 30),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "My Subscriptions",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Show All",
-                style: TextStyle(
-                    color: AppColors.primaryColor,
-                    decoration: TextDecoration.underline),
-              )
-            ],
-          ),
-          const SizedBox(height: 16),
-          activeSub.when(
-            loading: () => Shimmer.fromColors(
-              baseColor: AppColors.accent,
-              highlightColor: AppColors.primaryColor,
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 18,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: 170),
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  return Opacity(
-                    opacity: 1.0,
-                    child: SubscriptionCard(
-                      service: 'loading...',
-                      price: 10,
-                      members: 3,
-                      nextpayment: '',
-                      createdby: '',
-                    ),
-                  );
-                },
-              ),
-            ),
-            error: (
-              e,
-              stackTrace,
-            ) {
-              print('Error loading subscriptions: $e');
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Error loading subscriptions: $e'),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Add retry logic here
-                        ref.read(profileProvider.notifier).getListActiveSub();
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
+                      ),
+                    );
+                  },
+                  data: (categories) {
+                    return categories == null
+                        ? const Center(
+                            child: Text("No Active Category"),
+                          )
+                        : ListView.builder(
+                            itemCount: categories.length,
+                            itemBuilder: (context, index) {
+                              final item = categories[index];
+
+                              return ServiceWidget(
+                                imgaeURL: NetworkImage('${item.imageUrl}'),
+                                title: '${item.categoryName}',
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          StreamingServicesScreen(
+                                            id: item.id,
+                                          )),
+                                ),
+                                backgroundColor: AppColors.lightBlue,
+                              );
+                            },
+                            scrollDirection: Axis.horizontal,
+                          );
+                  },
                 ),
-              );
-            },
-            // skipLoadingOnReload: true,
-            data: (activeSub) {
-              if (subscriptionModel.isEmpty) {
-                setState(() {
-                  subscriptionModel = activeSub?.data ?? [];
-                  filterSub = subscriptionModel;
-                });
-              }
-              return subscriptionModel.isEmpty
-                  ? const Center(child: Text('No Active Subscription'))
-                  : filterSub.isEmpty
-                      ? Center(
-                          child: Text(
-                              'No Result Found: "${searchController.text}"'))
-                      : GridView.builder(
+              ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "My Subscriptions",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ControllerNavScreen(
+                                    initialIndex: 1,
+                                  )));
+                    },
+                    child: Text(
+                      "Show All",
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          decoration: TextDecoration.underline),
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 16),
+              activeSub.when(
+                skipLoadingOnReload: true,
+                loading: () => Shimmer.fromColors(
+                  baseColor: AppColors.accent,
+                  highlightColor: AppColors.primaryColor,
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 18,
+                            crossAxisSpacing: 12,
+                            mainAxisExtent: 170),
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return Opacity(
+                        opacity: 1.0,
+                        child: SubscriptionCard(
+                          service: 'loading...',
+                          price: 10,
+                          members: 3,
+                          nextpayment: '',
+                          createdby: '',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                error: (
+                  e,
+                  stackTrace,
+                ) {
+                  final el = e as UserResponseModel;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: AppColors.accent,
+                        highlightColor: AppColors.primaryColor,
+                        child: GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
@@ -350,42 +357,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   mainAxisSpacing: 18,
                                   crossAxisSpacing: 12,
                                   mainAxisExtent: 170),
-                          itemCount:
-                              filterSub.length > 6 ? 6 : filterSub.length,
+                          itemCount: 2,
                           itemBuilder: (context, index) {
-                            final item = filterSub[index];
-
                             return Opacity(
                               opacity: 1.0,
                               child: SubscriptionCard(
-                                image: Image.network(
-                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
-                                  width: 16,
-                                  height: 16,
-                                ),
-                                profile: Image.network(
-                                  '${item.service!.logoUrl}', // Replace with the actual path to the members image
-                                  width: 16,
-                                  height: 16,
-                                ),
-                                profile1: Image.network(
-                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
-                                  width: 16,
-                                  height: 16,
-                                ),
-                                service: item.service!.serviceName,
-                                price: item.totalCost,
-                                members: item.numberOfMembers,
+                                service: 'loading...',
+                                price: 10,
+                                members: 3,
                                 nextpayment: '',
-                                createdby: item.admin!.username,
+                                createdby: '',
                               ),
                             );
                           },
-                        );
-            },
+                        ),
+                      ),
+                      Text('Error loading subscriptions: ${el.message}'),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Add retry logic here
+                          getAll();
+                          ref.read(userProvider.notifier).getUserDetails();
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  );
+                },
+                // skipLoadingOnReload: true,
+                data: (activeSub) {
+                  if (subscriptionModel.isEmpty) {
+                    setState(() {
+                      subscriptionModel = activeSub ?? [];
+                      filterSub = subscriptionModel;
+                    });
+                  }
+                  return subscriptionModel.isEmpty
+                      ? const Center(child: Text('No Active Subscription'))
+                      : filterSub.isEmpty
+                          ? Center(
+                              child: Text(
+                                  'No Result Found: "${searchController.text}"'))
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 18,
+                                      crossAxisSpacing: 12,
+                                      mainAxisExtent: 170),
+                              itemCount:
+                                  filterSub.length > 6 ? 6 : filterSub.length,
+                              itemBuilder: (context, index) {
+                                final item = filterSub[index];
+
+                                return Opacity(
+                                  opacity: 1.0,
+                                  child: SubscriptionCard(
+                                    image: Image.network(
+                                      '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                    profile: Image.network(
+                                      '${item.service!.logoUrl}', // Replace with the actual path to the members image
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                    profile1: Image.network(
+                                      '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                    service: item.service!.serviceName,
+                                    price: item.totalCost,
+                                    members: item.numberOfMembers,
+                                    nextpayment: '',
+                                    createdby: item.admin!.username,
+                                  ),
+                                );
+                              },
+                            );
+                },
+              ),
+              const SizedBox(height: 30),
+            ],
           ),
-          const SizedBox(height: 30),
-        ],
+        ),
       ),
     );
   }

@@ -1,84 +1,231 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/create_group.dart';
+import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:sharepact_app/widgets/popup_content.dart';
 import 'package:sharepact_app/widgets/popup_input_widget.dart';
+import 'package:shimmer/shimmer.dart';
 
-class NetflixDetailsScreen extends StatefulWidget {
-  NetflixDetailsScreen({super.key});
-
+class NetflixDetailsScreen extends ConsumerStatefulWidget {
+  const NetflixDetailsScreen({super.key, this.id});
+  final String? id;
   @override
-  State<NetflixDetailsScreen> createState() => _NetflixDetailsScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _NetflixDetailsScreenState();
 }
 
-class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
+class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
   final TextEditingController messageController = TextEditingController();
 
   final TextEditingController codeController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(() => getserviceById());
+  }
+
+  Future<void> getserviceById() async {
+    try {
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+
+      if (isTokenValid!.code == 401) {
+        _handleSessionExpired();
+        return;
+      }
+      await _fetchbyId();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _fetchbyId() async {
+    try {
+      print(widget.id);
+      await ref.read(profileProvider.notifier).getServiceById(id: widget.id!);
+      final categories = ref.read(profileProvider).getServiceById;
+      print(
+          {' service': categories.value?.data?.subscriptionPlans?[0].planName});
+      // setState(() {
+      //   ser = categories!.data!.services!;
+      //   print(categories.data!.services!);
+      // });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(context: context, message: 'Session Expired');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final services = ref.watch(profileProvider).getServiceById;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Handle back button action
+            Navigator.pop(context);
           },
         ),
-        title: const Text('Netflix'),
+        title: Text(services.hasValue
+            ? '${services.value?.data?.serviceName}'
+            : 'loadind....'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 343,
-                height: 178,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Center(
-                  child: ClipOval(
-                    child: Container(
-                      color: Colors.black,
-                      child: Image.asset(
-                        'assets/netflix.png',
-                        width: 120,
-                        height: 120,
+            services.when(
+                data: (services) {
+                  final item = services?.data;
+                  if (item != null) {
+                    return Center(
+                      child: Container(
+                        width: 343,
+                        height: 178,
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Center(
+                          child: ClipOval(
+                            child: Container(
+                              color: Colors.black,
+                              child: Image.network(
+                                item.logoUrl!,
+                                width: 120,
+                                height: 120,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return const Text('No Data');
+                },
+                error: (
+                  e,
+                  stackTrace,
+                ) {
+                  print('Error loading subscriptions: $e');
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Error loading subscriptions: $e'),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add retry logic here
+                            ref
+                                .read(profileProvider.notifier)
+                                .getServiceById(id: widget.id!);
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => Shimmer.fromColors(
+                      baseColor: AppColors.accent,
+                      highlightColor: AppColors.primaryColor,
+                      child: Center(
+                        child: Container(
+                          width: 343,
+                          height: 178,
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Center(
+                            child: ClipOval(
+                              child: Container(
+                                color: Colors.black,
+                                child: Image.asset(
+                                  'assets/netflix.png',
+                                  width: 120,
+                                  height: 120,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+            const SizedBox(height: 16.0),
+            services.when(
+                data: (services) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      '${services?.data?.serviceDescription}',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            const SizedBox(
-              width: double.infinity,
-              child: Text(
-                'Netflix offers a diverse range of subscription plans to cater to different viewing needs and preferences. The Basic Plan allows streaming on one screen at a time, while the Standard Plan offers HD viewing on two screens.',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            const SizedBox(
-              width: double.infinity,
-              child: Text(
-                'For families and enthusiasts, the Premium Plan provides Ultra HD quality on up to four screens simultaneously. Enjoy unlimited access to movies, TV shows, and original content with the flexibility to cancel anytime.',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
+                  );
+                },
+                error: (
+                  e,
+                  stackTrace,
+                ) {
+                  print('Error loading subscriptions: $e');
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Error loading subscriptions: $e'),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add retry logic here
+                            ref
+                                .read(profileProvider.notifier)
+                                .getServiceById(id: widget.id!);
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => Shimmer.fromColors(
+                    baseColor: AppColors.accent,
+                    highlightColor: AppColors.primaryColor,
+                    child: const SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'For families and enthusiasts, the Premium Plan provides Ultra HD quality on up to four screens simultaneously. Enjoy unlimited access to movies, TV shows, and original content with the flexibility to cancel anytime.',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ))),
             const SizedBox(height: 20.0),
             const Text(
               'Available Subscription Plans',
@@ -88,35 +235,70 @@ class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
               ),
             ),
             const SizedBox(height: 10.0),
-            PlanCard(
-              planName: 'Basic Plan',
-              price: '5000 NGN/ month',
-              features: [
-                'Watch on 1 screen at a time',
-                'Unlimited movies and TV shows',
-                'Cancel anytime',
-              ],
-            ),
-            PlanCard(
-              planName: 'Standard Plan',
-              price: '10,000 NGN/ month',
-              features: [
-                'Watch on 2 screens at a time',
-                'HD available',
-                'Unlimited movies and TV shows',
-                'Cancel anytime',
-              ],
-            ),
-            PlanCard(
-              planName: 'Premium Plan',
-              price: '20,000 NGN/ month',
-              features: [
-                'Watch on 4 screens at a time',
-                'Ultra HD available',
-                'Unlimited movies and TV shows',
-                'Cancel anytime',
-              ],
-            ),
+            services.when(
+                data: (services) {
+                  final p = services?.data?.subscriptionPlans;
+                  if (p != null) {
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: services?.data?.subscriptionPlans?.length,
+                        itemBuilder: (context, index) {
+                          final c = p[index];
+                          return PlanCard(
+                            planName: '${c.planName} Plan',
+                            price: '${c.price} NGN/ month',
+                            features: [
+                              ...c.description!,
+                            ],
+                          );
+                        });
+                  }
+                  return Center(
+                    child: Text('date'),
+                  );
+                },
+                error: (
+                  e,
+                  stackTrace,
+                ) {
+                  print('Error loading subscriptions: $e');
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Error loading subscriptions: $e'),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add retry logic here
+                            ref
+                                .read(profileProvider.notifier)
+                                .getServiceById(id: widget.id!);
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => Shimmer.fromColors(
+                    baseColor: AppColors.accent,
+                    highlightColor: AppColors.primaryColor,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: 3,
+                        itemBuilder: (context, index) {
+                          return PlanCard(
+                            planName: 'Basic Plan',
+                            price: '5000 NGN/ month',
+                            features: const [
+                              'Watch on 1 screen at a time',
+                              'Unlimited movies and TV shows',
+                              'Cancel anytime',
+                            ],
+                          );
+                        }))),
             const SizedBox(height: 20.0),
             Container(
               width: double.infinity,
@@ -134,7 +316,7 @@ class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
                   ),
                   const SizedBox(width: 10.0),
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
                           text: 'Sharepact Handling Fee: ',
@@ -144,7 +326,9 @@ class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
                           ),
                         ),
                         TextSpan(
-                          text: '1,000 NGN/ month',
+                          text: services.hasValue
+                              ? '${services.value?.data?.handlingFees} NGN/ month'
+                              : '000 NGN/ month',
                           style: TextStyle(
                             color: Color(0xFF007BFF),
                             fontSize: 16.0,
@@ -189,7 +373,9 @@ class _NetflixDetailsScreenState extends State<NetflixDetailsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CreateGroupScreen(),
+                          builder: (context) => CreateGroupScreen(
+                            id: widget.id,
+                          ),
                         ),
                       );
                     },

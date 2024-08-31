@@ -1,5 +1,5 @@
 class Config {
-  static const String baseUrl = 'https://a8c4-51-6-13-158.ngrok-free.app';
+  static const String baseUrl = 'https://4add-51-6-13-158.ngrok-free.app';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';
@@ -27,10 +27,22 @@ class Config {
 
   //categories Endpoint
   static const String getCategoriesEndpoint = '/api/categories';
+  static const String getCategoriesByIdEndpoint = '/api/categories/';
 
   //subscription Endpoint
   static const String getActiveSubscriptionsEndpoint =
-      '/api/groups?subscriptionStatus=active';
+      '/api/groups?subscription_status=inactive';
+  // '/api/groups?subscription_status=active';
   static const String getInActiveSubscriptionsEndpoint =
-      '/api/groups?subscriptionStatus=inactive';
+      '/api/groups?subscription_status=inactive';
+
+  //bank Endpoint
+  static const String getBankEndpoint = '/api/bank-details/';
+  static const String postBankEndpoint = '/api/bank-details';
+
+  ///service end point
+  static const String getServiceByIdEndpoint = '/api/services/';
+
+  //group
+  static const String createGroupEndpoint = '/api/groups/create';
 }

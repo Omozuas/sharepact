@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/change_avatar.dart';
 import 'package:sharepact_app/login.dart';
@@ -32,8 +33,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
     final myToken = ref.read(profileProvider).getToken.value;
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
     final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-
-    if (isTokenValid!.code != 200) {
+    if (isTokenValid!.code == 401) {
       _handleSessionExpired();
       return;
     }
@@ -49,7 +49,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
           // Check if the response code is 200
           if (pUpdater.value!.code == 200) {
             showSuccess(message: message!, context: context);
-            await ref.read(profileProvider.notifier).getUserDetails();
+            await ref.read(userProvider.notifier).getUserDetails();
           } else {
             showErrorPopup(message: message, context: context);
           }
@@ -79,31 +79,34 @@ class EditProfileState extends ConsumerState<EditProfile> {
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
     final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-    if (isTokenValid!.code != 200) {
+    if (isTokenValid!.code == 401) {
       _handleSessionExpired();
       return;
     }
 
-    await ref.read(profileProvider.notifier).getUserDetails();
-    final user = ref.watch(profileProvider).getUser.value;
-    if (user?.code != 200) {
-      _handleError(user?.message, user?.code);
+    await ref.read(userProvider.notifier).getUserDetails();
+    final ayncUser = ref.watch(userProvider);
+    if (ayncUser.hasError) {
+      final el = ayncUser.error as UserResponseModel;
+      _handleError(el.message.toString());
       return;
-    } else {
+    }
+    if (ayncUser.hasValue) {
       setState(() {
-        _userModel = user?.data;
+        _userModel = ayncUser.value;
         // Populate the controllers with the fetched user data
         emailController.text = _userModel?.email ?? '';
         usernameController.text = _userModel?.username ?? '';
       });
+      return;
     }
   }
 
-  void _handleError(String? message, int? code) {
-    if (code != 200 && mounted) {
-      showErrorPopup(context: context, message: message);
-      return;
-    }
+  void _handleError([
+    String? message,
+  ]) {
+    showErrorPopup(context: context, message: message);
+    return;
   }
 
   void _handleSessionExpired() {
@@ -119,234 +122,240 @@ class EditProfileState extends ConsumerState<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(profileProvider).getUser.isLoading;
+    final isLoading = ref.watch(userProvider).isLoading;
     final isLoading1 =
         ref.watch(profileProvider).updateUserNameAndEmail.isLoading;
-    final userDetails = ref.watch(profileProvider).getUser;
-    return Scaffold(
-      backgroundColor: const Color(0xffE6F2FF),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(Icons.arrow_back_ios)),
-                      Text(
-                        "Edit Profile",
-                        style: GoogleFonts.lato(
-                          color: const Color(0xff343A40),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(),
-                    ],
+    final userDetails = ref.watch(userProvider);
+    return RefreshIndicator(
+      onRefresh: () async {
+        _fetchUserData();
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xffE6F2FF),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ChangeAvatarScreen(),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 4,
-                              color: AppColors.primaryColor,
-                            ),
-                            shape: BoxShape.circle),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: userDetails.when(
-                              data: (userDetails) {
-                                if (_userModel?.avatarUrl == null) {
-                                  return Image.asset(
-                                    'assets/avatars/image4.png',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.arrow_back_ios)),
+                        Text(
+                          "Edit Profile",
+                          style: GoogleFonts.lato(
+                            color: const Color(0xff343A40),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ChangeAvatarScreen(),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 4,
+                                color: AppColors.primaryColor,
+                              ),
+                              shape: BoxShape.circle),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: userDetails.when(
+                                skipLoadingOnReload: true,
+                                data: (userDetails) {
+                                  if (_userModel?.avatarUrl == null) {
+                                    return Image.asset(
+                                      'assets/avatars/image4.png',
+                                      fit: BoxFit.cover,
+                                    );
+                                  }
+                                  return Image.network(
+                                    "${_userModel?.avatarUrl}",
                                     fit: BoxFit.cover,
                                   );
-                                }
-                                return Image.network(
-                                  "${_userModel?.avatarUrl}",
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                              error: (e, st) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text('Error loading categories: $e'),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // Add retry logic here
-                                          ref
-                                              .read(profileProvider.notifier)
-                                              .getUserDetails();
-                                        },
-                                        child: const Text('Retry'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              loading: () => Shimmer.fromColors(
+                                },
+                                error: (e, st) {
+                                  return Shimmer.fromColors(
                                     baseColor: AppColors.accent,
                                     highlightColor: AppColors.primaryColor,
                                     child: Image.asset(
                                       'assets/avatars/image4.png',
                                       fit: BoxFit.cover,
                                     ),
-                                  )),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
+                                  );
+                                },
+                                loading: () => Shimmer.fromColors(
+                                      baseColor: AppColors.accent,
+                                      highlightColor: AppColors.primaryColor,
+                                      child: Image.asset(
+                                        'assets/avatars/image4.png',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
                           ),
-                          child: Center(
-                              child: SvgPicture.asset(AppImages.editIcon)),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Edit Profile",
-                  style: GoogleFonts.lato(
-                    color: AppColors.textColor,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  isLoading ? "Janedoe@gmail.com" : "${_userModel?.email}",
-                  style: GoogleFonts.lato(
-                    color: AppColors.textColor,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.55,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(64),
-                      topRight: Radius.circular(64),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                                child: SvgPicture.asset(AppImages.editIcon)),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Username',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                          ),
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      TextField(
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          hintStyle:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: const Color(0xff5D6166),
-                                  ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                                color: Color(0xffBBC0C3), width: 1),
-                          ),
-                          contentPadding: const EdgeInsets.all(20),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Email Address',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: isLoading
-                              ? 'Janedoe@gmail.com'
-                              : "${_userModel?.email}",
-                          hintStyle:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: const Color(0xff5D6166),
-                                  ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          contentPadding: const EdgeInsets.all(20),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 59,
-                        child: ElevatedButton(
-                          onPressed: isLoading1 ? () {} : update,
-                          child: isLoading1
-                              ? const CircularProgressIndicator()
-                              : const Text('Save Changes'),
-                        ),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 20,
                   ),
-                )
-              ],
+                  Text(
+                    "Edit Profile",
+                    style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    isLoading
+                        ? "Janedoe@gmail.com"
+                        : "${_userModel?.email ?? 'loading...'} ",
+                    style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.55,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(64),
+                        topRight: Radius.circular(64),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Username',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const Text(
+                              '*',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextField(
+                          controller: usernameController,
+                          decoration: InputDecoration(
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: const Color(0xff5D6166),
+                                ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(
+                                  color: Color(0xffBBC0C3), width: 1),
+                            ),
+                            contentPadding: const EdgeInsets.all(20),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Email Address',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: isLoading
+                                ? 'Janedoe@gmail.com'
+                                : "${_userModel?.email ?? 'loading...'} ",
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: const Color(0xff5D6166),
+                                ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            contentPadding: const EdgeInsets.all(20),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 59,
+                          child: ElevatedButton(
+                            onPressed: isLoading1 ? () {} : update,
+                            child: isLoading1
+                                ? const CircularProgressIndicator()
+                                : const Text('Save Changes'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

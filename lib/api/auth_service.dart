@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
+import 'package:sharepact_app/api/model/bank/bank_model.dart';
+import 'package:sharepact_app/api/model/categories/categoryByid.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/model/newmodel.dart';
+import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
@@ -149,7 +154,7 @@ class AuthService {
         token: token,
         endpoint: Config.verifyTokenEndpoint,
       );
-
+      print(response.body);
       return generalResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       print('Request timeout');
@@ -167,26 +172,29 @@ class AuthService {
   }
 
 //user flow
-  Future<UserResponseModel> getUser() async {
+  Future<UserModel> getUser() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
         token: token,
         endpoint: Config.getUserEndpoint,
       );
-
-      return userResponseModelFromJson(response.body);
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return UserModel.fromJson(body['data']);
+      }
+      throw CustomException(code: response.statusCode, message: 'err');
     } on TimeoutException catch (_) {
       print('Request timeout');
-      return UserResponseModel(
+      throw UserResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
       print('No Internet connection');
-      return UserResponseModel(
+      throw UserResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
       print('Error: $e');
-      return UserResponseModel(
+      throw UserResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
   }
@@ -245,50 +253,109 @@ class AuthService {
   }
 
   ///category flow
-  Future<CategoriesResponseModel> getListCategories() async {
+  Future<List<CategoriesModel>> getListCategories() async {
     final token = await getToken();
     try {
       final response = await apiService.get(
         token: token,
         endpoint: Config.getCategoriesEndpoint,
       );
-      return categoriesResponseModelFromJson(response.body);
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body != null) {
+          final category = List<CategoriesModel>.from(
+              body['data'].map((x) => CategoriesModel.fromJson(x)));
+          return category;
+        }
+
+        return [];
+      }
+      throw CustomException(code: response.statusCode, message: 'err');
     } on TimeoutException catch (_) {
       print('Request timeout');
-      return CategoriesResponseModel(
+      throw CategoriesResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
       print('No Internet connection');
-      return CategoriesResponseModel(
+      throw CategoriesResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
       print('Error: $e');
-      return CategoriesResponseModel(
+      throw CategoriesResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
   }
 
-  ///subscription flow
-  Future<SubscriptionResponseModel> getListActiveSub() async {
+  Future<CategorybyidResponsModel> getCategoriesById(
+      {required String id}) async {
     final token = await getToken();
     try {
       final response = await apiService.get(
         token: token,
-        endpoint: Config.getActiveSubscriptionsEndpoint,
+        endpoint: '${Config.getCategoriesByIdEndpoint}$id',
       );
+      var message = jsonDecode(response.body);
+      print(message['data']);
+      if (response.statusCode == 200) {
+        return categorybyidResponsModelFromJson(response.body);
+      }
 
-      return subscriptionResponseModelFromJson(response.body);
+      return CategorybyidResponsModel(
+          code: response.statusCode, message: message['message']);
     } on TimeoutException catch (_) {
       print('Request timeout');
-      return SubscriptionResponseModel(
+      return CategorybyidResponsModel(
+        code: 408,
+        message: 'Request Timeout',
+      );
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return CategorybyidResponsModel(
+        code: 503,
+        message: 'No Internet connection',
+      );
+    } catch (e) {
+      print('Error: $e');
+      return CategorybyidResponsModel(
+        code: 500,
+        message: 'Something went wrong',
+      );
+    }
+  }
+
+  ///subscription flow
+  Future<List<SubscriptionModel>> getListActiveSub(
+      {String? page, String? limit}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint:
+            '${Config.getActiveSubscriptionsEndpoint}&page=$page&limit=$limit',
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body != null) {
+          final sub = List<SubscriptionModel>.from(
+              body['data'].map((x) => SubscriptionModel.fromJson(x)));
+          return sub;
+        }
+
+        return [];
+      }
+      throw CustomException(code: response.statusCode, message: 'err');
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      throw UserResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
       print('No Internet connection');
-      return SubscriptionResponseModel(
+      throw UserResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
       print('Error: $e');
-      return SubscriptionResponseModel(
+      throw UserResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
   }
@@ -315,44 +382,133 @@ class AuthService {
           code: 500, message: 'Something went wrong', data: null);
     }
   }
-  // Future<GeneralResponseModel> getUser() async {
-  //   try {
-  //     bool valid = await isTokenValid();
-  //     if (!valid) {
-  //       // Return an error response or handle it accordingly
-  //       throw Exception("Invalid or expired token. Please log in again.");
-  //     }
-  //     final token = await getToken();
-  //     final response = await http.get(
-  //       Uri.parse(Config.signinEndpoint),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //     ).timeout(Config.requestTimeout);
 
-  //     if (response.statusCode == 200) {
-  //       return generalResponseModelFromJson(response.body);
-  //     } else {
-  //       final errorResponse = jsonDecode(response.body);
-  //       throw Exception(errorResponse['error'] ?? 'Failed to sign in');
-  //     }
-  //   } catch (e) {
-  //     throw Exception('Failed to sign in: $e');
-  //   }
-  // }
+  //bank flow
+  Future<BankResponseModel> getBankById() async {
+    final token = await getToken();
+    final userId = await getuserId();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getBankEndpoint + userId,
+      );
+
+      return bankResponseModelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return BankResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return BankResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
+    } catch (e) {
+      print('Error: $e');
+      return BankResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GeneralResponseModel> postBankDetails(
+      {required String accountName,
+      required String bankName,
+      required String accountNumber}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.post(
+          endpoint: Config.postBankEndpoint,
+          body: {
+            "accountName": accountName,
+            "bankName": bankName,
+            "accountNumber": accountNumber,
+          },
+          token: token);
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //service flow
+  Future<SingleServiceResponsModel> getServiceById({required String id}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: '${Config.getServiceByIdEndpoint}$id',
+      );
+      var message = jsonDecode(response.body);
+      print(message['data']);
+      if (response.statusCode == 200) {
+        return singleServiceResponsModelFromJson(response.body);
+      }
+
+      return SingleServiceResponsModel(
+          code: response.statusCode, message: message['message']);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return SingleServiceResponsModel(
+        code: 408,
+        message: 'Request Timeout',
+      );
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return SingleServiceResponsModel(
+        code: 503,
+        message: 'No Internet connection',
+      );
+    } catch (e) {
+      print('Error: $e');
+      return SingleServiceResponsModel(
+        code: 500,
+        message: 'Something went wrong',
+      );
+    }
+  }
+
+//group
+  Future<GeneralResponseModel> createGroup(
+      {required String serviceId,
+      required String groupName,
+      required String subscriptionPlan,
+      required int numberOfMembers,
+      required bool existingGroup}) async {
+    final token = await getToken();
+    try {
+      print({
+        "serviceId": serviceId,
+        "groupName": groupName,
+        "subscriptionPlan": subscriptionPlan,
+        "numberOfMembers": numberOfMembers,
+        "existingGroup": existingGroup
+      });
+      final response = await apiService
+          .post(token: token, endpoint: Config.createGroupEndpoint, body: {
+        "serviceId": serviceId,
+        "groupName": groupName,
+        "subscriptionPlan": subscriptionPlan,
+        "numberOfMembers": numberOfMembers,
+        "existingGroup": existingGroup
+      });
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   void saveToken(GeneralResponseModel? response) async {
     if (response!.data == null) return;
     final preferences = await SharedPreferences.getInstance();
     preferences.setString('token', response.data!["token"]);
+    preferences.setString('userID', response.data!['user']['_id']);
     return;
   }
 
   Future<bool> isTokenValid() async {
     final preferences = await SharedPreferences.getInstance();
     final token = preferences.getString('token');
-
     if (token == null) {
       return false; // No token stored
     } else {
@@ -363,6 +519,11 @@ class AuthService {
   Future<String> getToken() async {
     final preferences = await SharedPreferences.getInstance();
     return preferences.getString('token') ?? '';
+  }
+
+  Future<String> getuserId() async {
+    final preferences = await SharedPreferences.getInstance();
+    return preferences.getString('userID') ?? '';
   }
 }
 
