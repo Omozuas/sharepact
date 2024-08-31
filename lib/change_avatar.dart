@@ -30,9 +30,8 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
     await ref.read(profileProvider.notifier).getToken();
     final myToken = ref.read(profileProvider).getToken.value;
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-
-    if (isTokenValid!.code == 401) {
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus;
+    if (isTokenValid.value!.code != 200) {
       _handleSessionExpired();
       return;
     }

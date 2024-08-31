@@ -61,15 +61,15 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
 
-      if (isTokenValid!.code == 401) {
+      if (isTokenValid.value!.code != 200) {
         _handleSessionExpired();
         return;
       }
       await _fetchActiveSubscriptions();
-    } catch (e, stackTrace) {
-      _handleUnexpectedError(e, stackTrace);
+    } catch (e) {
+      _handleUnexpectedError(e);
     }
   }
 
@@ -105,12 +105,11 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
     }
   }
 
-  void _handleUnexpectedError(Object e, StackTrace stackTrace) {
+  void _handleUnexpectedError(e) {
     if (mounted) {
       print('Unexpected Error: $e');
-      print('StackTrace: $stackTrace');
-      showErrorPopup(
-          context: context, message: 'An unexpected error occurred.');
+      // print('StackTrace: $stackTrace');
+      showErrorPopup(context: context, message: e.toString());
     }
   }
 
@@ -252,7 +251,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                       onPressed: () {
                         // Add retry logic here
                         getAll();
-                        ref.read(userProvider.notifier).getUserDetails();
                       },
                       child: const Text('Retry'),
                     ),

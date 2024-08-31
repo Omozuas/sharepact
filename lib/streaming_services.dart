@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/categoryByid.dart';
-import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
@@ -48,19 +47,17 @@ class _StreamingServicesScreenState
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
-
-      if (isTokenValid.value!.code == 401) {
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+      if (isTokenValid!.code != 200) {
         _handleSessionExpired();
         return;
       }
-      if (isTokenValid.error != null) {
-        final e = isTokenValid.error as GeneralResponseModel;
-        showErrorPopup(context: context, message: e.message);
-      }
+
       await _fetchbyId();
     } catch (e) {
-      showErrorPopup(context: context, message: e.toString());
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
     }
   }
 

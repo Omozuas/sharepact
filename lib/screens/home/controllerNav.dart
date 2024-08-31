@@ -43,7 +43,7 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.watch(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid!.code == 401) {
+      if (isTokenValid!.code != 200) {
         _handleSessionExpired();
         return;
       }

@@ -32,9 +32,9 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
 
-      if (isTokenValid!.code == 401) {
+      if (isTokenValid.value!.code != 200) {
         _handleSessionExpired();
         return;
       }

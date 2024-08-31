@@ -79,7 +79,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
     await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
     final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-    if (isTokenValid!.code == 401) {
+    if (isTokenValid!.code != 200) {
       _handleSessionExpired();
       return;
     }

@@ -179,11 +179,9 @@ class AuthService {
         token: token,
         endpoint: Config.getUserEndpoint,
       );
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-        return UserModel.fromJson(body['data']);
-      }
-      throw CustomException(code: response.statusCode, message: 'err');
+
+      final body = jsonDecode(response.body);
+      return UserModel.fromJson(body['data']);
     } on TimeoutException catch (_) {
       print('Request timeout');
       throw UserResponseModel(
