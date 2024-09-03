@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/config.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/screens/group_details/screen/group_details_screen.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
-import 'package:socket_io_client/socket_io_client.dart' as Io;
 
-class ChatScreen extends StatefulWidget {
+import 'package:socket_io_client/socket_io_client.dart';
+
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
-  late Io.Socket socket;
-  void connect() {
-    socket = Io.io(Config.baseUrl, <String, dynamic>{
-      'transports': ['websocket'],
-    });
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  Future<void> connect({String? token}) async {
+    await ref.read(profileProvider.notifier).getToken();
+    final myToken = ref.read(profileProvider).getToken.value;
+    final Socket socket = io(
+        'https://improved-endlessly-midge.ngrok-free.app',
+        OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .setExtraHeaders({'token': myToken})
+            .build());
+
+    socket.connect();
+    socket.onConnect((data) => print('connected'));
+    socket.onDisconnect((_) => print('disconnected'));
+    print(socket.connected);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() => connect());
   }
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(

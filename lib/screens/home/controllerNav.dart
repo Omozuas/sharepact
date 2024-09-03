@@ -44,8 +44,8 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.watch(profileProvider).checkTokenstatus.value;
-
-      if (isTokenValid!.code != 200) {
+      print(isTokenValid?.data);
+      if (isTokenValid?.code != 200) {
         _handleSessionExpired();
         return;
       }
@@ -99,7 +99,8 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
   @override
   Widget build(BuildContext context) {
     // Define the screens for each index
-
+    ref.watch(profileProvider).checkTokenstatus;
+    ref.watch(userProvider);
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {

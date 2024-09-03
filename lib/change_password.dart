@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
@@ -46,20 +45,14 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   Future<void> _updatePassword(
       {required String newPassword, required String currentPassword}) async {
-    print({newPassword, currentPassword});
     try {
       await ref.read(profileProvider.notifier).getToken();
       final myToken = ref.read(profileProvider).getToken.value;
-      print(myToken);
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.read(profileProvider).checkTokenstatus;
-      final er = isTokenValid.error as GeneralResponseModel;
-      if (isTokenValid.error != null) {
-        showErrorPopup(context: context, message: er.message);
-        return;
-      }
+
       if (isTokenValid.value!.code != 200) {
         _handleSessionExpired();
         return;
