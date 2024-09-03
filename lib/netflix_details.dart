@@ -497,7 +497,7 @@ class PlanCard extends StatelessWidget {
 class FeatureItem extends StatelessWidget {
   final String text;
 
-  FeatureItem({required this.text});
+  const FeatureItem({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {

@@ -112,6 +112,7 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(profileProvider).generalrespond.isLoading;
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Navigator.push(context,

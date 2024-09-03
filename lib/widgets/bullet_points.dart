@@ -7,7 +7,7 @@ class BulletPointWidget extends StatelessWidget {
   final Widget? textWidget;
   const BulletPointWidget({
     super.key,
-     this.text = "",
+    this.text = "",
     this.textWidget,
   });
 
@@ -20,13 +20,13 @@ class BulletPointWidget extends StatelessWidget {
         Container(
           height: 5,
           width: 5,
-          margin: EdgeInsets.only(top: 5),
+          margin: const EdgeInsets.only(top: 5),
           decoration: const BoxDecoration(
             color: AppColors.textColor,
             shape: BoxShape.circle,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Expanded(
