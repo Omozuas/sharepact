@@ -102,14 +102,11 @@ String subscriptionResponseModelToJson(SubscriptionResponseModel data) =>
 
 class SubscriptionModel {
   String? id;
-  String? planName;
   String? groupName;
-  String? subscriptionPlan;
   final numberOfMembers;
   final subscriptionCost;
   final handlingFee;
   final individualShare;
-  final totalCost;
   String? groupCode;
   ServiceModel? service;
   AdmineModel? admin;
@@ -117,21 +114,20 @@ class SubscriptionModel {
   List<JoinRequest>? joinRequests;
   bool? existingGroup;
   bool? activated;
+  DateTime? nextSubscriptionDate;
   DateTime? createdAt;
   DateTime? updatedAt;
+  bool? oneTimePayment;
   final v;
 
   SubscriptionModel({
     this.id,
-    this.planName,
     this.service,
     this.groupName,
-    this.subscriptionPlan,
     this.numberOfMembers,
     this.subscriptionCost,
     this.handlingFee,
     this.individualShare,
-    this.totalCost,
     this.groupCode,
     this.admin,
     this.members,
@@ -140,51 +136,56 @@ class SubscriptionModel {
     this.activated,
     this.createdAt,
     this.updatedAt,
+    this.nextSubscriptionDate,
+    this.oneTimePayment,
     this.v,
   });
 
-  factory SubscriptionModel.fromJson(Map<String, dynamic> json) =>
-      SubscriptionModel(
-        id: json["_id"],
-        planName: json["planName"],
-        service: ServiceModel.fromJson(json["service"]),
-        groupName: json["groupName"],
-        subscriptionPlan: json["subscriptionPlan"],
-        numberOfMembers: json["numberOfMembers"],
-        subscriptionCost: json["subscriptionCost"],
-        handlingFee: json["handlingFee"],
-        individualShare: json["individualShare"],
-        totalCost: json["totalCost"],
-        groupCode: json["groupCode"],
-        admin: AdmineModel.fromJson(json["admin"]),
-        members: json["members"] != null
-            ? List<SubmembersModel>.from(
-                json["members"].map((x) => SubmembersModel.fromJson(x)))
-            : [], // Provide an empty list if null
-        joinRequests: json["joinRequests"] != null
-            ? List<JoinRequest>.from(
-                json["joinRequests"].map((x) => JoinRequest.fromJson(x)))
-            : [],
-        existingGroup: json["existingGroup"],
-        activated: json["activated"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-      );
+  factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
+    return SubscriptionModel(
+      id: json["_id"] as String?, // Safely cast to String?
+      service: json["service"] != null
+          ? ServiceModel.fromJson(json["service"])
+          : null,
+      groupName: json["groupName"] as String?, // Safely cast to String?
+      numberOfMembers: json["numberOfMembers"],
+      subscriptionCost: json["subscriptionCost"],
+      handlingFee: json["handlingFee"],
+      individualShare: json["individualShare"],
+      groupCode: json["groupCode"] as String?, // Safely cast to String?
+      oneTimePayment: json["oneTimePayment"] as bool?,
+      admin: json["admin"] != null ? AdmineModel.fromJson(json["admin"]) : null,
+      members: json["members"] != null
+          ? List<SubmembersModel>.from(
+              json["members"].map((x) => SubmembersModel.fromJson(x)))
+          : [], // Provide an empty list if null
+      joinRequests: json["joinRequests"] != null
+          ? List<JoinRequest>.from(
+              json["joinRequests"].map((x) => JoinRequest.fromJson(x)))
+          : [], // Provide an empty list if null
+      existingGroup: json["existingGroup"] as bool?,
+      nextSubscriptionDate: json["nextSubscriptionDate"] != null
+          ? DateTime.parse(json["nextSubscriptionDate"])
+          : null,
+      activated: json["activated"] as bool?,
+      createdAt:
+          json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
+      updatedAt:
+          json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
+      v: json["__v"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "_id": id,
-        "planName": planName,
         "service": service,
         "groupName": groupName,
-        "subscriptionPlan": subscriptionPlan,
         "numberOfMembers": numberOfMembers,
         "subscriptionCost": subscriptionCost,
         "handlingFee": handlingFee,
         "individualShare": individualShare,
-        "totalCost": totalCost,
         "groupCode": groupCode,
-        "admin": admin,
+        "admin": admin?.toJson(),
         "members": List<dynamic>.from(members!.map((x) => x.toJson())),
         "joinRequests":
             List<dynamic>.from(joinRequests!.map((x) => x.toJson())),
@@ -193,13 +194,12 @@ class SubscriptionModel {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
+        "nextSubscriptionDate": nextSubscriptionDate?.toIso8601String(),
       };
 
   SubscriptionModel copyWith({
     String? id,
-    String? planName,
     String? groupName,
-    String? subscriptionPlan,
     String? groupCode,
     ServiceModel? service,
     AdmineModel? admin,
@@ -207,14 +207,14 @@ class SubscriptionModel {
     List<JoinRequest>? joinRequests,
     bool? existingGroup,
     bool? activated,
+    DateTime? nextSubscriptionDate,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? oneTimePayment,
   }) {
     return SubscriptionModel(
       id: id ?? this.id,
-      planName: planName ?? this.planName,
       groupName: groupName ?? this.groupName,
-      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
       groupCode: groupCode ?? this.groupCode,
       service: service ?? this.service,
       admin: admin ?? this.admin,
@@ -222,14 +222,16 @@ class SubscriptionModel {
       joinRequests: joinRequests ?? this.joinRequests,
       existingGroup: existingGroup ?? this.existingGroup,
       activated: activated ?? this.activated,
+      nextSubscriptionDate: nextSubscriptionDate ?? this.nextSubscriptionDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      oneTimePayment: oneTimePayment ?? this.oneTimePayment,
     );
   }
 
   @override
   String toString() {
-    return 'SubscriptionModel(id: $id, planName: $planName, groupName: $groupName, subscriptionPlan: $subscriptionPlan, groupCode: $groupCode, service: $service, admin: $admin, members: $members, joinRequests: $joinRequests, existingGroup: $existingGroup, activated: $activated, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'SubscriptionModel(id: $id, groupName: $groupName, groupCode: $groupCode, service: $service, admin: $admin, members: $members, joinRequests: $joinRequests, existingGroup: $existingGroup, activated: $activated, nextSubscriptionDate: $nextSubscriptionDate, createdAt: $createdAt, updatedAt: $updatedAt, oneTimePayment: $oneTimePayment)';
   }
 
   @override
@@ -237,9 +239,7 @@ class SubscriptionModel {
     if (identical(this, other)) return true;
 
     return other.id == id &&
-        other.planName == planName &&
         other.groupName == groupName &&
-        other.subscriptionPlan == subscriptionPlan &&
         other.groupCode == groupCode &&
         other.service == service &&
         other.admin == admin &&
@@ -247,16 +247,16 @@ class SubscriptionModel {
         listEquals(other.joinRequests, joinRequests) &&
         other.existingGroup == existingGroup &&
         other.activated == activated &&
+        other.nextSubscriptionDate == nextSubscriptionDate &&
         other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+        other.updatedAt == updatedAt &&
+        other.oneTimePayment == oneTimePayment;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-        planName.hashCode ^
         groupName.hashCode ^
-        subscriptionPlan.hashCode ^
         groupCode.hashCode ^
         service.hashCode ^
         admin.hashCode ^
@@ -264,7 +264,9 @@ class SubscriptionModel {
         joinRequests.hashCode ^
         existingGroup.hashCode ^
         activated.hashCode ^
+        nextSubscriptionDate.hashCode ^
         createdAt.hashCode ^
-        updatedAt.hashCode;
+        updatedAt.hashCode ^
+        oneTimePayment.hashCode;
   }
 }

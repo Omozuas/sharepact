@@ -61,9 +61,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       await ref
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
 
-      if (isTokenValid.value!.code != 200) {
+      if (isTokenValid?.data['valid'] != true) {
         _handleSessionExpired();
         return;
       }
@@ -115,18 +115,17 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   void filterMembers() {
     final filter = searchController.text.toLowerCase();
-    // final sub = ref.watch(subscriptionProvider).value;
-    setState(() {
-      filterSub = ref.watch(subscriptionProvider).value!.where((member) {
-        final groupName = (member.groupName ?? '').toLowerCase();
-        final planName = (member.planName ?? '').toLowerCase();
-        final adminName = (member.service?.serviceName ?? '').toLowerCase();
+    final subscriptions = ref.watch(subscriptionProvider).value;
+    if (subscriptions != null) {
+      setState(() {
+        filterSub = subscriptions.where((member) {
+          final groupName = (member.groupName ?? '').toLowerCase();
+          final adminName = (member.service?.serviceName ?? '').toLowerCase();
 
-        return planName.contains(filter) ||
-            groupName.contains(filter) ||
-            adminName.contains(filter);
-      }).toList();
-    });
+          return groupName.contains(filter) || adminName.contains(filter);
+        }).toList();
+      });
+    }
   }
 
   @override
@@ -258,9 +257,13 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                 );
               },
               data: (activeSub) {
-                setState(() {
-                  filterSub = activeSub!;
-                });
+                if (searchController.text.isEmpty) {
+                  setState(() {
+                    filterSub = activeSub ?? [];
+                  });
+                } else {
+                  filterMembers(); // Apply filter based on the current search term
+                }
                 if (activeSub!.isEmpty) {
                   return const Center(child: Text('No Active Subscription'));
                 }
@@ -288,25 +291,27 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                               opacity: 1.0,
                               child: SubscriptionCard(
                                 image: Image.network(
-                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  '${item.admin?.avatarUrl}', // Replace with the actual path to the members image
                                   width: 16,
                                   height: 16,
                                 ),
                                 profile: Image.network(
-                                  '${item.service!.logoUrl}', // Replace with the actual path to the members image
+                                  '${item.service?.logoUrl}', // Replace with the actual path to the members image
                                   width: 16,
                                   height: 16,
                                 ),
                                 profile1: Image.network(
-                                  '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                  '${item.admin?.avatarUrl}', // Replace with the actual path to the members image
                                   width: 16,
                                   height: 16,
                                 ),
-                                service: item.service!.serviceName,
-                                price: item.totalCost,
+                                service: item.service?.serviceName,
+                                price: item.subscriptionCost,
                                 members: item.numberOfMembers,
-                                nextpayment: '',
+                                nextpayment:
+                                    item.nextSubscriptionDate.toString(),
                                 createdby: item.admin!.username,
+                                currentMembers: item.members?.length.toString(),
                               ),
                             );
                           },

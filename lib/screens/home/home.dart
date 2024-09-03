@@ -33,7 +33,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // filterSub = subscriptionModel;
     searchController.addListener(filterMembers);
@@ -48,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-      if (isTokenValid!.code != 200) {
+      if (isTokenValid?.code != 200) {
         _handleSessionExpired();
         return;
       }
@@ -89,8 +88,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _handleError([String? message]) {
-    showErrorPopup(context: context, message: message);
-    return;
+    if (mounted) {
+      showErrorPopup(context: context, message: message);
+      return;
+    }
   }
 
   Future<void> _fetchActiveSubscriptions() async {
@@ -121,10 +122,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  void _handleUnexpectedError(Object e, StackTrace stackTrace) {
+  void handleUnexpectedError(Object e, StackTrace stackTrace) {
     if (mounted) {
-      print('Unexpected Error: $e');
-      print('StackTrace: $stackTrace');
+      // print('Unexpected Error: $e');
+      // print('StackTrace: $stackTrace');
       showErrorPopup(
           context: context, message: 'An unexpected error occurred.');
     }
@@ -135,12 +136,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() {
       filterSub = subscriptionModel.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
-        final planName = (member.planName ?? '').toLowerCase();
+
         final adminName = (member.service?.serviceName ?? '').toLowerCase();
 
-        return planName.contains(filter) ||
-            groupName.contains(filter) ||
-            adminName.contains(filter);
+        return groupName.contains(filter) || adminName.contains(filter);
       }).toList();
     });
   }
@@ -163,11 +162,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           getAll();
         },
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Header(),
+              const Header(),
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
@@ -188,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Expanded(
                       child: TextField(
                         controller: searchController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Search subscriptions',
                           border: InputBorder.none,
                         ),
@@ -242,7 +241,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          StreamingServicesScreen()));
+                                          const StreamingServicesScreen()));
                             },
                             backgroundColor: AppColors.lightBlue,
                           );
@@ -284,7 +283,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "My Subscriptions",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
@@ -293,11 +292,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ControllerNavScreen(
+                              builder: (context) => const ControllerNavScreen(
                                     initialIndex: 1,
                                   )));
                     },
-                    child: Text(
+                    child: const Text(
                       "Show All",
                       style: TextStyle(
                           color: AppColors.primaryColor,
@@ -323,7 +322,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             mainAxisExtent: 170),
                     itemCount: 6,
                     itemBuilder: (context, index) {
-                      return Opacity(
+                      return const Opacity(
                         opacity: 1.0,
                         child: SubscriptionCard(
                           service: 'loading...',
@@ -358,7 +357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   mainAxisExtent: 170),
                           itemCount: 2,
                           itemBuilder: (context, index) {
-                            return Opacity(
+                            return const Opacity(
                               opacity: 1.0,
                               child: SubscriptionCard(
                                 service: 'loading...',
@@ -415,25 +414,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   opacity: 1.0,
                                   child: SubscriptionCard(
                                     image: Image.network(
-                                      '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                      '${item.admin?.avatarUrl}', // Replace with the actual path to the members image
                                       width: 16,
                                       height: 16,
                                     ),
                                     profile: Image.network(
-                                      '${item.service!.logoUrl}', // Replace with the actual path to the members image
+                                      '${item.service?.logoUrl}', // Replace with the actual path to the members image
                                       width: 16,
                                       height: 16,
                                     ),
                                     profile1: Image.network(
-                                      '${item.admin!.avatarUrl}', // Replace with the actual path to the members image
+                                      '${item.admin?.avatarUrl}', // Replace with the actual path to the members image
                                       width: 16,
                                       height: 16,
                                     ),
-                                    service: item.service!.serviceName,
-                                    price: item.totalCost,
+                                    service: item.service?.serviceName,
+                                    price: item.subscriptionCost,
                                     members: item.numberOfMembers,
-                                    nextpayment: '',
+                                    nextpayment:
+                                        item.nextSubscriptionDate.toString(),
                                     createdby: item.admin!.username,
+                                    currentMembers:
+                                        item.members?.length.toString(),
                                   ),
                                 );
                               },

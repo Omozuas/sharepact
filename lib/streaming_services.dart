@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/categoryByid.dart';
+import 'package:sharepact_app/api/riverPod/categoryById.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/login.dart';
 import 'package:sharepact_app/responsive_widgets.dart';
 import 'package:sharepact_app/responsive_helpers.dart';
 import 'package:sharepact_app/netflix_details.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
 // Import other screens similarly
@@ -23,7 +25,6 @@ class StreamingServicesScreen extends ConsumerStatefulWidget {
 class _StreamingServicesScreenState
     extends ConsumerState<StreamingServicesScreen> {
   void _navigateToScreen(BuildContext context, String serviceId) {
-    print('hu');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -35,7 +36,6 @@ class _StreamingServicesScreenState
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.microtask(() => getserviceById());
   }
@@ -65,17 +65,20 @@ class _StreamingServicesScreenState
   Future<void> _fetchbyId() async {
     try {
       await ref
-          .read(profileProvider.notifier)
+          .read(categorybyidProvider.notifier)
           .getCategoriesById(id: widget.id!);
-      final categories = ref.read(profileProvider).getCategoryById;
+      final categories = ref.read(categorybyidProvider);
       if (categories.value!.code != 200) {
         await getserviceById();
-        showErrorPopup(context: context, message: categories.value?.message);
-        return;
+        if (mounted) {
+          showErrorPopup(context: context, message: categories.value?.message);
+          return;
+        }
       }
     } catch (e) {
-      // print(e as CategorybyidResponsModel);
-      showErrorPopup(context: context, message: e.toString());
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
     }
   }
 
@@ -92,109 +95,122 @@ class _StreamingServicesScreenState
 
   @override
   Widget build(BuildContext context) {
-    final categories = ref.watch(profileProvider).getCategoryById;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          categories.hasValue
-              ? "${categories.value?.data?.category?.categoryName ?? 'Loading...'} Services"
-              : 'Loading... Services',
-          style: TextStyle(
-            fontSize: responsiveWidth(context, 0.05),
-            fontWeight: FontWeight.bold,
+    final categories = ref.watch(categorybyidProvider);
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ControllerNavScreen(
+                      initialIndex: 0,
+                    )));
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            categories.hasValue
+                ? "${categories.value?.data?.category?.categoryName ?? 'Loading...'} Services"
+                : 'Loading... Services',
+            style: TextStyle(
+              fontSize: responsiveWidth(context, 0.05),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              // Handle back button action
+              Navigator.pop(context);
+            },
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Handle back button action
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: ResponsiveContainer(
-        child: Column(
-          children: [
-            SizedBox(height: responsiveHeight(context, 0.02)),
-            Expanded(
-                child: categories.when(
-                    data: (categories) {
-                      final v = categories?.data!.services;
-                      if (v == null || v.isEmpty) {
-                        return Center(
-                          child: Text(
-                              'No ${categories?.data?.category?.categoryName ?? 'Loading...'} Service'),
-                        );
-                      }
+        body: ResponsiveContainer(
+          child: Column(
+            children: [
+              SizedBox(height: responsiveHeight(context, 0.02)),
+              Expanded(
+                  child: categories.when(
+                      data: (categories) {
+                        final v = categories?.data!.services;
+                        if (v == null || v.isEmpty) {
+                          return Center(
+                            child: Text(
+                                'No ${categories?.data?.category?.categoryName ?? 'Loading...'} Service'),
+                          );
+                        }
 
-                      return GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: responsiveHeight(context, 0.02),
-                            crossAxisSpacing: responsiveHeight(context, 0.02),
-                            // mainAxisExtent: 170
-                          ),
-                          itemCount: v.length,
-                          itemBuilder: (context, index) {
-                            final item = v[index];
-
-                            return GestureDetector(
-                              onTap: () => _navigateToScreen(context, item.id!),
-                              child: _buildBorderedResponsiveImageNetwork(
-                                  context, item.logoUrl!),
-                            );
-                          });
-                    },
-                    error: (
-                      e,
-                      stackTrace,
-                    ) {
-                      print('Error loading subscriptions: $e');
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Error loading subscriptions: $e'),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Add retry logic here
-                                ref
-                                    .read(profileProvider.notifier)
-                                    .getCategoriesById(id: widget.id!);
-                              },
-                              child: const Text('Retry'),
+                        return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: responsiveHeight(context, 0.02),
+                              crossAxisSpacing: responsiveHeight(context, 0.02),
+                              // mainAxisExtent: 170
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                    loading: () => Shimmer.fromColors(
-                        baseColor: AppColors.accent,
-                        highlightColor: AppColors.primaryColor,
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: responsiveWidth(context, 0.04),
-                          mainAxisSpacing: responsiveHeight(context, 0.02),
-                          children: [
-                            'assets/netflix.png',
-                            'assets/primevideo.png',
-                            'assets/showmax.png',
-                            'assets/hulu.png',
-                            'assets/disney.png',
-                            'assets/hbo.png',
-                            'assets/paramount.png',
-                          ].map((imagePath) {
-                            return GestureDetector(
-                              onTap: () {},
-                              child: _buildBorderedResponsiveImage(
-                                  context, imagePath),
-                            );
-                          }).toList(),
-                        )))),
-          ],
+                            itemCount: v.length,
+                            itemBuilder: (context, index) {
+                              final item = v[index];
+
+                              return GestureDetector(
+                                onTap: () =>
+                                    _navigateToScreen(context, item.id!),
+                                child: _buildBorderedResponsiveImageNetwork(
+                                    context, item.logoUrl!),
+                              );
+                            });
+                      },
+                      error: (
+                        e,
+                        stackTrace,
+                      ) {
+                        // print('Error loading subscriptions: $e');
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Error loading subscriptions: $e'),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Add retry logic here
+                                  ref
+                                      .read(categorybyidProvider.notifier)
+                                      .getCategoriesById(id: widget.id!);
+                                },
+                                child: const Text('Retry'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loading: () => Shimmer.fromColors(
+                          baseColor: AppColors.accent,
+                          highlightColor: AppColors.primaryColor,
+                          child: GridView.count(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: responsiveWidth(context, 0.04),
+                            mainAxisSpacing: responsiveHeight(context, 0.02),
+                            children: [
+                              'assets/netflix.png',
+                              'assets/primevideo.png',
+                              'assets/showmax.png',
+                              'assets/hulu.png',
+                              'assets/disney.png',
+                              'assets/hbo.png',
+                              'assets/paramount.png',
+                            ].map((imagePath) {
+                              return GestureDetector(
+                                onTap: () {},
+                                child: _buildBorderedResponsiveImage(
+                                    context, imagePath),
+                              );
+                            }).toList(),
+                          )))),
+            ],
+          ),
         ),
       ),
     );

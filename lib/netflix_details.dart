@@ -53,12 +53,10 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
       print(widget.id);
       await ref.read(profileProvider.notifier).getServiceById(id: widget.id!);
       final categories = ref.read(profileProvider).getServiceById;
-      print(
-          {' service': categories.value?.data?.subscriptionPlans?[0].planName});
-      // setState(() {
-      //   ser = categories!.data!.services!;
-      //   print(categories.data!.services!);
-      // });
+      setState(() {
+        // ser = categories!.data!.services!;
+        print(categories.value?.message);
+      });
     } catch (e) {
       print(e);
     }
@@ -78,81 +76,33 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final services = ref.watch(profileProvider).getServiceById;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Handle back button action
-            Navigator.pop(context);
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              // Handle back button action
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(services.hasValue
+              ? '${services.value?.data?.serviceName}'
+              : 'loadind....'),
         ),
-        title: Text(services.hasValue
-            ? '${services.value?.data?.serviceName}'
-            : 'loadind....'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            services.when(
-                data: (services) {
-                  final item = services?.data;
-                  if (item != null) {
-                    return Center(
-                      child: Container(
-                        width: 343,
-                        height: 178,
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Center(
-                          child: ClipOval(
-                            child: Container(
-                              color: Colors.black,
-                              child: Image.network(
-                                item.logoUrl!,
-                                width: 120,
-                                height: 120,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return const Text('No Data');
-                },
-                error: (
-                  e,
-                  stackTrace,
-                ) {
-                  print('Error loading subscriptions: $e');
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error loading subscriptions: $e'),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add retry logic here
-                            ref
-                                .read(profileProvider.notifier)
-                                .getServiceById(id: widget.id!);
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                loading: () => Shimmer.fromColors(
-                      baseColor: AppColors.accent,
-                      highlightColor: AppColors.primaryColor,
-                      child: Center(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              services.when(
+                  data: (services) {
+                    final item = services?.data;
+                    if (item != null) {
+                      return Center(
                         child: Container(
                           width: 343,
                           height: 178,
@@ -165,8 +115,8 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                             child: ClipOval(
                               child: Container(
                                 color: Colors.black,
-                                child: Image.asset(
-                                  'assets/netflix.png',
+                                child: Image.network(
+                                  item.logoUrl!,
                                   width: 120,
                                   height: 120,
                                 ),
@@ -174,233 +124,213 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                             ),
                           ),
                         ),
+                      );
+                    }
+                    return const Text('No Data');
+                  },
+                  error: (
+                    e,
+                    stackTrace,
+                  ) {
+                    // print('Error loading subscriptions: $e');
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Error loading subscriptions: $e'),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Add retry logic here
+                              ref
+                                  .read(profileProvider.notifier)
+                                  .getServiceById(id: widget.id!);
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
                       ),
-                    )),
-            const SizedBox(height: 16.0),
-            services.when(
-                data: (services) {
-                  return SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      '${services?.data?.serviceDescription}',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  );
-                },
-                error: (
-                  e,
-                  stackTrace,
-                ) {
-                  print('Error loading subscriptions: $e');
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error loading subscriptions: $e'),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add retry logic here
-                            ref
-                                .read(profileProvider.notifier)
-                                .getServiceById(id: widget.id!);
-                          },
-                          child: const Text('Retry'),
+                    );
+                  },
+                  loading: () => Shimmer.fromColors(
+                        baseColor: AppColors.accent,
+                        highlightColor: AppColors.primaryColor,
+                        child: Center(
+                          child: Container(
+                            width: 343,
+                            height: 178,
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Center(
+                              child: ClipOval(
+                                child: Container(
+                                  color: Colors.black,
+                                  child: Image.asset(
+                                    'assets/netflix.png',
+                                    width: 120,
+                                    height: 120,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-                loading: () => Shimmer.fromColors(
-                    baseColor: AppColors.accent,
-                    highlightColor: AppColors.primaryColor,
-                    child: const SizedBox(
+                      )),
+              const SizedBox(height: 16.0),
+              services.when(
+                  data: (services) {
+                    return SizedBox(
                       width: double.infinity,
                       child: Text(
-                        'For families and enthusiasts, the Premium Plan provides Ultra HD quality on up to four screens simultaneously. Enjoy unlimited access to movies, TV shows, and original content with the flexibility to cancel anytime.',
-                        style: TextStyle(
+                        '${services?.data?.serviceDescription}',
+                        style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ))),
-            const SizedBox(height: 20.0),
-            const Text(
-              'Available Subscription Plans',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            services.when(
-                data: (services) {
-                  final p = services?.data?.subscriptionPlans;
-                  if (p != null) {
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: services?.data?.subscriptionPlans?.length,
-                        itemBuilder: (context, index) {
-                          final c = p[index];
-                          return PlanCard(
-                            planName: '${c.planName} Plan',
-                            price: '${c.price} NGN/ month',
-                            features: [
-                              ...c.description!,
-                            ],
-                          );
-                        });
-                  }
-                  return Center(
-                    child: Text('date'),
-                  );
-                },
-                error: (
-                  e,
-                  stackTrace,
-                ) {
-                  print('Error loading subscriptions: $e');
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error loading subscriptions: $e'),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add retry logic here
-                            ref
-                                .read(profileProvider.notifier)
-                                .getServiceById(id: widget.id!);
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                loading: () => Shimmer.fromColors(
-                    baseColor: AppColors.accent,
-                    highlightColor: AppColors.primaryColor,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 3,
-                        itemBuilder: (context, index) {
-                          return PlanCard(
-                            planName: 'Basic Plan',
-                            price: '5000 NGN/ month',
-                            features: const [
-                              'Watch on 1 screen at a time',
-                              'Unlimited movies and TV shows',
-                              'Cancel anytime',
-                            ],
-                          );
-                        }))),
-            const SizedBox(height: 20.0),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 49,
-                    color: const Color(0xFF007BFF),
-                  ),
-                  const SizedBox(width: 10.0),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Sharepact Handling Fee: ',
+                    );
+                  },
+                  error: (
+                    e,
+                    stackTrace,
+                  ) {
+                    print('Error loading subscriptions: $e');
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Error loading subscriptions: $e'),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Add retry logic here
+                              ref
+                                  .read(profileProvider.notifier)
+                                  .getServiceById(id: widget.id!);
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => Shimmer.fromColors(
+                      baseColor: AppColors.accent,
+                      highlightColor: AppColors.primaryColor,
+                      child: const SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          'For families and enthusiasts, the Premium Plan provides Ultra HD quality on up to four screens simultaneously. Enjoy unlimited access to movies, TV shows, and original content with the flexibility to cancel anytime.',
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.0,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        TextSpan(
-                          text: services.hasValue
-                              ? '${services.value?.data?.handlingFees} NGN/ month'
-                              : '000 NGN/ month',
-                          style: TextStyle(
-                            color: Color(0xFF007BFF),
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                      ))),
+              const SizedBox(height: 20.0),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 49,
+                      color: const Color(0xFF007BFF),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10.0),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Sharepact Handling Fee: ',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          TextSpan(
+                            text: services.hasValue
+                                ? '${services.value?.data?.handlingFees} NGN/ month'
+                                : '000 NGN/ month',
+                            style: const TextStyle(
+                              color: Color(0xFF007BFF),
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20.0),
-            Center(
-              child: Column(
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      _showJoinGroupDialog(context);
-                    },
-                    child: const Text(
-                      'Join A Group',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color(0xFF007BFF),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      fixedSize: const Size(339, 59),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 16.0),
-                      side: const BorderSide(color: Color(0xFF007BFF)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateGroupScreen(
-                            id: widget.id,
-                          ),
+              const SizedBox(height: 20.0),
+              Center(
+                child: Column(
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        _showJoinGroupDialog(context);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        fixedSize: const Size(339, 59),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 16.0),
+                        side: const BorderSide(color: Color(0xFF007BFF)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
-                      );
-                    },
-                    child: const Text(
-                      'Create A Group',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color(0xFF007BFF),
-                        fontWeight: FontWeight.w400,
+                      ),
+                      child: const Text(
+                        'Join A Group',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color(0xFF007BFF),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
-                    style: OutlinedButton.styleFrom(
-                      fixedSize: const Size(339, 59),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 16.0),
-                      side: const BorderSide(color: Color(0xFF007BFF)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+                    const SizedBox(height: 10.0),
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateGroupScreen(
+                              id: widget.id,
+                            ),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        fixedSize: const Size(339, 59),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20.0, horizontal: 16.0),
+                        side: const BorderSide(color: Color(0xFF007BFF)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Create A Group',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color(0xFF007BFF),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -3,26 +3,126 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:heroicons_flutter/heroicons_flutter.dart';
+import 'package:sharepact_app/api/model/bank/bank_model.dart';
+import 'package:sharepact_app/api/riverPod/getAllBanks.dart';
+import 'package:sharepact_app/api/riverPod/getBankDetails.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/bank_details/controller/bank_details_controller.dart';
+import 'package:sharepact_app/screens/home/components/input_field.dart';
 import 'package:sharepact_app/support_screen.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../responsive_helpers.dart';
 
-class BankDetailsScreen extends ConsumerWidget {
-  BankDetailsScreen({super.key});
-
-  final _formKey = GlobalKey<FormState>();
+class BankDetailsScreen extends ConsumerStatefulWidget {
+  const BankDetailsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _BankDetailsScreenState();
+}
+
+class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController nameController = TextEditingController();
+
+  final TextEditingController bankController = TextEditingController();
+
+  final TextEditingController accountNumberController = TextEditingController();
+  String selectedBank = '';
+  String bankCode = '';
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => {getBankDetails(), getAllBanks()});
+  }
+
+  Future<void> getBankDetails() async {
+    await ref.read(getBankProvider.notifier).getBankById();
+    final res = ref.watch(getBankProvider);
+
+    if (mounted) {
+      if (res.value != null) {
+        final message = res.value?.message;
+        final item = res.value;
+        if (item?.code == 200) {
+          ref.read(bankDetailsProvider.notifier).showBankDetails = true;
+          showSuccess(message: message!, context: context);
+        } else {
+          ref.watch(bankDetailsProvider);
+          ref.read(bankDetailsProvider.notifier).showBankDetails = false;
+          showErrorPopup(message: message, context: context);
+          return;
+        }
+      }
+    }
+  }
+
+  Future<void> postBankDetails() async {
+    try {
+      await ref.read(profileProvider.notifier).postBankDetails(
+          accountName: nameController.text,
+          bankName: selectedBank,
+          sortCode: bankCode,
+          accountNumber: accountNumberController.text);
+      final res = ref.read(profileProvider).postBankDetails;
+      final result = res.value;
+      if (mounted) {
+        if (result != null) {
+          if (result.code == 201) {
+            showSuccess(message: result.message!, context: context);
+            ref.read(bankDetailsProvider.notifier).showBankDetails = true;
+            await getBankDetails();
+            return;
+          } else {
+            showErrorPopup(context: context, message: result.message!);
+            ref.watch(bankDetailsProvider);
+            ref.read(bankDetailsProvider.notifier).showBankDetails = false;
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
+    }
+  }
+
+  Future<void> getAllBanks() async {
+    await ref.read(getAllBankProvider.notifier).getAllBank();
+    final res = ref.watch(getAllBankProvider);
+    if (mounted) {
+      if (res.value != null) {
+        final message = res.value?.message;
+        final item = res.value;
+        if (item?.code == 200) {
+        } else {
+          showErrorPopup(message: message, context: context);
+          return;
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final width = MediaQuery.of(context).size.width;
+    final getbankDetails = ref.watch(getBankProvider);
     final bankDetails = ref.watch(bankDetailsProvider);
+    final getAllbank = ref.watch(getAllBankProvider);
+    final isLoading = ref.watch(profileProvider).postBankDetails.isLoading;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -61,85 +161,166 @@ class BankDetailsScreen extends ConsumerWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                Visibility(
-                  visible: bankDetails.showBankDetails,
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.skyBlue,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Account Name: ',
-                            style: GoogleFonts.lato(
-                              color: AppColors.textColor01,
-                              fontSize: 14,
-                            ),
+                getbankDetails.when(
+                    skipLoadingOnReload: true,
+                    data: (getbankDetails) {
+                      final item = getbankDetails?.data;
+                      return Visibility(
+                        visible: bankDetails.showBankDetails,
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.skyBlue,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: "${bankDetails.nameController.text}",
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Account Name: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: item?.accountName ?? '',
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Bank Name: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: item?.bankName ?? '',
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Account Number: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: item?.accountNumber ?? '',
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            text: 'Bank Name: ',
-                            style: GoogleFonts.lato(
-                              color: AppColors.textColor01,
-                              fontSize: 14,
-                            ),
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      print(error.toString());
+                      final err = error as BankResponseModel;
+                      return Text('${err.message}');
+                    },
+                    loading: () => Shimmer.fromColors(
+                          baseColor: AppColors.accent,
+                          highlightColor: AppColors.primaryColor,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: "${bankDetails.bankController.text}",
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Account Name: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "loading....",
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Bank Name: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "loading....",
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Account Number: ',
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor01,
+                                    fontSize: 14,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "loading....",
+                                      style: GoogleFonts.lato(
+                                        color: AppColors.textColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            text: 'Account Number: ',
-                            style: GoogleFonts.lato(
-                              color: AppColors.textColor01,
-                              fontSize: 14,
-                            ),
-                            children: [
-                              TextSpan(
-                                text:
-                                    "${bankDetails.accountNumberController.text}",
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                        )),
                 const SizedBox(
                   height: 20,
                 ),
@@ -222,7 +403,7 @@ class BankDetailsScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: responsiveHeight(context, 0.005)),
                       TextFormField(
-                        controller: bankDetails.nameController,
+                        controller: nameController,
                         decoration: InputDecoration(
                           hintText: 'Enter name',
                           hintStyle:
@@ -246,37 +427,50 @@ class BankDetailsScreen extends ConsumerWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        'Bank Name',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      SizedBox(height: responsiveHeight(context, 0.005)),
-                      TextFormField(
-                        controller: bankDetails.bankController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter bank name',
-                          hintStyle:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: const Color(0xff5D6166),
-                                  ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                                color: Color(0xffBBC0C3), width: 1),
-                          ),
-                          contentPadding: const EdgeInsets.all(20),
+                      AppInputField(
+                        headerText: 'Bank Name',
+                        style: GoogleFonts.lato(
+                          color: const Color(0xff343A40),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty == true) {
-                            return "Bank Name required";
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
+                        hintText: 'Select Bank Name',
+                        trailing: DropdownButton<String>(
+                          icon: const Icon(HeroiconsOutline.chevronDown),
+                          padding: EdgeInsets.only(
+                              left: width * .05, right: width * .05),
+                          items: getAllbank.value?.data?.map((toElement) {
+                            return DropdownMenuItem<String>(
+                              value: toElement.name,
+                              child: Text(
+                                toElement.name ?? '',
+                                style: GoogleFonts.lato(
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Text(
+                            selectedBank.isEmpty
+                                ? 'Select Bank Name'
+                                : selectedBank,
+                            style: GoogleFonts.lato(),
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          underline: const SizedBox(),
+                          isExpanded: true,
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedBank = value;
+                                final bankCode1 = getAllbank.value?.data
+                                    ?.firstWhere((plan) => plan.name == value);
+
+                                bankCode = bankCode1?.code ?? "0";
+                              });
+                            }
+                          },
+                        ),
                       ),
                       Text(
                         'Account Number',
@@ -286,7 +480,7 @@ class BankDetailsScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: responsiveHeight(context, 0.005)),
                       TextFormField(
-                        controller: bankDetails.accountNumberController,
+                        controller: accountNumberController,
                         keyboardType: TextInputType.number,
                         maxLength: 10,
                         decoration: InputDecoration(
@@ -313,14 +507,16 @@ class BankDetailsScreen extends ConsumerWidget {
                       SizedBox(
                         height: responsiveHeight(context, 0.08),
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              ref
-                                  .read(bankDetailsProvider.notifier)
-                                  .showBankDetails = true;
-                            }
-                          },
-                          child: const Text('Save'),
+                          onPressed: isLoading
+                              ? () {}
+                              : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    postBankDetails();
+                                  }
+                                },
+                          child: isLoading
+                              ? const Text('Saving....')
+                              : const Text('Save'),
                         ),
                       ),
                       SizedBox(height: responsiveHeight(context, 0.01)),

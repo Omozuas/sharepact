@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,15 +25,19 @@ class CreateGroupScreen extends ConsumerStatefulWidget {
 
 class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   final TextEditingController groupNameController = TextEditingController();
+  final TextEditingController subScriptionCostController =
+      TextEditingController();
   String selectedCategory = '';
   String selectedService = '';
   String selectedPlan = '';
   String groupName = '';
   String numberOfMembers = '';
-  String existingGroup = '';
+  String existingGroup = 'Select Yes or No';
+  String oneTimePaymentSt = 'Select Yes or No';
   int selectedPrice = 0;
   bool agreedToTerms = false;
   bool showDatePickerFlag = false;
+  bool oneTimePayment = false;
   DateTime? selectedDate;
 
   final dateformat = DateFormat('dd MMMM, yyyy');
@@ -54,7 +59,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
       type: OmniDateTimePickerType.date,
-      // firstDate: Date,
+      firstDate: DateTime.now(),
       borderRadius: const BorderRadius.all(Radius.circular(16)),
       constraints: const BoxConstraints(
         maxWidth: 350,
@@ -94,33 +99,32 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     });
   }
 
-  void _showPrivacyDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Do you have an Existing Group?'),
-          content: Text('Do you have an Existing Group?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('No'),
-              onPressed: () {
-                _proceedWithGroupCreation();
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Yes'),
-              onPressed: () {
-                _selectDate(context);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showPrivacyDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Do you have an Existing Group?'),
+  //         content: Text('Do you have an Existing Group?'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('No'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: Text('Yes'),
+  //             onPressed: () {
+  //               _selectDate(context);
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> _proceedWithGroupCreation() async {
     // Handle the creation of group without showing date picker
@@ -134,26 +138,31 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
       _handleSessionExpired();
       return;
     }
-    if (groupNameController.text.isEmpty) {
-      showErrorPopup(context: context, message: 'Enter a Group Name');
-      return;
-    }
-    if (selectedPlan.isEmpty) {
-      showErrorPopup(context: context, message: 'Enter a Group Name');
-      return;
-    }
-    if (numberOfMembers.isEmpty) {
-      showErrorPopup(context: context, message: 'Enter a Group Name');
-      return;
+    if (mounted) {
+      if (groupNameController.text.isEmpty) {
+        showErrorPopup(context: context, message: 'Enter a Group Name');
+        return;
+      }
+      if (subScriptionCostController.text.isEmpty) {
+        showErrorPopup(context: context, message: 'Enter a Subscription Cost');
+        return;
+      }
+      if (numberOfMembers.isEmpty) {
+        showErrorPopup(context: context, message: 'Enter number of members');
+        return;
+      }
     }
     int numberOfMembersString = int.parse(numberOfMembers);
+    int subscriptionCost = int.parse(subScriptionCostController.text);
     bool isExistingGroup = existingGroup.toLowerCase() == 'yes';
+    bool isOneTimePayment = oneTimePaymentSt.toLowerCase() == 'yes';
     try {
       await ref.read(profileProvider.notifier).createGroup(
           serviceId: widget.id!,
           groupName: groupNameController.text,
-          subscriptionPlan: selectedPlan,
+          subscriptionCost: subscriptionCost,
           numberOfMembers: numberOfMembersString,
+          oneTimePayment: isOneTimePayment,
           existingGroup: isExistingGroup);
       final res = ref.read(profileProvider).createGroup.value;
       if (res?.code == 201) {
@@ -163,14 +172,19 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
           MaterialPageRoute(builder: (context) => const ChatScreen()),
         );
       } else {
-        showErrorPopup(context: context, message: res?.message);
+        if (mounted) {
+          showErrorPopup(context: context, message: res?.message);
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.microtask(() => getserviceById());
   }
@@ -230,6 +244,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final services = ref.watch(profileProvider).getServiceById;
+    final isLoading = ref.watch(profileProvider).postBankDetails.isLoading;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -468,50 +483,50 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               //   ),
               // ),
 
-              AppInputField(
-                headerText: 'Subscription Plan',
-                style: GoogleFonts.lato(
-                  color: const Color(0xff343A40),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                hintText: 'Select plan',
-                trailing: DropdownButton<String>(
-                  icon: const Icon(HeroiconsOutline.chevronDown),
-                  padding:
-                      EdgeInsets.only(left: width * .04, right: width * .04),
-                  items:
-                      services.value?.data?.subscriptionPlans?.map((toElement) {
-                    return DropdownMenuItem<String>(
-                      value: toElement.planName,
-                      child: Text(
-                        toElement.planName ?? '',
-                        style: GoogleFonts.lato(
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  hint: Text(
-                    selectedPlan.isEmpty ? 'Select plan' : selectedPlan,
-                    style: GoogleFonts.lato(),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                  underline: const SizedBox(),
-                  isExpanded: true,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedPlan = value;
-                        selectedPrice = services.value?.data?.subscriptionPlans!
-                                .firstWhere((plan) => plan.planName == value)
-                                .price ??
-                            0;
-                      });
-                    }
-                  },
-                ),
-              ),
+              // AppInputField(
+              //   headerText: 'Subscription Plan',
+              //   style: GoogleFonts.lato(
+              //     color: const Color(0xff343A40),
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.w600,
+              //   ),
+              //   hintText: 'Select plan',
+              //   trailing: DropdownButton<String>(
+              //     icon: const Icon(HeroiconsOutline.chevronDown),
+              //     padding:
+              //         EdgeInsets.only(left: width * .04, right: width * .04),
+              //     items:
+              //         services.value?.data?.subscriptionPlans?.map((toElement) {
+              //       return DropdownMenuItem<String>(
+              //         value: toElement.planName,
+              //         child: Text(
+              //           toElement.planName ?? '',
+              //           style: GoogleFonts.lato(
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //     hint: Text(
+              //       selectedPlan.isEmpty ? 'Select plan' : selectedPlan,
+              //       style: GoogleFonts.lato(),
+              //     ),
+              //     borderRadius: BorderRadius.circular(10),
+              //     underline: const SizedBox(),
+              //     isExpanded: true,
+              //     onChanged: (value) {
+              //       if (value != null) {
+              //         setState(() {
+              //           selectedPlan = value;
+              //           selectedPrice = services.value?.data?.subscriptionPlans!
+              //                   .firstWhere((plan) => plan.planName == value)
+              //                   .price ??
+              //               0;
+              //         });
+              //       }
+              //     },
+              //   ),
+              // ),
 
               AppInputField(
                 controller: groupNameController,
@@ -522,6 +537,20 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 hintText: 'e.g Spotify family',
+              ),
+              AppInputField(
+                controller: subScriptionCostController,
+                headerText: 'Subscription Cost',
+                keyboardType: TextInputType.number,
+                style: GoogleFonts.lato(
+                  color: const Color(0xff343A40),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                hintText: 'Subscription Cost',
               ),
               AppInputField(
                 headerText: 'Number of Members',
@@ -563,8 +592,9 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                   },
                 ),
               ),
+
               AppInputField(
-                headerText: 'Do you have an Existing Group?',
+                headerText: 'One Time Payment?',
                 style: GoogleFonts.lato(
                   color: const Color(0xff343A40),
                   fontSize: 16,
@@ -587,7 +617,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                     );
                   }).toList(),
                   hint: Text(
-                    existingGroup,
+                    oneTimePaymentSt,
                     style: GoogleFonts.lato(),
                   ),
                   borderRadius: BorderRadius.circular(10),
@@ -596,20 +626,76 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                   onChanged: (value) {
                     if (value != null) {
                       setState(() {
-                        existingGroup = value;
-                        print(existingGroup);
-                        if (existingGroup == 'yes') {
-                          _selectDate(context);
-                        } else {
-                          showDatePickerFlag = false;
-                          selectedDate = null;
-                          // _proceedWithGroupCreation();
+                        oneTimePaymentSt = value;
+
+                        if (oneTimePaymentSt == 'Yes') {
+                          setState(() {
+                            oneTimePayment = false;
+                          });
+                        } else if (oneTimePaymentSt == 'No') {
+                          setState(() {
+                            oneTimePayment = true;
+                          });
                         }
                       });
                     }
                   },
                 ),
               ),
+              if (oneTimePayment)
+                AppInputField(
+                  headerText: 'Do you have an Existing Group?',
+                  style: GoogleFonts.lato(
+                    color: const Color(0xff343A40),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  hintText: 'Select Yes or No',
+                  trailing: DropdownButton<String>(
+                    icon: const Icon(HeroiconsOutline.chevronDown),
+                    padding:
+                        EdgeInsets.only(left: width * .04, right: width * .04),
+                    items: <String>['Yes', 'No'].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    hint: Text(
+                      existingGroup,
+                      style: GoogleFonts.lato(),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    underline: const SizedBox(),
+                    isExpanded: true,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          existingGroup = value;
+
+                          if (existingGroup == 'Yes') {
+                            setState(() {
+                              showDatePickerFlag = true;
+                            });
+                          } else {
+                            setState(() {
+                              showDatePickerFlag = false;
+                              selectedDate = null;
+                            });
+
+                            // _proceedWithGroupCreation();
+                          }
+                        });
+                      }
+                    },
+                  ),
+                ),
+
               if (showDatePickerFlag)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -780,9 +866,9 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: agreedToTerms
-                      ? () {
-                          _showPrivacyDialog();
-                        }
+                      ? isLoading
+                          ? () {}
+                          : _proceedWithGroupCreation
                       : null,
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -799,7 +885,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                             vertical: 20.0, horizontal: 16.0)),
                   ),
                   child: Text(
-                    'Create Group',
+                    isLoading ? 'Creating...' : 'Create Group',
                     style: GoogleFonts.lato(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,

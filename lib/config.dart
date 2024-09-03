@@ -1,5 +1,5 @@
 class Config {
-  static const String baseUrl = 'https://4add-51-6-13-158.ngrok-free.app';
+  static const String baseUrl = 'https://fd7b-51-6-13-203.ngrok-free.app';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';
@@ -24,6 +24,7 @@ class Config {
   static const String updateAvaterEndpoint = '/api/profile/update-avatar';
   static const String updateUserName = '/api/profile/update-username-email';
   static const String getAllAvaters = '/api/profile/avatars';
+  static const String deleteAccount = '/api/profile/delete-user';
 
   //categories Endpoint
   static const String getCategoriesEndpoint = '/api/categories';
@@ -38,6 +39,7 @@ class Config {
 
   //bank Endpoint
   static const String getBankEndpoint = '/api/bank-details/';
+  static const String getAllBankEndpoint = '/api/banks';
   static const String postBankEndpoint = '/api/bank-details';
 
   ///service end point
@@ -45,4 +47,12 @@ class Config {
 
   //group
   static const String createGroupEndpoint = '/api/groups/create';
+//support
+  static const String contactSupportEndpoint = '/api/support/contact-support';
+
+  //support
+  static const String patchNotificationSettingEndpoint =
+      '/api/profile/notification-config';
+  static const String getNotificationSettingEndpoint =
+      '/api/profile/notification-config';
 }

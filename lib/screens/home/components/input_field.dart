@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppInputField extends StatelessWidget {
   final Widget? trailing;
@@ -16,7 +17,7 @@ class AppInputField extends StatelessWidget {
   final circularBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
   );
-
+  final List<TextInputFormatter>? inputFormatters;
   final Color? borderColor;
   final double? borderWidth;
   final bool removeSpace;
@@ -35,6 +36,7 @@ class AppInputField extends StatelessWidget {
     this.hintStyle,
     this.password = false,
     this.style,
+    this.inputFormatters,
     this.trailingTapped,
     this.onTap,
     this.borderColor,
@@ -57,6 +59,7 @@ class AppInputField extends StatelessWidget {
         ),
         SizedBox(height: height * 0.008),
         TextFormField(
+          inputFormatters: inputFormatters,
           onTap: onTap,
           readOnly: readOnly,
           validator: validator,

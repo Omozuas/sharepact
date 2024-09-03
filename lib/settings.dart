@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
+import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -69,6 +70,52 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  Future<void> deletAccount() async {
+    try {
+      await ref.read(profileProvider.notifier).getToken();
+      final myToken = ref.read(profileProvider).getToken.value;
+      await ref
+          .read(profileProvider.notifier)
+          .checkTokenStatus(token: myToken!);
+      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
+
+      if (isTokenValid.value!.code != 200) {
+        _handleSessionExpired();
+        return;
+      }
+
+      await ref.read(profileProvider.notifier).deleteAccount();
+      final pUpdater = ref.read(profileProvider).deleteAccount;
+
+      // Safely check for value and data
+      if (pUpdater.value != null) {
+        final message = pUpdater.value?.message;
+
+        // Safely check for code
+        if (pUpdater.value?.code == 200) {
+          await _clearSessionData();
+          ref.invalidate(userProvider);
+          if (mounted) {
+            showSuccess(message: message!, context: context);
+
+            // Navigate to LoginScreen if logout is successful
+            _navigateToLoginScreen();
+          }
+        } else {
+          if (mounted) {
+            showErrorPopup(
+                message: message ?? 'An error occurred', context: context);
+          }
+        }
+      } else {
+        _showLogoutError();
+      }
+    } catch (e) {
+      // Show error if login fails
+      _handleError(e);
+    }
+  }
+
   void _showLogoutError() {
     if (mounted) {
       showErrorPopup(
@@ -109,6 +156,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.watch(userProvider);
     ref.watch(categoryProvider);
     ref.watch(subscriptionProvider);
+    ref.watch(notificationConfigProvider);
+
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),
@@ -155,7 +204,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                   onTap: () {
                     // Handle Manage Bank details
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BankDetailsScreen()));
+                        builder: (context) => const BankDetailsScreen()));
 
                     //
                   },
@@ -264,7 +313,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                             "Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost",
                         actionBtnText: "Yes, Delete",
                         buttonColor: Colors.red,
-                        onPressed: () {},
+                        onPressed: deletAccount,
                       ),
                     );
                   });
@@ -327,7 +376,7 @@ class PopupContentWidgetState extends ConsumerState<PopupContentWidget> {
                 backgroundColor: widget.buttonColor,
               ),
               onPressed: isLoading ? () {} : widget.onPressed,
-              child: Text(isLoading ? "logging Out" : widget.actionBtnText),
+              child: Text(isLoading ? "Logging Out" : widget.actionBtnText),
             ),
           ),
           const SizedBox(
@@ -341,10 +390,97 @@ class PopupContentWidgetState extends ConsumerState<PopupContentWidget> {
                 elevation: 1,
                 backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: isLoading
-                        ? AppColors.textColor02
-                        : AppColors.primaryColor,
+                  side: const BorderSide(
+                    color: AppColors.primaryColor,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.lato(
+                  color: AppColors.primaryColor,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PopupContentWidget1 extends ConsumerStatefulWidget {
+  final String title, actionBtnText;
+  final VoidCallback onPressed;
+  final Color buttonColor;
+  const PopupContentWidget1({
+    super.key,
+    required this.title,
+    required this.actionBtnText,
+    required this.onPressed,
+    this.buttonColor = AppColors.primaryColor,
+  });
+
+  @override
+  ConsumerState createState() => PopupContentWidgetState();
+}
+
+class PopupContent1WidgetState extends ConsumerState<PopupContentWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final isDeleting = ref.watch(profileProvider).deleteAccount.isLoading;
+
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.lato(
+              color: AppColors.textColor02,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.buttonColor,
+              ),
+              onPressed: isDeleting ? () {} : widget.onPressed,
+              child: Text(isDeleting ? "Deletin..." : widget.actionBtnText),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 1,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    color: AppColors.primaryColor,
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),

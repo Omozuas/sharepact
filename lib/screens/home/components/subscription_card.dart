@@ -6,6 +6,7 @@ class SubscriptionCard extends StatelessWidget {
   final String? service;
   final price;
   final members;
+  final currentMembers;
   final String? nextpayment;
   final String? createdby;
   final Widget? image, profile, profile1;
@@ -17,6 +18,7 @@ class SubscriptionCard extends StatelessWidget {
       this.nextpayment,
       this.createdby,
       this.profile,
+      this.currentMembers,
       this.profile1,
       this.image});
 
@@ -118,7 +120,7 @@ class SubscriptionCard extends StatelessWidget {
                     ),
                 const SizedBox(width: 4),
                 Text(
-                  "$members/5 members",
+                  "$currentMembers/ $members members",
                   style: const TextStyle(fontSize: 12),
                 ),
               ],

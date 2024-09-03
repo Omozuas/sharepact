@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
 import 'package:sharepact_app/api/model/bank/bank_model.dart';
+import 'package:sharepact_app/api/model/bank/getBank_model.dart';
 import 'package:sharepact_app/api/model/categories/categoryByid.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/newmodel.dart';
+import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
@@ -154,7 +156,6 @@ class AuthService {
         token: token,
         endpoint: Config.verifyTokenEndpoint,
       );
-      print(response.body);
       return generalResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       print('Request timeout');
@@ -246,6 +247,29 @@ class AuthService {
     } catch (e) {
       print('Error: $e');
       return AvaterResponseModel(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GeneralResponseModel> deletAccount() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.delete(
+        token: token,
+        endpoint: Config.deleteAccount,
+      );
+      return response!;
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GeneralResponseModel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      return GeneralResponseModel(
+          code: 503, message: 'No Internet connection', data: null);
+    } catch (e) {
+      print('Error: $e');
+      return GeneralResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
   }
@@ -390,7 +414,8 @@ class AuthService {
         token: token,
         endpoint: Config.getBankEndpoint + userId,
       );
-
+      final body = jsonDecode(response.body);
+      print({'auth': body});
       return bankResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       print('Request timeout');
@@ -398,8 +423,12 @@ class AuthService {
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
       print('No Internet connection');
-      return BankResponseModel(
-          code: 503, message: 'No Internet connection', data: null);
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      return BankResponseModel.fromJson(body);
     } catch (e) {
       print('Error: $e');
       return BankResponseModel(
@@ -410,7 +439,8 @@ class AuthService {
   Future<GeneralResponseModel> postBankDetails(
       {required String accountName,
       required String bankName,
-      required String accountNumber}) async {
+      required String accountNumber,
+      required String sortCode}) async {
     final token = await getToken();
     try {
       final response = await apiService.post(
@@ -419,12 +449,38 @@ class AuthService {
             "accountName": accountName,
             "bankName": bankName,
             "accountNumber": accountNumber,
+            "sortCode": sortCode
           },
           token: token);
 
       return response!;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<GetAllBanks> getAllBanks() async {
+    try {
+      final response = await apiService.get(
+        endpoint: Config.getAllBankEndpoint,
+      );
+
+      return getAllBanksFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GetAllBanks(code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      return GetAllBanks.fromJson(body);
+    } catch (e) {
+      print('Error: $e');
+      return GetAllBanks(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
 
@@ -469,30 +525,106 @@ class AuthService {
   Future<GeneralResponseModel> createGroup(
       {required String serviceId,
       required String groupName,
-      required String subscriptionPlan,
       required int numberOfMembers,
-      required bool existingGroup}) async {
+      required bool existingGroup,
+      required int subscriptionCost,
+      required bool oneTimePayment}) async {
     final token = await getToken();
     try {
-      print({
-        "serviceId": serviceId,
-        "groupName": groupName,
-        "subscriptionPlan": subscriptionPlan,
-        "numberOfMembers": numberOfMembers,
-        "existingGroup": existingGroup
-      });
       final response = await apiService
           .post(token: token, endpoint: Config.createGroupEndpoint, body: {
         "serviceId": serviceId,
         "groupName": groupName,
-        "subscriptionPlan": subscriptionPlan,
+        "subscriptionCost": subscriptionCost,
         "numberOfMembers": numberOfMembers,
-        "existingGroup": existingGroup
+        "existingGroup": existingGroup,
+        "oneTimePayment": existingGroup
       });
 
       return response!;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  /// contact service
+  Future<GeneralResponseModel> contactService({
+    required String name,
+    required String email,
+    required String message,
+  }) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.post(
+          token: token,
+          endpoint: Config.contactSupportEndpoint,
+          body: {"name": name, "email": email, "message": message});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //notification settings
+  Future<GeneralResponseModel> patchNotificationSettings({
+    required bool loginAlert,
+    required bool passwordChanges,
+    required bool newGroupCreation,
+    required bool groupInvitation,
+    required bool groupMessages,
+    required bool subscriptionUpdates,
+    required bool paymentReminders,
+    required bool renewalAlerts,
+  }) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.patch(
+          token: token,
+          endpoint: Config.patchNotificationSettingEndpoint,
+          body: {
+            "loginAlert": loginAlert,
+            "passwordChanges": passwordChanges,
+            "newGroupCreation": newGroupCreation,
+            "groupInvitation": groupInvitation,
+            "groupMessages": groupMessages,
+            "subscriptionUpdates": subscriptionUpdates,
+            "paymentReminders": paymentReminders,
+            "renewalAlerts": renewalAlerts
+          });
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<NotificationConfigResponse> getNotificationConfig() async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: Config.getNotificationSettingEndpoint,
+      );
+      final body = jsonDecode(response.body);
+      print({'auth': body});
+      return notificationConfigResponseFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return NotificationConfigResponse(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      print('No Internet connection');
+      return NotificationConfigResponse.fromJson(body);
+    } catch (e) {
+      print('Error: $e');
+      return NotificationConfigResponse(
+          code: 500, message: 'Something went wrong', data: null);
     }
   }
 

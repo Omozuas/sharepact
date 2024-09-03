@@ -94,13 +94,15 @@ class ApiService {
   }
 
   Future<GeneralResponseModel?> delete(
-      String endpoint, Map<String, dynamic> body, String? token) async {
+      {required String endpoint,
+      Map<String, dynamic>? body,
+      String? token}) async {
     try {
       var response = await http
           .delete(
             Uri.parse('$baseUrl$endpoint'),
             headers: {
-              'Content-Type': 'application/json',
+              // 'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
             },
             body: jsonEncode(body),

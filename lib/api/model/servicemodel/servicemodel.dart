@@ -36,7 +36,7 @@ class SingleService {
   String? id;
   String? serviceName;
   String? serviceDescription;
-  List<SubscriptionPlan>? subscriptionPlans;
+  // List<SubscriptionPlan>? subscriptionPlans;
   String? currency;
   int? handlingFees;
   String? logoUrl;
@@ -49,7 +49,7 @@ class SingleService {
     this.id,
     this.serviceName,
     this.serviceDescription,
-    this.subscriptionPlans,
+    // this.subscriptionPlans,
     this.currency,
     this.handlingFees,
     this.logoUrl,
@@ -63,10 +63,10 @@ class SingleService {
         id: json["_id"],
         serviceName: json["serviceName"],
         serviceDescription: json["serviceDescription"],
-        subscriptionPlans: json["subscriptionPlans"] != null
-            ? List<SubscriptionPlan>.from(json["subscriptionPlans"]
-                .map((x) => SubscriptionPlan.fromJson(x)))
-            : [],
+        // subscriptionPlans: json["subscriptionPlans"] != null
+        //     ? List<SubscriptionPlan>.from(json["subscriptionPlans"]
+        //         .map((x) => SubscriptionPlan.fromJson(x)))
+        //     : [],
         currency: json["currency"],
         handlingFees: json["handlingFees"],
         logoUrl: json["logoUrl"],
@@ -80,9 +80,9 @@ class SingleService {
         "_id": id,
         "serviceName": serviceName,
         "serviceDescription": serviceDescription,
-        "subscriptionPlans": subscriptionPlans != null
-            ? List<dynamic>.from(subscriptionPlans!.map((x) => x.toJson()))
-            : [],
+        // "subscriptionPlans": subscriptionPlans != null
+        //     ? List<dynamic>.from(subscriptionPlans!.map((x) => x.toJson()))
+        //     : [],
         "currency": currency,
         "handlingFees": handlingFees,
         "logoUrl": logoUrl,
@@ -93,27 +93,27 @@ class SingleService {
       };
 }
 
-class SubscriptionPlan {
-  SubscriptionPlan({
-    required this.planName,
-    required this.description,
-    required this.price,
-  });
+// class SubscriptionPlan {
+//   SubscriptionPlan({
+//     required this.planName,
+//     required this.description,
+//     required this.price,
+//   });
 
-  String? planName;
-  List<String>? description;
-  int? price;
+//   String? planName;
+//   List<String>? description;
+//   int? price;
 
-  factory SubscriptionPlan.fromJson(Map<String, dynamic> json) =>
-      SubscriptionPlan(
-        planName: json["planName"],
-        description: List<String>.from(json["description"].map((x) => x)),
-        price: json["price"],
-      );
+//   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) =>
+//       SubscriptionPlan(
+//         planName: json["planName"],
+//         description: List<String>.from(json["description"].map((x) => x)),
+//         price: json["price"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "planName": planName,
-        "description": List<dynamic>.from(description!.map((x) => x)),
-        "price": price,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "planName": planName,
+//         "description": List<dynamic>.from(description!.map((x) => x)),
+//         "price": price,
+//       };
+// }
