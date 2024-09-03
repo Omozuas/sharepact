@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:169740275266:android:00218a9baaf071b5fee7db",
         "android_client_info": {
-          "package_name": "com.example.sharepact_app"
+          "package_name": "com.sharepact.share"
         }
       },
       "oauth_client": [],
