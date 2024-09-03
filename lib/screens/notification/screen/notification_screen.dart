@@ -12,7 +12,7 @@ class NotificationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-   final notifications = ref.watch(notificationProvider);
+    final notifications = ref.watch(notificationProvider);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -66,26 +66,26 @@ class NotificationScreen extends ConsumerWidget {
             : ListView.builder(
                 itemCount: notifications.userNotifications.length,
                 itemBuilder: (context, index) {
-                  NotificationModel notificationModel = notifications.userNotifications[index];
+                  NotificationModel notificationModel =
+                      notifications.userNotifications[index];
                   return SizedBox(
                     height: 120,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         notificationModel.isNew
                             ? Container(
                                 height: 8,
                                 width: 8,
-                                margin: EdgeInsets.only(top: 5),
+                                margin: const EdgeInsets.only(top: 5),
                                 decoration: const BoxDecoration(
                                   color: Colors.red,
                                   shape: BoxShape.circle,
                                 ),
                               )
-                            : SizedBox(),
-                        SizedBox(
+                            : const SizedBox(),
+                        const SizedBox(
                           width: 20,
                         ),
                         SvgPicture.asset(
@@ -93,7 +93,7 @@ class NotificationScreen extends ConsumerWidget {
                           width: 24,
                           height: 24,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         Expanded(
@@ -122,22 +122,22 @@ class NotificationScreen extends ConsumerWidget {
                                   onPressed: () {
                                     notifications.removeNotification(index);
                                   },
+                                  style: OutlinedButton.styleFrom(
+                                    fixedSize: const Size(80, 28),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0, horizontal: 10.0),
+                                    side: const BorderSide(
+                                        color: Color(0xFF007BFF)),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                  ),
                                   child: const Text(
                                     'Dismiss',
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       color: Color(0xFF007BFF),
                                       fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    fixedSize: const Size(80, 28),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5.0, horizontal: 10.0),
-                                    side:
-                                        const BorderSide(color: Color(0xFF007BFF)),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16.0),
                                     ),
                                   ),
                                 ),

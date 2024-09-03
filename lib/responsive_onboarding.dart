@@ -6,7 +6,7 @@ class ResponsiveOnboardingPage extends StatelessWidget {
   final String description;
 
   const ResponsiveOnboardingPage({
-    super.key, 
+    super.key,
     required this.image,
     required this.title,
     required this.description,
@@ -19,7 +19,7 @@ class ResponsiveOnboardingPage extends StatelessWidget {
     return Column(
       children: [
         // Container for the onboarding image
-        Container(
+        SizedBox(
           height: screenSize.height * 0.5, // Adjust the height as needed
           width: double.infinity,
           child: Image.asset(

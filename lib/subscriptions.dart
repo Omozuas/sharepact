@@ -29,7 +29,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   int page = 10;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     searchController.addListener(filterMembers);
     Future.microtask(() => getAll());
@@ -172,7 +171,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                   Expanded(
                     child: TextField(
                       controller: searchController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Search subscriptions',
                         border: InputBorder.none,
                       ),
@@ -232,7 +231,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                                 mainAxisExtent: 170),
                         itemCount: 2,
                         itemBuilder: (context, index) {
-                          return Opacity(
+                          return const Opacity(
                             opacity: 1.0,
                             child: SubscriptionCard(
                               service: 'loading...',

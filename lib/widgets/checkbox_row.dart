@@ -39,7 +39,7 @@ class CheckboxRow extends StatelessWidget {
             onChanged: onChanged,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Text(

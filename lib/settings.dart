@@ -51,8 +51,9 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
         if (pUpdater.value?.code == 200) {
           await _clearSessionData();
           ref.invalidate(userProvider);
-          showSuccess(message: message!, context: context);
-
+          if (mounted) {
+            showSuccess(message: message!, context: context);
+          }
           // Navigate to LoginScreen if logout is successful
           _navigateToLoginScreen();
         } else {
@@ -508,7 +509,11 @@ class SettingsTile extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
 
-  SettingsTile({required this.icon, required this.title, required this.onTap});
+  const SettingsTile(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {

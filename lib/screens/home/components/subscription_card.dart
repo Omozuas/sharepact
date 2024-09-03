@@ -80,7 +80,7 @@ class SubscriptionCard extends StatelessWidget {
                     ),
                 const SizedBox(width: 8),
                 Text(
-                  "${service}",
+                  "$service",
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
