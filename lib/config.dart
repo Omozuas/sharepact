@@ -1,5 +1,6 @@
 class Config {
-  static const String baseUrl = 'https://fd7b-51-6-13-203.ngrok-free.app';
+  static const String baseUrl =
+      'https://improved-endlessly-midge.ngrok-free.app';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';

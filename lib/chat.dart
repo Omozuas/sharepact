@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:sharepact_app/config.dart';
 import 'package:sharepact_app/screens/group_details/screen/group_details_screen.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
+import 'package:socket_io_client/socket_io_client.dart' as Io;
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  late Io.Socket socket;
+  void connect() {
+    socket = Io.io(Config.baseUrl, <String, dynamic>{
+      'transports': ['websocket'],
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
