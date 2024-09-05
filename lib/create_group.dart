@@ -8,10 +8,10 @@ import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/chat.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/components/input_field.dart';
 import 'package:intl/intl.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 
@@ -58,6 +58,8 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     DateTime? dateTime = await showOmniDateTimePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
+      lastDate: DateTime.now()
+          .add(const Duration(days: 30)), // Restrict to next 30 days
       type: OmniDateTimePickerType.date,
       firstDate: DateTime.now(),
       borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -153,7 +155,8 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
       }
     }
     int numberOfMembersString = int.parse(numberOfMembers);
-    int subscriptionCost = int.parse(subScriptionCostController.text);
+    int subscriptionCost =
+        int.parse(subScriptionCostController.text.replaceAll(',', ''));
     bool isExistingGroup = existingGroup.toLowerCase() == 'yes';
     bool isOneTimePayment = oneTimePaymentSt.toLowerCase() == 'yes';
     try {
@@ -169,7 +172,10 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         showSuccess(message: res!.message!, context: context);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
+          MaterialPageRoute(
+              builder: (context) => const ControllerNavScreen(
+                    initialIndex: 2,
+                  )),
         );
       } else {
         if (mounted) {
@@ -549,6 +555,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                 ),
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
+                  ThousandsSeparatorInputFormatter(), // Add the custom formatter
                 ],
                 hintText: 'Subscription Cost',
               ),
@@ -755,7 +762,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     buildPaymentDetailRow('Subscription Cost',
-                        '${selectedPrice.toString()} NGN/', 'Month'),
+                        '${subScriptionCostController.text} NGN/', 'Month'),
                     const Divider(),
                     buildPaymentDetailRow('Handling Fee',
                         '${services.value?.data?.handlingFees ?? 0} NGN', ''),
@@ -936,6 +943,34 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat("#,###");
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Only format the new value if it is a number
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    // Remove any non-digit characters (except commas)
+    String newText = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
+    // Format the text using NumberFormat
+    final formattedText = _formatter.format(int.parse(newText));
+
+    // Maintain the cursor position
+    int newOffset =
+        formattedText.length - (newValue.text.length - newValue.selection.end);
+
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: newOffset),
     );
   }
 }

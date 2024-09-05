@@ -7,7 +7,7 @@ import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/bottom_nav_bar.dart';
 import 'package:sharepact_app/groups.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/home.dart';
 import 'package:sharepact_app/settings.dart';
 import 'package:sharepact_app/subscriptions.dart';

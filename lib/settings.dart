@@ -8,7 +8,7 @@ import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/bank_details/screen/bank_details_screen.dart';
 import 'package:sharepact_app/change_password.dart';
 import 'package:sharepact_app/edit_profile.dart';
@@ -165,6 +165,9 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(
+            height: 15,
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
@@ -174,6 +177,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
               borderRadius: BorderRadius.circular(16),
             ),
             child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [

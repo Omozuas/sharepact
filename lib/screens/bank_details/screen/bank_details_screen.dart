@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:sharepact_app/api/model/bank/bank_model.dart';
 import 'package:sharepact_app/api/riverPod/getAllBanks.dart';
 import 'package:sharepact_app/api/riverPod/getBankDetails.dart';
@@ -15,6 +14,7 @@ import 'package:sharepact_app/support_screen.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import '../../../responsive_helpers.dart';
 
 class BankDetailsScreen extends ConsumerStatefulWidget {
@@ -55,7 +55,7 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
         } else {
           ref.watch(bankDetailsProvider);
           ref.read(bankDetailsProvider.notifier).showBankDetails = false;
-          showErrorPopup(message: message, context: context);
+          // showErrorPopup(message: message, context: context);
           return;
         }
       }
@@ -245,7 +245,6 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                       );
                     },
                     error: (error, stackTrace) {
-                      print(error.toString());
                       final err = error as BankResponseModel;
                       return Text('${err.message}');
                     },
@@ -435,37 +434,43 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                         hintText: 'Select Bank Name',
-                        trailing: DropdownButton<String>(
-                          icon: const Icon(HeroiconsOutline.chevronDown),
-                          padding: EdgeInsets.only(
-                              left: width * .05, right: width * .05),
-                          items: getAllbank.value?.data?.map((toElement) {
-                            return DropdownMenuItem<String>(
-                              value: toElement.name,
-                              child: Text(
-                                toElement.name ?? '',
-                                style: GoogleFonts.lato(
-                                  fontWeight: FontWeight.w400,
+                        trailing: DropdownSearch<String>(
+                          popupProps: PopupProps.menu(
+                            showSearchBox: true, // Enable search functionality
+                            searchFieldProps: TextFieldProps(
+                              decoration: InputDecoration(
+                                hintText: "Search Bank Name",
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: width * .05,
                                 ),
                               ),
-                            );
-                          }).toList(),
-                          hint: Text(
-                            selectedBank.isEmpty
-                                ? 'Select Bank Name'
-                                : selectedBank,
-                            style: GoogleFonts.lato(),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                          underline: const SizedBox(),
-                          isExpanded: true,
-                          onChanged: (value) {
+                          items: getAllbank.value?.data
+                                  ?.map((bank) => bank.name ?? '')
+                                  .toList() ??
+                              [],
+                          selectedItem:
+                              selectedBank.isEmpty ? null : selectedBank,
+                          dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownSearchDecoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              contentPadding: EdgeInsets.only(
+                                left: width * .05,
+                                right: width * .05,
+                              ),
+                              hintText: 'Select Bank Name',
+                            ),
+                          ),
+                          onChanged: (String? value) {
                             if (value != null) {
                               setState(() {
                                 selectedBank = value;
                                 final bankCode1 = getAllbank.value?.data
                                     ?.firstWhere((plan) => plan.name == value);
-
                                 bankCode = bankCode1?.code ?? "0";
                               });
                             }

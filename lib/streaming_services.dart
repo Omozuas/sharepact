@@ -4,7 +4,7 @@ import 'package:sharepact_app/api/model/categories/categoryByid.dart';
 import 'package:sharepact_app/api/riverPod/categoryById.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/responsive_widgets.dart';
 import 'package:sharepact_app/responsive_helpers.dart';
 import 'package:sharepact_app/netflix_details.dart';

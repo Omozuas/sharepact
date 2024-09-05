@@ -9,7 +9,7 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
@@ -113,7 +113,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   }
 
   void filterMembers() {
-    final filter = searchController.text.toLowerCase();
+    final filter = searchController.text.trim().toLowerCase();
+    ;
     final subscriptions = ref.watch(subscriptionProvider).value;
     if (subscriptions != null) {
       setState(() {

@@ -8,7 +8,7 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/components/service_widget.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
@@ -132,7 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void filterMembers() {
-    final filter = searchController.text.toLowerCase();
+    final filter = searchController.text.trim().toLowerCase();
     setState(() {
       filterSub = subscriptionModel.where((member) {
         final groupName = (member.groupName ?? '').toLowerCase();
@@ -433,7 +433,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     members: item.numberOfMembers,
                                     nextpayment:
                                         item.nextSubscriptionDate.toString(),
-                                    createdby: item.admin!.username,
+                                    createdby: item.admin?.username,
                                     currentMembers:
                                         item.members?.length.toString(),
                                   ),

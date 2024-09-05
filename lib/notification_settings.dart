@@ -102,7 +102,7 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
             });
           }
 
-          showSuccess(message: message!, context: context);
+          // showSuccess(message: message!, context: context);
           return;
         } else {
           showErrorPopup(message: message, context: context);

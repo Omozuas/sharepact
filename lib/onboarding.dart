@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sharepact_app/signup.dart';
+import 'package:sharepact_app/screens/authScreen/signup.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'responsive_helpers.dart';
 import 'responsive_onboarding.dart'; // Import the responsive onboarding page

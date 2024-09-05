@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/create_group.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
+import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:sharepact_app/widgets/popup_content.dart';
@@ -73,9 +74,83 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
     }
   }
 
+  Future<void> _isGroupExisting({required String roomId}) async {
+    try {
+      await ref.read(profileProvider.notifier).getGroupByCode(groupId: roomId);
+
+      final pUpdater = ref.read(profileProvider).getGroupbyCode;
+      // Navigate to home screen if login is successful
+
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          // final message = pUpdater.value?.message;
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+            // Navigate to homescreen if signin is successful
+
+            _showJoinGroupDialogPass(context, ref);
+          } else {
+            _showJoinGroupDialogFailed(context);
+          }
+        }
+      }
+    } catch (e) {
+      // Show error if login fails
+      if (mounted) {
+        showErrorPopup(
+            message: e.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
+    }
+  }
+
+  Future<void> _joinGroup(
+      {required String roomId, required String message}) async {
+    try {
+      await ref
+          .read(profileProvider.notifier)
+          .joinAGroup(groupCode: roomId, message: message);
+
+      final pUpdater = ref.read(profileProvider).joinGroup;
+      // Navigate to home screen if login is successful
+
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+            // Navigate to homescreen if signin is successful
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ControllerNavScreen(
+                        initialIndex: 2,
+                      )),
+            );
+            _showJoinGroupDialogPassMessage(context);
+            codeController.clear();
+            messageController.clear();
+          } else {
+            showErrorPopup(message: message, context: context);
+          }
+        }
+      }
+    } catch (e) {
+      // Show error if login fails
+      if (mounted) {
+        showErrorPopup(
+            message: e.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final services = ref.watch(profileProvider).getServiceById;
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -276,7 +351,7 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                   children: [
                     OutlinedButton(
                       onPressed: () {
-                        _showJoinGroupDialog(context);
+                        _showJoinGroupDialog(context, ref);
                       },
                       style: OutlinedButton.styleFrom(
                         fixedSize: const Size(339, 59),
@@ -336,7 +411,8 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
     );
   }
 
-  void _showJoinGroupDialog(BuildContext context) {
+  void _showJoinGroupDialog(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(profileProvider).getGroupbyCode.isLoading;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -352,65 +428,96 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
             subtext:
                 "Please enter the group code provided by the group creator to join the subscription group",
             hintText: 'Enter code',
-            btnText: 'Proceed',
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      // contentPadding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      content: codeController.text == "123456"
-                          ? PopupInputWidget(
-                              title: "Message",
-                              subtext:
-                                  "Please send a message to the group creator about your intention to join the group",
-                              minLines: 5,
-                              btnText: 'Send Message',
-                              textController: messageController,
-                              height: 310,
-                              hintText:
-                                  'Hi creator, I’d like to become a member of this group ',
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                          // contentPadding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          content: PopupContentWidget(
-                                            icon: AppImages.successIcon,
-                                            title: "Request Sent!",
-                                            subtext:
-                                                "Your request to join the group has been sent successfully",
-                                            actionBtnText: "Join More Groups",
-                                            buttonColor: AppColors.primaryColor,
-                                            closeBtnText: 'Close',
-                                            onPressed: () {},
-                                          ));
-                                    });
-                              })
-                          : PopupContentWidget(
-                              icon: AppImages.invalidIcon,
-                              title: "Invalid Group Code!",
-                              subtext:
-                                  "The group code you entered is incorrect. Please try again or reach out to the group creator if you believe the code provided is incorrect",
-                              actionBtnText: "Try Again",
-                              buttonColor: AppColors.primaryColor,
-                              onPressed: () {},
-                            ),
-                    );
-                  });
-            },
+            btnText: isLoading ? 'proceeding...' : 'Proceed',
+            onPressed: isLoading
+                ? () {}
+                : () {
+                    _isGroupExisting(roomId: codeController.text);
+                    Navigator.pop(context);
+                  },
           ),
         );
       },
     );
+  }
+
+  void _showJoinGroupDialogPass(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(profileProvider).joinGroup.isLoading;
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              // contentPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              content: PopupInputWidget(
+                  title: "Message",
+                  subtext:
+                      "Please send a message to the group creator about your intention to join the group",
+                  minLines: 5,
+                  btnText: isLoading ? 'sending...' : 'Send Message',
+                  textController: messageController,
+                  height: 320,
+                  hintText:
+                      'Hi creator, I’d like to become a member of this group ',
+                  onPressed: () {
+                    _joinGroup(
+                        roomId: codeController.text,
+                        message: messageController.text);
+                    Navigator.pop(context);
+                  }));
+        });
+  }
+
+  void _showJoinGroupDialogFailed(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            // contentPadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            content: PopupContentWidget(
+              icon: AppImages.invalidIcon,
+              title: "Invalid Group Code!",
+              subtext:
+                  "The group code you entered is incorrect. Please try again or reach out to the group creator if you believe the code provided is incorrect",
+              actionBtnText: "Try Again",
+              buttonColor: AppColors.primaryColor,
+              onPressed: () {
+                Navigator.pop(context);
+                _showJoinGroupDialog(context, ref);
+              },
+            ),
+          );
+        });
+  }
+
+  void _showJoinGroupDialogPassMessage(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              // contentPadding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              content: PopupContentWidget(
+                icon: AppImages.successIcon,
+                title: "Request Sent!",
+                subtext:
+                    "Your request to join the group has been sent successfully",
+                actionBtnText: "Join More Groups",
+                buttonColor: AppColors.primaryColor,
+                closeBtnText: 'Close',
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showJoinGroupDialog(context, ref);
+                },
+              ));
+        });
   }
 }
 

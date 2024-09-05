@@ -10,6 +10,8 @@ import 'package:sharepact_app/api/model/bank/getBank_model.dart';
 import 'package:sharepact_app/api/model/categories/categoryByid.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
+import 'package:sharepact_app/api/model/groupDetails/groupdetails.dart';
+import 'package:sharepact_app/api/model/groupDetails/joinRequest.dart';
 import 'package:sharepact_app/api/model/newmodel.dart';
 import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
@@ -625,6 +627,125 @@ class AuthService {
       print('Error: $e');
       return NotificationConfigResponse(
           code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+//groupdeails
+  Future<GroupdetailsResponse> getGroupDetailsById({required String id}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+          endpoint: Config.getGroupDetailsEndpoint + id, token: token);
+
+      return groupdetailsResponseFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GroupdetailsResponse(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      return GroupdetailsResponse.fromJson(body);
+    } catch (e) {
+      print('Error: $e');
+      return GroupdetailsResponse(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GroupJoinRequestResponse> getGroupJoinRequestById(
+      {required String id}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+          endpoint: Config.getGroupJiinRequestsEndpoint + id, token: token);
+
+      return groupJoinRequestResponseFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GroupJoinRequestResponse(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      return GroupJoinRequestResponse.fromJson(body);
+    } catch (e) {
+      print('Error: $e');
+      return GroupJoinRequestResponse(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GeneralResponseModel> leaveGroup({required String id}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.post2(
+        token: token,
+        endpoint: Config.leaveeGroupEndpoint + id,
+      );
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> acceptOrRejectInviteGroup(
+      {required String groupId,
+      required String userId,
+      required bool approve}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.post(
+          token: token,
+          endpoint: Config.acceptOrRejectGroupEndpoint,
+          body: {"groupId": groupId, "userId": userId, "approve": approve});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> joinAGroup(
+      {required String groupCode, required String message}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.post(
+          token: token,
+          endpoint: Config.joinGroupEndpoint,
+          body: {"groupCode": groupCode, "message": message});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> getGroupByCode({
+    required String groupId,
+  }) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.get2(
+        token: token,
+        endpoint: Config.getGroupByCodeEndpoint + groupId,
+      );
+
+      return response!;
+    } catch (e) {
+      rethrow;
     }
   }
 

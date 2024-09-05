@@ -34,7 +34,11 @@ class AuthServiceProvider
         createGroup: AsyncData(null),
         contactService: AsyncData(null),
         postBankDetails: AsyncData(null),
-        deleteAccount: AsyncData(null));
+        leaveGroup: AsyncData(null),
+        acceptOrRejectInviteGroup: AsyncData(null),
+        deleteAccount: AsyncData(null),
+        joinGroup: AsyncData(null),
+        getGroupbyCode: AsyncData(null));
   }
 
 //auth flow
@@ -323,6 +327,69 @@ class AuthServiceProvider
     }
   }
 
+  Future<void> leaveGroup({
+    required String roomId,
+  }) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        leaveGroup: const AsyncLoading(),
+      );
+      final response = await auth.leaveGroup(id: roomId);
+      state = state.copyWith(leaveGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(leaveGroup: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> acceptOrRejectInviteGroup(
+      {required String groupId,
+      required String userId,
+      required bool approve}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        acceptOrRejectInviteGroup: const AsyncLoading(),
+      );
+      final response = await auth.acceptOrRejectInviteGroup(
+          groupId: groupId, userId: userId, approve: approve);
+      state = state.copyWith(acceptOrRejectInviteGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          acceptOrRejectInviteGroup: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> joinAGroup(
+      {required String groupCode, required String message}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        joinGroup: const AsyncLoading(),
+      );
+      final response =
+          await auth.joinAGroup(groupCode: groupCode, message: message);
+      state = state.copyWith(joinGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(joinGroup: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> getGroupByCode({
+    required String groupId,
+  }) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        getGroupbyCode: const AsyncLoading(),
+      );
+      final response = await auth.getGroupByCode(groupId: groupId);
+      state = state.copyWith(getGroupbyCode: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getGroupbyCode: AsyncError(e, StackTrace.current));
+    }
+  }
+
   //group
   Future<void> contactService({
     required String name,
@@ -391,12 +458,15 @@ class AuthServiceProviderStates {
   final AsyncValue<GeneralResponseModel?> confirmReSetPassword;
   final AsyncValue<GeneralResponseModel?> changePassword;
   final AsyncValue<GeneralResponseModel?> logout;
+  final AsyncValue<GeneralResponseModel?> leaveGroup;
   final AsyncValue<GeneralResponseModel?> updateAvater;
   final AsyncValue<GeneralResponseModel?> updateUserNameAndEmail;
   final AsyncValue<GeneralResponseModel?> changeProfilePassword;
   final AsyncValue<GeneralResponseModel?> checkTokenstatus;
   final AsyncValue<GeneralResponseModel?> contactService;
   final AsyncValue<GeneralResponseModel?> motificationSettings;
+  final AsyncValue<GeneralResponseModel?> joinGroup;
+  final AsyncValue<GeneralResponseModel?> getGroupbyCode;
   final AsyncValue<bool?> isTokenValid;
   final AsyncValue<GeneralResponseModel?> createGroup;
   final AsyncValue<GeneralResponseModel?> postBankDetails;
@@ -404,41 +474,45 @@ class AuthServiceProviderStates {
   final AsyncValue<SubscriptionResponseModel?> getListInactiveSub;
   final AsyncValue<AvaterResponseModel?> getAllAvater;
   final AsyncValue<String?> getToken;
+  final AsyncValue<GeneralResponseModel?> acceptOrRejectInviteGroup;
   // final AsyncValue<String?> initiateSubscription;
 
-  const AuthServiceProviderStates(
-      {
-      // required this.pickedImage,
-      // required this.user,
-      // required this.profileUpdater,
-      required this.generalrespond,
-      required this.otp,
-      required this.resendOtp,
-      required this.login,
-      required this.resetPassword,
-      required this.confirmReSetPassword,
-      required this.changePassword,
-      required this.isTokenValid,
-      required this.logout,
-      required this.getToken,
-      required this.getListInactiveSub,
-      required this.updateAvater,
-      required this.updateUserNameAndEmail,
-      required this.getAllAvater,
-      required this.changeProfilePassword,
-      required this.checkTokenstatus,
-      required this.postBankDetails,
-      required this.getServiceById,
-      required this.createGroup,
-      required this.contactService,
-      required this.motificationSettings,
-      required this.deleteAccount
-      // required this.fetchSubcription,
-      // required this.fetchSubcriptionbyUserId,
-      // required this.updatePassword,
-      // required this.inviteLink,
-      // required this.initiateSubscription,
-      });
+  const AuthServiceProviderStates({
+    // required this.pickedImage,
+    // required this.user,
+    // required this.profileUpdater,
+    required this.generalrespond,
+    required this.otp,
+    required this.resendOtp,
+    required this.login,
+    required this.resetPassword,
+    required this.confirmReSetPassword,
+    required this.changePassword,
+    required this.isTokenValid,
+    required this.logout,
+    required this.getToken,
+    required this.getListInactiveSub,
+    required this.updateAvater,
+    required this.updateUserNameAndEmail,
+    required this.getAllAvater,
+    required this.changeProfilePassword,
+    required this.checkTokenstatus,
+    required this.postBankDetails,
+    required this.getServiceById,
+    required this.createGroup,
+    required this.contactService,
+    required this.motificationSettings,
+    required this.deleteAccount,
+    required this.leaveGroup,
+    required this.acceptOrRejectInviteGroup,
+    required this.joinGroup,
+    required this.getGroupbyCode,
+    // required this.fetchSubcription,
+    // required this.fetchSubcriptionbyUserId,
+    // required this.updatePassword,
+    // required this.inviteLink,
+    // required this.initiateSubscription,
+  });
 
   AuthServiceProviderStates copyWith({
     //   XFile? pickedImage,
@@ -459,12 +533,16 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? checkTokenstatus,
     AsyncValue<GeneralResponseModel?>? postBankDetails,
     AsyncValue<GeneralResponseModel?>? contactService,
+    AsyncValue<GeneralResponseModel?>? acceptOrRejectInviteGroup,
     AsyncValue<GeneralResponseModel?>? createGroup,
     AsyncValue<SubscriptionResponseModel?>? getListInactiveSub,
     AsyncValue<AvaterResponseModel?>? getAllAvater,
     AsyncValue<SingleServiceResponsModel?>? getServiceById,
     AsyncValue<GeneralResponseModel?>? motificationSettings,
     AsyncValue<GeneralResponseModel?>? deleteAccount,
+    AsyncValue<GeneralResponseModel?>? leaveGroup,
+    AsyncValue<GeneralResponseModel?>? joinGroup,
+    AsyncValue<GeneralResponseModel?>? getGroupbyCode,
 
     // AsyncValue<NotificationModel?>? notificationFetch,
     // AsyncValue<SubscriptionModel?>? fetchSubcription,
@@ -504,6 +582,11 @@ class AuthServiceProviderStates {
       contactService: contactService ?? this.contactService,
       motificationSettings: motificationSettings ?? this.motificationSettings,
       deleteAccount: deleteAccount ?? this.deleteAccount,
+      leaveGroup: leaveGroup ?? this.leaveGroup,
+      acceptOrRejectInviteGroup:
+          acceptOrRejectInviteGroup ?? this.acceptOrRejectInviteGroup,
+      joinGroup: joinGroup ?? this.joinGroup,
+      getGroupbyCode: getGroupbyCode ?? this.getGroupbyCode,
 
       // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
       // notificationFetch: notificationFetch ?? this.notificationFetch,

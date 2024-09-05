@@ -48,10 +48,18 @@ class Config {
 
   //group
   static const String createGroupEndpoint = '/api/groups/create';
+  static const String leaveeGroupEndpoint = '/api/groups/leave/';
+  static const String acceptOrRejectGroupEndpoint =
+      '/api/groups/handle-join-request';
+  static const String getGroupDetailsEndpoint = '/api/groups/';
+  static const String getGroupJiinRequestsEndpoint =
+      '/api/groups/join-requests/';
+  static const String getGroupByCodeEndpoint = '/api/groups/by-code/';
+  static const String joinGroupEndpoint = '/api/groups/join';
 //support
   static const String contactSupportEndpoint = '/api/support/contact-support';
 
-  //support
+  //Notification
   static const String patchNotificationSettingEndpoint =
       '/api/profile/notification-config';
   static const String getNotificationSettingEndpoint =

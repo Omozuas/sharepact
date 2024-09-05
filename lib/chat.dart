@@ -14,28 +14,57 @@ class ChatScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
-  Future<void> connect({String? token}) async {
+  late Socket socket;
+
+  Future<void> getToken() async {
     await ref.read(profileProvider.notifier).getToken();
     final myToken = ref.read(profileProvider).getToken.value;
-    final Socket socket = io(
+    print(myToken);
+    connect(token: myToken);
+  }
+
+  void connect({String? token}) {
+    socket = io(
         'https://improved-endlessly-midge.ngrok-free.app',
         OptionBuilder()
-            .setTransports(['websocket'])
+            .setTransports(["websocket"])
             .disableAutoConnect()
-            .setExtraHeaders({'token': myToken})
+            .setExtraHeaders({"token": token})
             .build());
 
     socket.connect();
-    socket.onConnect((data) => print('connected'));
+    socket.emit("chat-message", []);
+    socket.emit("messages-669743cc4c71861346ef3b34", []);
+    socket.onConnect((data) {
+      print('connected');
+      socket.on("send-message", (msg) {
+        print(msg);
+      });
+    });
+
     socket.onDisconnect((_) => print('disconnected'));
-    print(socket.connected);
+    print({'socket': socket.connected});
   }
+
+  // void sendMessage({String? message, String? roomId}) {
+  //   if (socket.connected) {
+  //     socket.emit('send-message', {'msg': message, 'room': roomId});
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() => connect());
+    Future.microtask(() => getToken());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Disconnect the socket when the widget is disposed
+    socket.disconnect();
+    print('ddd');
   }
 
   @override
@@ -112,7 +141,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   case 'Group details':
                     // Handle group details action
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => GroupDetailsScreen()));
+                        builder: (context) => const GroupDetailsScreen()));
 
                     break;
                   case 'Mute Notifications':

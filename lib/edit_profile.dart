@@ -7,7 +7,7 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/change_avatar.dart';
-import 'package:sharepact_app/login.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';
@@ -190,14 +190,18 @@ class EditProfileState extends ConsumerState<EditProfile> {
                             child: userDetails.when(
                                 skipLoadingOnReload: true,
                                 data: (userDetails) {
-                                  if (_userModel?.avatarUrl == null) {
-                                    return Image.asset(
-                                      'assets/avatars/image4.png',
-                                      fit: BoxFit.cover,
+                                  if (userDetails?.avatarUrl == null) {
+                                    return Shimmer.fromColors(
+                                      baseColor: AppColors.accent,
+                                      highlightColor: AppColors.primaryColor,
+                                      child: Image.asset(
+                                        'assets/avatars/image4.png',
+                                        fit: BoxFit.cover,
+                                      ),
                                     );
                                   }
                                   return Image.network(
-                                    "${_userModel?.avatarUrl}",
+                                    "${userDetails?.avatarUrl}",
                                     fit: BoxFit.cover,
                                   );
                                 },
@@ -322,6 +326,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
                         ),
                         const SizedBox(height: 10),
                         TextField(
+                          readOnly: true,
                           decoration: InputDecoration(
                             hintText: isLoading
                                 ? 'Janedoe@gmail.com'

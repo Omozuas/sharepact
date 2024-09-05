@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/edit_profile.dart';
 import 'package:sharepact_app/screens/notification/screen/notification_screen.dart';
 
 class Header extends ConsumerStatefulWidget {
@@ -81,9 +82,16 @@ class _HeaderState extends ConsumerState<Header> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  CircleAvatar(
-                    backgroundImage: NetworkImage("${user?.avatarUrl}"),
-                    radius: 24,
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const EditProfile(),
+                      ));
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage("${user?.avatarUrl}"),
+                      radius: 24,
+                    ),
                   )
                 ],
               )

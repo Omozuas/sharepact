@@ -92,7 +92,7 @@ class SubscriptionCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: RichText(
               text: TextSpan(
-                text: "$price",
+                text: "$price NGN",
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class SubscriptionCard extends StatelessWidget {
               border: Border(top: BorderSide(color: Color(0XFFD1D4D7))),
             ),
             child: Text(
-              'Next payment: $nextpayment',
+              'Next payment: $nextpayment ',
               style: const TextStyle(fontSize: 8, color: Colors.grey),
             ),
           ),
