@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
 import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/groupDetailsProvider.dart';
@@ -381,17 +382,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                       context: context,
                                       sender: item1.sender!.username!,
                                       message: item1.content!,
-                                      time: DateTime.parse(
-                                              item1.sentAt!.toString())
+                                      time: DateFormat('h:mm a')
+                                          .format(item1.sentAt!)
                                           .toString(),
                                       img: item1.sender!.avatarUrl!);
                                 } else {
                                   return _buildSentMessage1(
                                       context: context,
                                       message: item1.content!,
-                                      time: DateTime.parse(
-                                              item1.sentAt!.toString())
+                                      time: DateFormat('h:mm a')
+                                          .format(item1.sentAt!)
                                           .toString(),
+                                      // DateTime.parse(
+                                      //         item1.sentAt!.toString())
+                                      //     .toString(),
                                       img: item1.sender!.avatarUrl!);
                                 }
                               });
