@@ -37,6 +37,7 @@ class AuthServiceProvider
         leaveGroup: AsyncData(null),
         acceptOrRejectInviteGroup: AsyncData(null),
         deleteAccount: AsyncData(null),
+        getUserId: AsyncData(null),
         joinGroup: AsyncData(null),
         getGroupbyCode: AsyncData(null));
   }
@@ -162,6 +163,17 @@ class AuthServiceProvider
       state = state.copyWith(getToken: AsyncData(response));
     } catch (e) {
       state = state.copyWith(getToken: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> getuserId() async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(getUserId: const AsyncLoading());
+      final response = await auth.getuserId();
+      state = state.copyWith(getUserId: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(getUserId: AsyncError(e, StackTrace.current));
     }
   }
 
@@ -474,6 +486,7 @@ class AuthServiceProviderStates {
   final AsyncValue<SubscriptionResponseModel?> getListInactiveSub;
   final AsyncValue<AvaterResponseModel?> getAllAvater;
   final AsyncValue<String?> getToken;
+  final AsyncValue<String?> getUserId;
   final AsyncValue<GeneralResponseModel?> acceptOrRejectInviteGroup;
   // final AsyncValue<String?> initiateSubscription;
 
@@ -507,6 +520,7 @@ class AuthServiceProviderStates {
     required this.acceptOrRejectInviteGroup,
     required this.joinGroup,
     required this.getGroupbyCode,
+    required this.getUserId,
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -550,54 +564,56 @@ class AuthServiceProviderStates {
     //   AsyncValue<SubscriptionModel?>? fetchSubcriptionbyUserId,
 
     AsyncValue<String?>? getToken,
+    AsyncValue<String?>? getUserId,
     //   AsyncValue<String?>? initiateSubscription,
 
     // AsyncValue<UpdatePasswordModel?>? updatePassword
   }) {
     return AuthServiceProviderStates(
-      // pickedImage: pickedImage ?? this.pickedImage,
-      // user: user ?? this.user,
-      // profileUpdater: profileUpdater ?? this.profileUpdater,
-      generalrespond: generalrespond ?? this.generalrespond,
-      otp: otp ?? this.otp,
-      resendOtp: resendOtp ?? this.resendOtp,
-      login: login ?? this.login,
-      resetPassword: resetPassword ?? this.resetPassword,
-      confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
-      changePassword: changePassword ?? this.changePassword,
-      isTokenValid: isTokenValid ?? this.isTokenValid,
-      logout: logout ?? this.logout,
-      getToken: getToken ?? this.getToken,
-      getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
-      updateAvater: updateAvater ?? this.updateAvater,
-      updateUserNameAndEmail:
-          updateUserNameAndEmail ?? this.updateUserNameAndEmail,
-      getAllAvater: getAllAvater ?? this.getAllAvater,
-      changeProfilePassword:
-          changeProfilePassword ?? this.changeProfilePassword,
-      checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus,
-      postBankDetails: postBankDetails ?? this.postBankDetails,
-      getServiceById: getServiceById ?? this.getServiceById,
-      createGroup: createGroup ?? this.createGroup,
-      contactService: contactService ?? this.contactService,
-      motificationSettings: motificationSettings ?? this.motificationSettings,
-      deleteAccount: deleteAccount ?? this.deleteAccount,
-      leaveGroup: leaveGroup ?? this.leaveGroup,
-      acceptOrRejectInviteGroup:
-          acceptOrRejectInviteGroup ?? this.acceptOrRejectInviteGroup,
-      joinGroup: joinGroup ?? this.joinGroup,
-      getGroupbyCode: getGroupbyCode ?? this.getGroupbyCode,
+        // pickedImage: pickedImage ?? this.pickedImage,
+        // user: user ?? this.user,
+        // profileUpdater: profileUpdater ?? this.profileUpdater,
+        generalrespond: generalrespond ?? this.generalrespond,
+        otp: otp ?? this.otp,
+        resendOtp: resendOtp ?? this.resendOtp,
+        login: login ?? this.login,
+        resetPassword: resetPassword ?? this.resetPassword,
+        confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
+        changePassword: changePassword ?? this.changePassword,
+        isTokenValid: isTokenValid ?? this.isTokenValid,
+        logout: logout ?? this.logout,
+        getToken: getToken ?? this.getToken,
+        getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
+        updateAvater: updateAvater ?? this.updateAvater,
+        updateUserNameAndEmail:
+            updateUserNameAndEmail ?? this.updateUserNameAndEmail,
+        getAllAvater: getAllAvater ?? this.getAllAvater,
+        changeProfilePassword:
+            changeProfilePassword ?? this.changeProfilePassword,
+        checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus,
+        postBankDetails: postBankDetails ?? this.postBankDetails,
+        getServiceById: getServiceById ?? this.getServiceById,
+        createGroup: createGroup ?? this.createGroup,
+        contactService: contactService ?? this.contactService,
+        motificationSettings: motificationSettings ?? this.motificationSettings,
+        deleteAccount: deleteAccount ?? this.deleteAccount,
+        leaveGroup: leaveGroup ?? this.leaveGroup,
+        acceptOrRejectInviteGroup:
+            acceptOrRejectInviteGroup ?? this.acceptOrRejectInviteGroup,
+        joinGroup: joinGroup ?? this.joinGroup,
+        getGroupbyCode: getGroupbyCode ?? this.getGroupbyCode,
+        getUserId: getUserId ?? this.getUserId
 
-      // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
-      // notificationFetch: notificationFetch ?? this.notificationFetch,
-      // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
+        // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
+        // notificationFetch: notificationFetch ?? this.notificationFetch,
+        // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
 
-      // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
+        // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
 
-      // inviteLink: inviteLink ?? this.inviteLink,
-      // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+        // inviteLink: inviteLink ?? this.inviteLink,
+        // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
 
-      // updatePassword: updatePassword ?? this.updatePassword
-    );
+        // updatePassword: updatePassword ?? this.updatePassword
+        );
   }
 }

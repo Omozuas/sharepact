@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/email_verification.dart';
 import 'package:sharepact_app/screens/authScreen/reset_password.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/authScreen/signup.dart';
@@ -47,14 +48,27 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
             // Safely access message
             final message = pUpdater.value?.message;
             // Check if the response code is 200
+
             if (pUpdater.value!.code == 200) {
               // Navigate to homescreen if signin is successful
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ControllerNavScreen()),
-              );
-              showSuccess(message: message!, context: context);
+              if (pUpdater.value!.data["user"]["verified"] == true) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ControllerNavScreen()),
+                );
+                showSuccess(message: message!, context: context);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EmailVerificationScreen(
+                          email: pUpdater.value!.data["user"]["email"])),
+                );
+
+                showErrorPopup(
+                    message: 'Account Not Verifyed ', context: context);
+              }
             } else {
               showErrorPopup(message: message, context: context);
             }

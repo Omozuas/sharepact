@@ -766,8 +766,6 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                     const Divider(),
                     buildPaymentDetailRow('Handling Fee',
                         '${services.value?.data?.handlingFees ?? 0} NGN', ''),
-                    const Divider(),
-                    buildPaymentDetailRow('Individual Share', '1,100 NGN', ''),
                   ],
                 ),
               ),

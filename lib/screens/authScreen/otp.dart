@@ -120,6 +120,7 @@ class OTPScreenState extends ConsumerState<OTPScreen> {
     final isLoading = ref.watch(profileProvider).confirmReSetPassword.isLoading;
     final isLoading1 = ref.watch(profileProvider).resetPassword.isLoading;
 
+    // ignore: deprecated_member_use
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
@@ -305,11 +306,16 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                                   width: 16,
                                   height: 16,
                                 ),
-                                service: item.service?.serviceName,
+                                service: item.groupName,
                                 price: item.subscriptionCost,
                                 members: item.numberOfMembers,
                                 nextpayment:
-                                    item.nextSubscriptionDate.toString(),
+                                    item.nextSubscriptionDate.toString() ==
+                                            'null'
+                                        ? ''
+                                        : DateFormat('d MMM y')
+                                            .format(item.nextSubscriptionDate!)
+                                            .toString(),
                                 createdby: item.admin!.username,
                                 currentMembers: item.members?.length.toString(),
                               ),
