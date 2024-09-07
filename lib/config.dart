@@ -37,6 +37,8 @@ class Config {
   // '/api/groups?subscription_status=active';
   static const String getInActiveSubscriptionsEndpoint =
       '/api/groups?subscription_status=inactive';
+  static const String updateSubscriptionCostEndpoint =
+      '/api/groups/update-subscription-cost/';
 
   //bank Endpoint
   static const String getBankEndpoint = '/api/bank-details/';
@@ -56,6 +58,11 @@ class Config {
       '/api/groups/join-requests/';
   static const String getGroupByCodeEndpoint = '/api/groups/by-code/';
   static const String joinGroupEndpoint = '/api/groups/join';
+  static const String groupListEndpoint = '/api/groups/grouplist';
+  static const String confirmStatusEndpoint = '/api/groups/confirm-status/';
+  static const String activateGroupEndpoint = '/api/groups/activate/';
+  static const String markGroupMesagesEndpoint =
+      '/api/chat/messages/mark-as-read';
 //support
   static const String contactSupportEndpoint = '/api/support/contact-support';
 

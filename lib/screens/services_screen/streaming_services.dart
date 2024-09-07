@@ -7,7 +7,7 @@ import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/responsive_widgets.dart';
 import 'package:sharepact_app/responsive_helpers.dart';
-import 'package:sharepact_app/netflix_details.dart';
+import 'package:sharepact_app/screens/services_screen/netflix_details.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';

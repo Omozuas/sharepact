@@ -5,6 +5,7 @@ import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
@@ -14,7 +15,7 @@ import 'package:sharepact_app/screens/home/components/service_widget.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/home/header.dart';
-import 'package:sharepact_app/streaming_services.dart'; // Import the StreamingServicesScreen
+import 'package:sharepact_app/screens/services_screen/streaming_services.dart'; // Import the StreamingServicesScreen
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
 // Import MySubscriptionsScreen
@@ -157,6 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final categories = ref.watch(categoryProvider);
     final activeSub = ref.watch(subscriptionProvider);
     ref.watch(profileProvider).checkTokenstatus;
+    ref.watch(groupListprovider);
     return SingleChildScrollView(
       child: RefreshIndicator(
         onRefresh: () async {

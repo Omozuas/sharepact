@@ -12,6 +12,7 @@ import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/groupDetails/groupdetails.dart';
 import 'package:sharepact_app/api/model/groupDetails/joinRequest.dart';
+import 'package:sharepact_app/api/model/list_of_groups/list_of_groups.dart';
 import 'package:sharepact_app/api/model/newmodel.dart';
 import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
@@ -742,6 +743,97 @@ class AuthService {
         token: token,
         endpoint: Config.getGroupByCodeEndpoint + groupId,
       );
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GroupResponseList> getGroupList({String? page, String? limit}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+          endpoint: '${Config.groupListEndpoint}?&page=$page&limit=$limit',
+          token: token);
+      var body = jsonDecode(response.body);
+      print(body['data']['groups']);
+      return GroupResponseList.fromJson(body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return GroupResponseList(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      print('No Internet connection');
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      return GroupResponseList.fromJson(body);
+    } catch (e, stackTrace) {
+      print('Error: $e');
+      print('Stack trace: $stackTrace');
+      return GroupResponseList(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<GeneralResponseModel> updateSubscriptionCost(
+      {required int newSubscriptionCost, required String id}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.patch(
+          token: token,
+          endpoint: Config.updateSubscriptionCostEndpoint + id,
+          body: {"newSubscriptionCost": newSubscriptionCost});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> updateConfirmStatus({required String id}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.post2(
+        token: token,
+        endpoint: '${Config.confirmStatusEndpoint}$id/confirm',
+      );
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> updateActivateGroup({required String id}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.post2(
+        token: token,
+        endpoint: Config.activateGroupEndpoint + id,
+      );
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GeneralResponseModel> markGroupasRead(
+      {required String groupId, required List<String> messagesid}) async {
+    final token = await getToken();
+
+    try {
+      final response = await apiService.patch(
+          token: token,
+          endpoint: Config.markGroupMesagesEndpoint,
+          body: {"messageIds": messagesid, "groupId": groupId});
 
       return response!;
     } catch (e) {

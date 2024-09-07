@@ -6,7 +6,7 @@ import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/change_avatar.dart';
+import 'package:sharepact_app/screens/settings_screen/change_avatar.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';

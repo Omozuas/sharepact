@@ -28,6 +28,7 @@ class ChatProvider extends AutoDisposeNotifier<ChatProviderStates> {
   void getMessagess(
       {required String roomId, required int limit, required String? cursor}) {
     final chat = ref.read(chatServiceProvider);
+    state = state.copyWith(chatrespond: const AsyncLoading());
     chat.getMessages(roomId: roomId, limit: limit, cursor: cursor);
   }
 }

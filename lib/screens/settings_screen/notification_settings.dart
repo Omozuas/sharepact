@@ -8,7 +8,7 @@ import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/widgets/checkbox_row.dart';
 import 'package:shimmer/shimmer.dart';
-import 'responsive_helpers.dart';
+import '../../responsive_helpers.dart';
 
 class NotificationSettings extends ConsumerStatefulWidget {
   const NotificationSettings({super.key});
