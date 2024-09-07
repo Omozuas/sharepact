@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/email_verification.dart';
+import 'package:sharepact_app/screens/authScreen/email_verification.dart';
 import 'package:sharepact_app/screens/authScreen/reset_password.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/authScreen/signup.dart';

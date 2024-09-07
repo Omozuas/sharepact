@@ -13,8 +13,8 @@ import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key});
-
+  const ChatScreen({super.key, this.roomId});
+  final String? roomId;
   @override
   ConsumerState createState() => _ChatScreenState();
 }
@@ -22,9 +22,10 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _isLoadingMore = false;
+
   String userId = '';
   Future<void> getToken() async {
+    print(widget.roomId);
     await ref.read(profileProvider.notifier).getToken();
     await ref.read(profileProvider.notifier).getuserId();
     final myToken = ref.read(profileProvider).getToken.value;
@@ -32,15 +33,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     setState(() {
       userId = myid!;
     });
-    print({myToken, myid});
-    ref.read(chatStateProvider.notifier).connect(
-        token: myToken!, userId: myid!, roomId: '66d6da40712d196a6a915636');
+    ref
+        .read(chatStateProvider.notifier)
+        .connect(token: myToken!, userId: myid!, roomId: widget.roomId!);
     _getAllMessage();
     getGroupDetails();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Scroll to bottom every time new data is rendered
-      _scrollToBottom();
-    });
   }
 
   @override
@@ -48,6 +45,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.initState();
     Future.microtask(() => getToken());
     _scrollController.addListener(_onScroll);
+    _scrollToBottom();
   }
 
   // Function to scroll to the bottom of the list
@@ -64,15 +62,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    // Disconnect the socket when the widget is disposed
-    // disConnect();
+
     singleChat.clear();
     _scrollController.dispose();
-    print('ddd');
   }
 
-  void disConnect() {
-    ref.read(chatServiceProvider).disconnect();
+  @override
+  void deactivate() {
+    // Call disconnect here in `deactivate()` which is still safe for state reading
+    disConnect();
+    super.deactivate(); // Always call super.deactivate()
+  }
+
+  Future<void> disConnect() async {
+    ref.read(chatStateProvider.notifier).disConnect();
   }
 
   // Function to detect scroll position and load more messages when at the top
@@ -84,20 +87,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   void _sendMessage() {
     if (_messageController.text.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Scroll to bottom every time new data is rendered
-        _scrollToBottom();
-      });
       ref.read(chatStateProvider.notifier).sendMessage(
-          roomId: '66d6da40712d196a6a915636', message: _messageController.text);
+          roomId: widget.roomId!, message: _messageController.text);
 
       _messageController.clear();
+      _scrollToBottom();
     }
   }
 
-  int page = 20;
+  int page = 50;
+  bool _isLoadingMore = false;
   // Function to load more messages
-  void _loadMoreMessages() async {
+  void _loadMoreMessages() {
     if (_isLoadingMore) return;
     setState(() {
       _isLoadingMore = true;
@@ -106,8 +107,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     page = page + 20;
 
     // Replace this with your logic to load more data (e.g., pagination)
-    ref.read(chatStateProvider.notifier).getMessagess(
-        roomId: '66d6da40712d196a6a915636', limit: page, cursor: null);
+    ref
+        .read(chatStateProvider.notifier)
+        .getMessagess(roomId: widget.roomId!, limit: page, cursor: null);
     // Restore the scroll position after loading more data
 
     setState(() {
@@ -116,19 +118,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _getAllMessage() {
-    ref.read(chatStateProvider.notifier).getMessagess(
-        roomId: '66d6da40712d196a6a915636', limit: 20, cursor: null);
+    ref
+        .read(chatStateProvider.notifier)
+        .getMessagess(roomId: widget.roomId!, limit: 50, cursor: null);
+    _scrollToBottom();
     // singleChat.clear();
   }
 
   Future<void> getGroupDetails() async {
     await ref
         .read(groupdetailsprovider.notifier)
-        .getGroupDetailsById(id: '66d6da40712d196a6a915636');
+        .getGroupDetailsById(id: widget.roomId!);
     // final res = ref.watch(groupdetailsprovider).value;
     // print(res?.data?.joinRequests?[0]);
   }
 
+  bool _hasScrolledToBottom = false;
   Future<void> _leaveGroup({required String roomId}) async {
     try {
       await ref.read(profileProvider.notifier).leaveGroup(roomId: roomId);
@@ -322,12 +327,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   case 'Group details':
                     // Handle group details action
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const GroupDetailsScreen()));
+                        builder: (context) => GroupDetailsScreen(
+                              id: widget.roomId,
+                            )));
 
                     break;
                   case 'Exit Group':
                     // Handle exit group action
-                    _leaveGroup(roomId: '');
+                    _leaveGroup(roomId: widget.roomId!);
                     break;
                 }
               },
@@ -356,12 +363,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   child: res.when(
                       skipLoadingOnReload: true,
                       data: (data) {
-                        print('Message count in UI: ${data?.length}');
                         if (data != null && data.isNotEmpty) {
-                          // WidgetsBinding.instance.addPostFrameCallback((_) {
-                          //   // Scroll to bottom every time new data is rendered
-                          //   _scrollToBottom();
-                          // });
                           return ListView.builder(
                               itemCount: _isLoadingMore
                                   ? data.length + 20
@@ -373,10 +375,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               itemBuilder: (context, index) {
                                 var item1 = data[index];
                                 // Show loading indicator when loading more messages
-                                if (_isLoadingMore) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
+
                                 if (item1.sender?.id != userId) {
                                   return _buildReceivedMessage1(
                                       context: context,
@@ -387,6 +386,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                           .toString(),
                                       img: item1.sender!.avatarUrl!);
                                 } else {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (!_hasScrolledToBottom) {
+                                      _scrollToBottom(); // Scroll to the bottom
+                                      _hasScrolledToBottom =
+                                          true; // Mark that the scroll has been performed
+                                    }
+                                  });
+
                                   return _buildSentMessage1(
                                       context: context,
                                       message: item1.content!,
@@ -689,10 +697,4 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: ChatScreen(),
-  ));
 }

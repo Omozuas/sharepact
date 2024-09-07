@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/reset_successful.dart';
+import 'package:sharepact_app/screens/authScreen/reset_successful.dart';
 import '../../responsive_helpers.dart';
 
 class NewPasswordScreen extends ConsumerStatefulWidget {

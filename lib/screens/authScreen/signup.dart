@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/email_verification.dart';
+import 'package:sharepact_app/screens/authScreen/email_verification.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import '../../responsive_helpers.dart';
 

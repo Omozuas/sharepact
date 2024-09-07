@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
@@ -10,12 +11,12 @@ import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/bank_details/screen/bank_details_screen.dart';
-import 'package:sharepact_app/change_password.dart';
-import 'package:sharepact_app/edit_profile.dart';
-import 'package:sharepact_app/notification_settings.dart';
-import 'package:sharepact_app/privacy_policy.dart';
-import 'package:sharepact_app/support_screen.dart';
-import 'package:sharepact_app/terms_and_conditions.dart';
+import 'package:sharepact_app/screens/settings_screen/change_password.dart';
+import 'package:sharepact_app/screens/settings_screen/edit_profile.dart';
+import 'package:sharepact_app/screens/settings_screen/notification_settings.dart';
+import 'package:sharepact_app/screens/settings_screen/privacy_policy.dart';
+import 'package:sharepact_app/screens/settings_screen/support_screen.dart';
+import 'package:sharepact_app/screens/settings_screen/terms_and_conditions.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -158,7 +159,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.watch(categoryProvider);
     ref.watch(subscriptionProvider);
     ref.watch(notificationConfigProvider);
-
+    ref.watch(groupListprovider);
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),

@@ -39,6 +39,10 @@ class AuthServiceProvider
         deleteAccount: AsyncData(null),
         getUserId: AsyncData(null),
         joinGroup: AsyncData(null),
+        updateSubsriptionCost: AsyncData(null),
+        updateConfirmStatus: AsyncData(null),
+        updateActivateGroup: AsyncData(null),
+        markGroupAsRead: AsyncData(null),
         getGroupbyCode: AsyncData(null));
   }
 
@@ -402,6 +406,70 @@ class AuthServiceProvider
     }
   }
 
+  Future<void> updatSubscriptioncost(
+      {required int newSubscriptionCost, required String id}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        updateSubsriptionCost: const AsyncLoading(),
+      );
+      final response = await auth.updateSubscriptionCost(
+          newSubscriptionCost: newSubscriptionCost, id: id);
+
+      state = state.copyWith(updateSubsriptionCost: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          updateSubsriptionCost: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> updatActivateGroup({required String id}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        updateActivateGroup: const AsyncLoading(),
+      );
+      final response = await auth.updateActivateGroup(id: id);
+
+      state = state.copyWith(updateActivateGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          updateActivateGroup: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> updatConfirmStatus({required String id}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        updateConfirmStatus: const AsyncLoading(),
+      );
+      final response = await auth.updateConfirmStatus(id: id);
+
+      state = state.copyWith(updateConfirmStatus: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(
+          updateConfirmStatus: AsyncError(e, StackTrace.current));
+    }
+  }
+
+  Future<void> markGroupAsRead(
+      {required String groupId, required List<String> messagesid}) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        markGroupAsRead: const AsyncLoading(),
+      );
+      final response =
+          await auth.markGroupasRead(groupId: groupId, messagesid: messagesid);
+
+      state = state.copyWith(markGroupAsRead: AsyncData(response));
+    } catch (e) {
+      state =
+          state.copyWith(markGroupAsRead: AsyncError(e, StackTrace.current));
+    }
+  }
+
   //group
   Future<void> contactService({
     required String name,
@@ -488,7 +556,10 @@ class AuthServiceProviderStates {
   final AsyncValue<String?> getToken;
   final AsyncValue<String?> getUserId;
   final AsyncValue<GeneralResponseModel?> acceptOrRejectInviteGroup;
-  // final AsyncValue<String?> initiateSubscription;
+  final AsyncValue<GeneralResponseModel?> updateSubsriptionCost;
+  final AsyncValue<GeneralResponseModel?> updateActivateGroup;
+  final AsyncValue<GeneralResponseModel?> updateConfirmStatus;
+  final AsyncValue<GeneralResponseModel?> markGroupAsRead;
 
   const AuthServiceProviderStates({
     // required this.pickedImage,
@@ -521,6 +592,11 @@ class AuthServiceProviderStates {
     required this.joinGroup,
     required this.getGroupbyCode,
     required this.getUserId,
+    required this.updateSubsriptionCost,
+    required this.updateActivateGroup,
+    required this.updateConfirmStatus,
+    required this.markGroupAsRead,
+
     // required this.fetchSubcription,
     // required this.fetchSubcriptionbyUserId,
     // required this.updatePassword,
@@ -557,7 +633,10 @@ class AuthServiceProviderStates {
     AsyncValue<GeneralResponseModel?>? leaveGroup,
     AsyncValue<GeneralResponseModel?>? joinGroup,
     AsyncValue<GeneralResponseModel?>? getGroupbyCode,
-
+    AsyncValue<GeneralResponseModel?>? updateSubsriptionCost,
+    AsyncValue<GeneralResponseModel?>? updateActivateGroup,
+    AsyncValue<GeneralResponseModel?>? updateConfirmStatus,
+    AsyncValue<GeneralResponseModel?>? markGroupAsRead,
     // AsyncValue<NotificationModel?>? notificationFetch,
     // AsyncValue<SubscriptionModel?>? fetchSubcription,
 
@@ -570,50 +649,55 @@ class AuthServiceProviderStates {
     // AsyncValue<UpdatePasswordModel?>? updatePassword
   }) {
     return AuthServiceProviderStates(
-        // pickedImage: pickedImage ?? this.pickedImage,
-        // user: user ?? this.user,
-        // profileUpdater: profileUpdater ?? this.profileUpdater,
-        generalrespond: generalrespond ?? this.generalrespond,
-        otp: otp ?? this.otp,
-        resendOtp: resendOtp ?? this.resendOtp,
-        login: login ?? this.login,
-        resetPassword: resetPassword ?? this.resetPassword,
-        confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
-        changePassword: changePassword ?? this.changePassword,
-        isTokenValid: isTokenValid ?? this.isTokenValid,
-        logout: logout ?? this.logout,
-        getToken: getToken ?? this.getToken,
-        getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
-        updateAvater: updateAvater ?? this.updateAvater,
-        updateUserNameAndEmail:
-            updateUserNameAndEmail ?? this.updateUserNameAndEmail,
-        getAllAvater: getAllAvater ?? this.getAllAvater,
-        changeProfilePassword:
-            changeProfilePassword ?? this.changeProfilePassword,
-        checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus,
-        postBankDetails: postBankDetails ?? this.postBankDetails,
-        getServiceById: getServiceById ?? this.getServiceById,
-        createGroup: createGroup ?? this.createGroup,
-        contactService: contactService ?? this.contactService,
-        motificationSettings: motificationSettings ?? this.motificationSettings,
-        deleteAccount: deleteAccount ?? this.deleteAccount,
-        leaveGroup: leaveGroup ?? this.leaveGroup,
-        acceptOrRejectInviteGroup:
-            acceptOrRejectInviteGroup ?? this.acceptOrRejectInviteGroup,
-        joinGroup: joinGroup ?? this.joinGroup,
-        getGroupbyCode: getGroupbyCode ?? this.getGroupbyCode,
-        getUserId: getUserId ?? this.getUserId
+      // pickedImage: pickedImage ?? this.pickedImage,
+      // user: user ?? this.user,
+      // profileUpdater: profileUpdater ?? this.profileUpdater,
+      generalrespond: generalrespond ?? this.generalrespond,
+      otp: otp ?? this.otp,
+      resendOtp: resendOtp ?? this.resendOtp,
+      login: login ?? this.login,
+      resetPassword: resetPassword ?? this.resetPassword,
+      confirmReSetPassword: confirmReSetPassword ?? this.confirmReSetPassword,
+      changePassword: changePassword ?? this.changePassword,
+      isTokenValid: isTokenValid ?? this.isTokenValid,
+      logout: logout ?? this.logout,
+      getToken: getToken ?? this.getToken,
+      getListInactiveSub: getListInactiveSub ?? this.getListInactiveSub,
+      updateAvater: updateAvater ?? this.updateAvater,
+      updateUserNameAndEmail:
+          updateUserNameAndEmail ?? this.updateUserNameAndEmail,
+      getAllAvater: getAllAvater ?? this.getAllAvater,
+      changeProfilePassword:
+          changeProfilePassword ?? this.changeProfilePassword,
+      checkTokenstatus: checkTokenstatus ?? this.checkTokenstatus,
+      postBankDetails: postBankDetails ?? this.postBankDetails,
+      getServiceById: getServiceById ?? this.getServiceById,
+      createGroup: createGroup ?? this.createGroup,
+      contactService: contactService ?? this.contactService,
+      motificationSettings: motificationSettings ?? this.motificationSettings,
+      deleteAccount: deleteAccount ?? this.deleteAccount,
+      leaveGroup: leaveGroup ?? this.leaveGroup,
+      acceptOrRejectInviteGroup:
+          acceptOrRejectInviteGroup ?? this.acceptOrRejectInviteGroup,
+      joinGroup: joinGroup ?? this.joinGroup,
+      getGroupbyCode: getGroupbyCode ?? this.getGroupbyCode,
+      getUserId: getUserId ?? this.getUserId,
+      updateSubsriptionCost:
+          updateSubsriptionCost ?? this.updateSubsriptionCost,
+      updateActivateGroup: updateActivateGroup ?? this.updateActivateGroup,
+      updateConfirmStatus: updateConfirmStatus ?? this.updateConfirmStatus,
+      markGroupAsRead: markGroupAsRead ?? this.markGroupAsRead,
 
-        // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
-        // notificationFetch: notificationFetch ?? this.notificationFetch,
-        // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
+      // notificationUpdater: notificationUpdater ?? this.notificationUpdater,
+      // notificationFetch: notificationFetch ?? this.notificationFetch,
+      // fetchSubcription: fetchSubcription ?? this.fetchSubcription,
 
-        // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
+      // fetchSubcriptionbyUserId: fetchSubcriptionbyUserId ?? this.fetchSubcriptionbyUserId,
 
-        // inviteLink: inviteLink ?? this.inviteLink,
-        // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
+      // inviteLink: inviteLink ?? this.inviteLink,
+      // initiateSubscription: initiateSubscription ?? this.initiateSubscription,
 
-        // updatePassword: updatePassword ?? this.updatePassword
-        );
+      // updatePassword: updatePassword ?? this.updatePassword
+    );
   }
 }

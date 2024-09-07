@@ -79,10 +79,14 @@ class SubscriptionCard extends StatelessWidget {
                       height: 24,
                     ),
                 const SizedBox(width: 8),
-                Text(
-                  "$service",
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.bold),
+                Flexible(
+                  child: Text(
+                    "$service",
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),

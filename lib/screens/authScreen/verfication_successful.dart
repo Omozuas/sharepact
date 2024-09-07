@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
-import 'responsive_helpers.dart';
+import '../../responsive_helpers.dart';
 
 class VerificationSuccessfulScreen extends StatefulWidget {
   const VerificationSuccessfulScreen({super.key});

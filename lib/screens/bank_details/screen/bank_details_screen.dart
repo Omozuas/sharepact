@@ -10,7 +10,7 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/bank_details/controller/bank_details_controller.dart';
 import 'package:sharepact_app/screens/home/components/input_field.dart';
-import 'package:sharepact_app/support_screen.dart';
+import 'package:sharepact_app/screens/settings_screen/support_screen.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';

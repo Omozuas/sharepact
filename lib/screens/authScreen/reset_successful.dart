@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'responsive_helpers.dart';
+import '../../responsive_helpers.dart';
 
 class ResetSuccessfulScreen extends StatefulWidget {
   const ResetSuccessfulScreen({super.key});
@@ -13,7 +13,8 @@ class ResetSuccessfulScreenState extends State<ResetSuccessfulScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
+        padding:
+            EdgeInsets.symmetric(horizontal: responsiveWidth(context, 0.06)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -29,8 +30,8 @@ class ResetSuccessfulScreenState extends State<ResetSuccessfulScreen> {
               child: Text(
                 'Password Reset Successful!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
             ),
             SizedBox(height: responsiveHeight(context, 0.01)),
@@ -38,9 +39,9 @@ class ResetSuccessfulScreenState extends State<ResetSuccessfulScreen> {
               child: Text(
                 'Your password reset was successful. Proceed to Login',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xff5D6166),
-                ),
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff5D6166),
+                    ),
                 textAlign: TextAlign.center,
               ),
             ),

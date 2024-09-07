@@ -5,7 +5,7 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
-import 'responsive_helpers.dart';
+import '../../responsive_helpers.dart';
 
 class SupportScreen extends ConsumerStatefulWidget {
   const SupportScreen({super.key});

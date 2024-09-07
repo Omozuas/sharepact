@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
@@ -115,7 +116,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   void filterMembers() {
     final filter = searchController.text.trim().toLowerCase();
-    ;
     final subscriptions = ref.watch(subscriptionProvider).value;
     if (subscriptions != null) {
       setState(() {
@@ -144,6 +144,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
     ref.watch(userProvider);
     ref.watch(categoryProvider);
     ref.watch(profileProvider).checkTokenstatus;
+    ref.watch(groupListprovider);
     final isloading = ref.watch(subscriptionProvider).isLoading;
     return Padding(
       padding: const EdgeInsets.only(left: 15.0, right: 15, top: 15),

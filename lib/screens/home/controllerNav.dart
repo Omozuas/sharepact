@@ -6,11 +6,11 @@ import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/bottom_nav_bar.dart';
-import 'package:sharepact_app/groups.dart';
+import 'package:sharepact_app/screens/group_details/screen/groups_screen.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/home.dart';
-import 'package:sharepact_app/settings.dart';
-import 'package:sharepact_app/subscriptions.dart';
+import 'package:sharepact_app/screens/settings_screen/settings.dart';
+import 'package:sharepact_app/screens/subscriptionScreen/subscriptions.dart';
 
 class ControllerNavScreen extends ConsumerStatefulWidget {
   const ControllerNavScreen({super.key, this.initialIndex = 0});
