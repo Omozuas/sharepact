@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
-import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
 import 'package:sharepact_app/api/riverPod/userProvider.dart';
-import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/group_details/screen/chat.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:shimmer/shimmer.dart';
@@ -93,7 +91,6 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                             final item = data?.data?.groups?[index];
                             return InkWell(
                               onTap: () {
-                                _maarkAsRead(roomId: item.id!);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -419,35 +416,5 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
             ],
           )),
     );
-  }
-
-  Future<void> _maarkAsRead({required String roomId}) async {
-    try {
-      await ref
-          .read(profileProvider.notifier)
-          .markGroupAsRead(groupId: roomId, messagesid: []);
-
-      final pUpdater = ref.read(profileProvider).markGroupAsRead;
-      // Navigate to home screen if login is successful
-
-      if (mounted) {
-        if (pUpdater.value != null) {
-          // Safely access message
-          final message = pUpdater.value?.message;
-          // Check if the response code is 200
-          if (pUpdater.value!.code == 200) {
-          } else {
-            showErrorPopup(message: message, context: context);
-          }
-        }
-      }
-    } catch (e) {
-      // Show error if login fails
-      if (mounted) {
-        showErrorPopup(
-            message: e.toString().replaceAll('Exception: ', ''),
-            context: context);
-      }
-    }
   }
 }

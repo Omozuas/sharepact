@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/push_notification/permissions.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/app_theme.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
@@ -16,6 +17,8 @@ Future<void> main() async {
       DeviceOrientation.portraitDown,
     ],
   );
+  PermissionsMethods permissionsMethods = PermissionsMethods();
+  await permissionsMethods.askNotificationPermission();
   runApp(const ProviderScope(child: MyApp()));
 }
 

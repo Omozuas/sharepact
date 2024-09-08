@@ -131,6 +131,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         .getGroupDetailsById(id: widget.roomId!);
     // final res = ref.watch(groupdetailsprovider).value;
     // print(res?.data?.joinRequests?[0]);
+    _maarkAsRead(roomId: widget.roomId!);
   }
 
   bool _hasScrolledToBottom = false;
@@ -180,6 +181,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
+        _maarkAsRead(roomId: widget.roomId!);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -195,6 +197,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
+              _maarkAsRead(roomId: widget.roomId!);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -696,5 +699,35 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _maarkAsRead({required String roomId}) async {
+    try {
+      await ref
+          .read(profileProvider.notifier)
+          .markGroupAsRead(groupId: roomId, messagesid: []);
+
+      final pUpdater = ref.read(profileProvider).markGroupAsRead;
+      // Navigate to home screen if login is successful
+
+      if (mounted) {
+        if (pUpdater.value != null) {
+          // Safely access message
+          final message = pUpdater.value?.message;
+          // Check if the response code is 200
+          if (pUpdater.value!.code == 200) {
+          } else {
+            showErrorPopup(message: message, context: context);
+          }
+        }
+      }
+    } catch (e) {
+      // Show error if login fails
+      if (mounted) {
+        showErrorPopup(
+            message: e.toString().replaceAll('Exception: ', ''),
+            context: context);
+      }
+    }
   }
 }
