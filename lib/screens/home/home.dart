@@ -5,6 +5,7 @@ import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/getNotifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
@@ -157,6 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // final isLoading = ref.watch(profileProvider).getListCategories.isLoading;
     final categories = ref.watch(categoryProvider);
     final activeSub = ref.watch(subscriptionProvider);
+    ref.watch(notificationsprovider);
     ref.watch(profileProvider).checkTokenstatus;
     ref.watch(groupListprovider);
     return SingleChildScrollView(

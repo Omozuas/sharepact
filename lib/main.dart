@@ -1,7 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/push_notification/permissions.dart';
+import 'package:sharepact_app/api/push_notification/push_notification_service.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/app_theme.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
@@ -9,6 +11,7 @@ import 'splash.dart';
 import 'onboarding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Make app always in portrait
@@ -20,14 +23,21 @@ Future<void> main() async {
   );
   PermissionsMethods permissionsMethods = PermissionsMethods();
   await permissionsMethods.askNotificationPermission();
-  runApp(const ProviderScope(child: MyApp()));
-
-
-// ...
-
-await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
+  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessages);
+  PushNotificationService pushNotificationService = PushNotificationService();
+  await pushNotificationService.initNotification();
+  await pushNotificationService.generateDiviceToken();
+
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+Future<void> handleBackgroundMessages(RemoteMessage message) async {
+  print("Title: ${message.notification!.title}");
+  print("Body: ${message.notification!.body}");
+  print("Payload: ${message.data}");
 }
 
 class MyApp extends StatelessWidget {

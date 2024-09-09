@@ -14,6 +14,7 @@ import 'package:sharepact_app/api/model/groupDetails/groupdetails.dart';
 import 'package:sharepact_app/api/model/groupDetails/joinRequest.dart';
 import 'package:sharepact_app/api/model/list_of_groups/list_of_groups.dart';
 import 'package:sharepact_app/api/model/newmodel.dart';
+import 'package:sharepact_app/api/model/notification-model/notification-moddel.dart';
 import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
@@ -627,6 +628,35 @@ class AuthService {
     } catch (e) {
       print('Error: $e');
       return NotificationConfigResponse(
+          code: 500, message: 'Something went wrong', data: null);
+    }
+  }
+
+  Future<NotificationModdel> getNotifications({required int limit}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.get(
+        token: token,
+        endpoint: '${Config.getNotificationsEndpoint}&page=1&limit=$limit',
+      );
+      final body = jsonDecode(response.body);
+      print({'auth': body});
+      return notificationModdelFromJson(response.body);
+    } on TimeoutException catch (_) {
+      print('Request timeout');
+      return NotificationModdel(
+          code: 408, message: 'Request Timeout', data: null);
+    } on SocketException catch (_) {
+      final Map<String, dynamic> body = {
+        "code": 503,
+        "message": "No Internet connection",
+        "data": null
+      };
+      print('No Internet connection');
+      return NotificationModdel.fromJson(body);
+    } catch (e) {
+      print('Error: $e');
+      return NotificationModdel(
           code: 500, message: 'Something went wrong', data: null);
     }
   }

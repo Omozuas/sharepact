@@ -71,4 +71,5 @@ class Config {
       '/api/profile/notification-config';
   static const String getNotificationSettingEndpoint =
       '/api/profile/notification-config';
+  static const String getNotificationsEndpoint = '/api/profile/notifications?';
 }
