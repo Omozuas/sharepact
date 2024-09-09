@@ -45,21 +45,17 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
       }
       await _fetchbyId();
     } catch (e) {
-      print(e);
     }
   }
 
   Future<void> _fetchbyId() async {
     try {
-      print(widget.id);
       await ref.read(profileProvider.notifier).getServiceById(id: widget.id!);
       final categories = ref.read(profileProvider).getServiceById;
       setState(() {
         // ser = categories!.data!.services!;
-        print(categories.value?.message);
       });
     } catch (e) {
-      print(e);
     }
   }
 
@@ -207,7 +203,6 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                     e,
                     stackTrace,
                   ) {
-                    // print('Error loading subscriptions: $e');
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -271,7 +266,6 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                     e,
                     stackTrace,
                   ) {
-                    print('Error loading subscriptions: $e');
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

@@ -18,7 +18,6 @@ class CategoryProvider
     try {
       state = const AsyncLoading();
       final response = await auth.getListCategories();
-      // print(response.toList());
       state = AsyncData(response);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);

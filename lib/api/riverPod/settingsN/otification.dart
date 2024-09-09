@@ -18,7 +18,6 @@ class NotificationConfigProvider
     try {
       state = const AsyncLoading();
       final response = await auth.getNotificationConfig();
-      print({'data': response.data?.id});
       state = AsyncData(response);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);

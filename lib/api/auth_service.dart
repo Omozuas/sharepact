@@ -162,15 +162,12 @@ class AuthService {
       );
       return generalResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GeneralResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       return GeneralResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       return GeneralResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -188,15 +185,12 @@ class AuthService {
       final body = jsonDecode(response.body);
       return UserModel.fromJson(body['data']);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       throw UserResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       throw UserResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       throw UserResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -241,15 +235,12 @@ class AuthService {
 
       return avaterResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return AvaterResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       return AvaterResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       return AvaterResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -264,15 +255,12 @@ class AuthService {
       );
       return response!;
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GeneralResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       return GeneralResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       return GeneralResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -298,15 +286,12 @@ class AuthService {
       }
       throw CustomException(code: response.statusCode, message: 'err');
     } on TimeoutException catch (_) {
-      print('Request timeout');
       throw CategoriesResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       throw CategoriesResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       throw CategoriesResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -321,7 +306,6 @@ class AuthService {
         endpoint: '${Config.getCategoriesByIdEndpoint}$id',
       );
       var message = jsonDecode(response.body);
-      print(message['data']);
       if (response.statusCode == 200) {
         return categorybyidResponsModelFromJson(response.body);
       }
@@ -329,19 +313,16 @@ class AuthService {
       return CategorybyidResponsModel(
           code: response.statusCode, message: message['message']);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return CategorybyidResponsModel(
         code: 408,
         message: 'Request Timeout',
       );
     } on SocketException catch (_) {
-      print('No Internet connection');
       return CategorybyidResponsModel(
         code: 503,
         message: 'No Internet connection',
       );
     } catch (e) {
-      print('Error: $e');
       return CategorybyidResponsModel(
         code: 500,
         message: 'Something went wrong',
@@ -359,7 +340,6 @@ class AuthService {
         endpoint:
             '${Config.getActiveSubscriptionsEndpoint}&page=$page&limit=$limit',
       );
-      print(response.body);
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         if (body != null) {
@@ -372,15 +352,12 @@ class AuthService {
       }
       throw CustomException(code: response.statusCode, message: 'err');
     } on TimeoutException catch (_) {
-      print('Request timeout');
       throw UserResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       throw UserResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       throw UserResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -395,15 +372,12 @@ class AuthService {
       );
       return subscriptionResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return SubscriptionResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       return SubscriptionResponseModel(
           code: 503, message: 'No Internet connection', data: null);
     } catch (e) {
-      print('Error: $e');
       return SubscriptionResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -419,14 +393,11 @@ class AuthService {
         endpoint: Config.getBankEndpoint + userId,
       );
       final body = jsonDecode(response.body);
-      print({'auth': body});
       return bankResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return BankResponseModel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       final Map<String, dynamic> body = {
         "code": 503,
         "message": "No Internet connection",
@@ -434,7 +405,6 @@ class AuthService {
       };
       return BankResponseModel.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return BankResponseModel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -471,10 +441,8 @@ class AuthService {
 
       return getAllBanksFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GetAllBanks(code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       final Map<String, dynamic> body = {
         "code": 503,
         "message": "No Internet connection",
@@ -482,7 +450,6 @@ class AuthService {
       };
       return GetAllBanks.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return GetAllBanks(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -497,7 +464,6 @@ class AuthService {
         endpoint: '${Config.getServiceByIdEndpoint}$id',
       );
       var message = jsonDecode(response.body);
-      print(message['data']);
       if (response.statusCode == 200) {
         return singleServiceResponsModelFromJson(response.body);
       }
@@ -505,19 +471,16 @@ class AuthService {
       return SingleServiceResponsModel(
           code: response.statusCode, message: message['message']);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return SingleServiceResponsModel(
         code: 408,
         message: 'Request Timeout',
       );
     } on SocketException catch (_) {
-      print('No Internet connection');
       return SingleServiceResponsModel(
         code: 503,
         message: 'No Internet connection',
       );
     } catch (e) {
-      print('Error: $e');
       return SingleServiceResponsModel(
         code: 500,
         message: 'Something went wrong',
@@ -611,10 +574,8 @@ class AuthService {
         endpoint: Config.getNotificationSettingEndpoint,
       );
       final body = jsonDecode(response.body);
-      print({'auth': body});
       return notificationConfigResponseFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return NotificationConfigResponse(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
@@ -623,10 +584,8 @@ class AuthService {
         "message": "No Internet connection",
         "data": null
       };
-      print('No Internet connection');
       return NotificationConfigResponse.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return NotificationConfigResponse(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -640,10 +599,8 @@ class AuthService {
         endpoint: '${Config.getNotificationsEndpoint}&page=1&limit=$limit',
       );
       final body = jsonDecode(response.body);
-      print({'auth': body});
       return notificationModdelFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return NotificationModdel(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
@@ -652,10 +609,8 @@ class AuthService {
         "message": "No Internet connection",
         "data": null
       };
-      print('No Internet connection');
       return NotificationModdel.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return NotificationModdel(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -685,11 +640,9 @@ class AuthService {
 
       return groupdetailsResponseFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GroupdetailsResponse(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       final Map<String, dynamic> body = {
         "code": 503,
         "message": "No Internet connection",
@@ -697,7 +650,6 @@ class AuthService {
       };
       return GroupdetailsResponse.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return GroupdetailsResponse(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -712,11 +664,9 @@ class AuthService {
 
       return groupJoinRequestResponseFromJson(response.body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GroupJoinRequestResponse(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       final Map<String, dynamic> body = {
         "code": 503,
         "message": "No Internet connection",
@@ -724,7 +674,6 @@ class AuthService {
       };
       return GroupJoinRequestResponse.fromJson(body);
     } catch (e) {
-      print('Error: $e');
       return GroupJoinRequestResponse(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -802,14 +751,11 @@ class AuthService {
           endpoint: '${Config.groupListEndpoint}?&page=$page&limit=$limit',
           token: token);
       var body = jsonDecode(response.body);
-      print(body['data']['groups']);
       return GroupResponseList.fromJson(body);
     } on TimeoutException catch (_) {
-      print('Request timeout');
       return GroupResponseList(
           code: 408, message: 'Request Timeout', data: null);
     } on SocketException catch (_) {
-      print('No Internet connection');
       final Map<String, dynamic> body = {
         "code": 503,
         "message": "No Internet connection",
@@ -817,8 +763,6 @@ class AuthService {
       };
       return GroupResponseList.fromJson(body);
     } catch (e, stackTrace) {
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
       return GroupResponseList(
           code: 500, message: 'Something went wrong', data: null);
     }

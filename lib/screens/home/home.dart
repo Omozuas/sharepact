@@ -131,8 +131,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void handleUnexpectedError(Object e, StackTrace stackTrace) {
     if (mounted) {
-      // print('Unexpected Error: $e');
-      // print('StackTrace: $stackTrace');
       showErrorPopup(
           context: context, message: 'An unexpected error occurred.');
     }

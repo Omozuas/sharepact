@@ -10,11 +10,9 @@ class ChatProvider1 extends AutoDisposeAsyncNotifier<List<Message>?> {
 
   Future<void> getMessages(dynamic data) async {
     final chat = ref.read(chatServiceProvider);
-    print('object');
     try {
       state = const AsyncLoading();
       final response = await chat.handleMessageResponse1(data);
-      print({'rswew': response.toList()});
       // Assuming 'response' is a list of maps or objects with 'messageId'
 
       state = AsyncData(response);

@@ -20,7 +20,6 @@ class SubscriptionProvider
       final response =
           await auth.getListActiveSub(page: '1', limit: limit.toString());
       response.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-      print(response.toList());
       state = AsyncData(response);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);

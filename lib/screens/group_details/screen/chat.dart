@@ -25,7 +25,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   String userId = '';
   Future<void> getToken() async {
-    print(widget.roomId);
     await ref.read(profileProvider.notifier).getToken();
     await ref.read(profileProvider.notifier).getuserId();
     final myToken = ref.read(profileProvider).getToken.value;
@@ -130,7 +129,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         .read(groupdetailsprovider.notifier)
         .getGroupDetailsById(id: widget.roomId!);
     // final res = ref.watch(groupdetailsprovider).value;
-    // print(res?.data?.joinRequests?[0]);
     _maarkAsRead(roomId: widget.roomId!);
   }
 

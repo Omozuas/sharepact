@@ -44,7 +44,6 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
           .read(profileProvider.notifier)
           .checkTokenStatus(token: myToken!);
       final isTokenValid = ref.watch(profileProvider).checkTokenstatus.value;
-      print(isTokenValid?.data);
       if (isTokenValid?.code != 200) {
         _handleSessionExpired();
         return;
@@ -82,8 +81,6 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
 
   void _handleUnexpectedError(Object e, StackTrace stackTrace) {
     if (mounted) {
-      print('Unexpected Error: $e');
-      print('StackTrace: $stackTrace');
       showErrorPopup(
           context: context, message: 'An unexpected error occurred.');
     }
@@ -104,7 +101,6 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
-        print("object");
         return false;
       },
       child: Scaffold(

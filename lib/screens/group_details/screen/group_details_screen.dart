@@ -55,7 +55,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
           isActive = member!.confirmStatus!;
         });
 
-        print(true); // The member with matching userId is found
+        // The member with matching userId is found
       }
     } else {
       setState(() {
@@ -67,7 +67,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
       userId1 = userId!;
     });
     // final res = ref.watch(groupdetailsprovider).value;
-    // print(res?.data?.joinRequests?[0]);
   }
 
   Future<void> _leaveGroup({required String roomId}) async {
@@ -1229,11 +1228,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   void toggleActiveStatus(bool value) {
     // Perform any action when the switch is toggled
     if (value) {
-      print('Switch is ON, perform action');
       // Your logic when the switch is turned ON (isActive = true)
       _activateConfirmStatusGroup(roomId: widget.id!);
     } else {
-      print('Switch is OFF, perform action');
       // Your logic when the switch is turned OFF (isActive = false)
     }
   }
@@ -1241,11 +1238,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   void toggleActiveStatus2(bool value) {
     // Perform any action when the switch is toggled
     if (value) {
-      print('Switch is ON, perform action');
       // Your logic when the switch is turned ON (isActive = true)
       _activateGroup(roomId: widget.id!);
     } else {
-      print('Switch is OFF, perform action');
       // Your logic when the switch is turned OFF (isActive = false)
     }
   }

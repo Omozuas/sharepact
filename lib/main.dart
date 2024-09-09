@@ -29,15 +29,12 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessages);
   PushNotificationService pushNotificationService = PushNotificationService();
   await pushNotificationService.initNotification();
-  await pushNotificationService.generateDiviceToken();
+  await pushNotificationService.generateDeviceToken();
 
   runApp(const ProviderScope(child: MyApp()));
 }
 
 Future<void> handleBackgroundMessages(RemoteMessage message) async {
-  print("Title: ${message.notification!.title}");
-  print("Body: ${message.notification!.body}");
-  print("Payload: ${message.data}");
 }
 
 class MyApp extends StatelessWidget {

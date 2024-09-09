@@ -11,7 +11,6 @@ class AuthServiceProvider
     extends AutoDisposeNotifier<AuthServiceProviderStates> {
   @override
   AuthServiceProviderStates build() {
-    print('boyyyy');
     return const AuthServiceProviderStates(
         generalrespond: AsyncData(null),
         otp: AsyncData(null),
@@ -311,7 +310,6 @@ class AuthServiceProvider
     try {
       state = state.copyWith(getServiceById: const AsyncLoading());
       final response = await auth.getServiceById(id: id);
-      // print(response.toList());
       state = state.copyWith(getServiceById: AsyncData(response));
     } catch (e) {
       state = state.copyWith(getServiceById: AsyncError(e, StackTrace.current));

@@ -31,7 +31,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         if (loaging) return;
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
-          print('Scrolled to bottom');
           setState(() {
             loaging = true;
           });

@@ -167,7 +167,6 @@ class _StreamingServicesScreenState
                         e,
                         stackTrace,
                       ) {
-                        // print('Error loading subscriptions: $e');
                         return Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,

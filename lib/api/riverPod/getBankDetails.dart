@@ -16,7 +16,6 @@ class GetBankProvider extends AutoDisposeAsyncNotifier<BankResponseModel?> {
       state = const AsyncLoading();
       final response = await auth.getBankById();
       state = AsyncData(response);
-      print({'data': response});
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }

@@ -75,9 +75,7 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
   Future<void> _get() async {
     await ref.read(notificationConfigProvider.notifier).getNotificationConfig();
     final pUpdater = ref.watch(notificationConfigProvider);
-    print(pUpdater.value?.data?.id);
     // Navigate to home screen if login is successful
-    print({'popop': pUpdater.value});
     if (pUpdater.hasValue) {
       if (pUpdater.error == null) {}
     }

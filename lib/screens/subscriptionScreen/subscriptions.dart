@@ -41,7 +41,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
         if (loaging) return;
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
-          print('Scrolled to bottom');
           setState(() {
             loaging = true;
           });
@@ -108,8 +107,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   void _handleUnexpectedError(e) {
     if (mounted) {
-      print('Unexpected Error: $e');
-      // print('StackTrace: $stackTrace');
       showErrorPopup(context: context, message: e.toString());
     }
   }

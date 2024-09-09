@@ -42,7 +42,6 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
         if (loaging) return;
         if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent) {
-          print('Scrolled to bottom');
           setState(() {
             loaging = true;
           });

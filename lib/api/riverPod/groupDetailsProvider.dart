@@ -11,13 +11,11 @@ class Groupdetailsprovider
   }
 
   Future<void> getGroupDetailsById({required String id}) async {
-    print(id);
     final auth = ref.read(authServiceProvider);
     try {
       state = const AsyncLoading();
       final response = await auth.getGroupDetailsById(id: id);
       state = AsyncData(response);
-      print({'data': response.message});
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
