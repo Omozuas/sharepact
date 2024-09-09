@@ -7,7 +7,8 @@ import 'package:sharepact_app/app_theme.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'splash.dart';
 import 'onboarding.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Make app always in portrait
@@ -20,6 +21,13 @@ Future<void> main() async {
   PermissionsMethods permissionsMethods = PermissionsMethods();
   await permissionsMethods.askNotificationPermission();
   runApp(const ProviderScope(child: MyApp()));
+
+
+// ...
+
+await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
 }
 
 class MyApp extends StatelessWidget {

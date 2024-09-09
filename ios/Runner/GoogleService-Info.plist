@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCNa3wLD32yQP9bJ2s9EuV86EJNGjO9c28</string>
+	<string>AIzaSyBUoG3e4-e4FN6zTJ51Pt8w5idp2--Qs8M</string>
 	<key>GCM_SENDER_ID</key>
-	<string>169740275266</string>
+	<string>352159932423</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.sharepactApp</string>
+	<string>com.sharepact.share</string>
 	<key>PROJECT_ID</key>
-	<string>sharepactdev</string>
+	<string>sharepact-179d2</string>
 	<key>STORAGE_BUCKET</key>
-	<string>sharepactdev.appspot.com</string>
+	<string>sharepact-179d2.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:169740275266:ios:79a84c07248c2389fee7db</string>
+	<string>1:352159932423:ios:20b473b9e86ee8b6f94aa2</string>
 </dict>
 </plist>
