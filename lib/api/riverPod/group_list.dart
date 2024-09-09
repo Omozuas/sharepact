@@ -16,6 +16,7 @@ class GroupListprovider extends AutoDisposeAsyncNotifier<GroupResponseList?> {
       state = const AsyncLoading();
       final response =
           await auth.getGroupList(page: '1', limit: limit.toString());
+
       state = AsyncData(response);
       print({'data': state});
     } catch (e) {

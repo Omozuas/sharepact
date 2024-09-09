@@ -72,4 +72,6 @@ class Config {
   static const String getNotificationSettingEndpoint =
       '/api/profile/notification-config';
   static const String getNotificationsEndpoint = '/api/profile/notifications?';
+  static const String markNotificationsEndpoint =
+      '/api/profile/notifications/mark-as-read';
 }

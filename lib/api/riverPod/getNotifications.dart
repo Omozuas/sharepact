@@ -7,7 +7,7 @@ class Notificationsprovider
     extends AutoDisposeAsyncNotifier<NotificationModdel?> {
   @override
   Future<NotificationModdel?> build() async {
-    getNotifications(limit: 20);
+    getNotifications(limit: 30);
     return null;
   }
 

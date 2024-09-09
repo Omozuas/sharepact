@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
@@ -18,6 +21,7 @@ import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/home/header.dart';
 import 'package:sharepact_app/screens/services_screen/streaming_services.dart'; // Import the StreamingServicesScreen
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';
 // Import MySubscriptionsScreen
 
@@ -396,7 +400,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     });
                   }
                   return subscriptionModel.isEmpty
-                      ? const Center(child: Text('No Active Subscription'))
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Lottie.asset("assets/empty.json"),
+                            Text(
+                              "No Active Subscripton yet",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              "You're all caught up! No Active Subscripton at the moment. Check back later for updates",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        )
                       : filterSub.isEmpty
                           ? Center(
                               child: Text(

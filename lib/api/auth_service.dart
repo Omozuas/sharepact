@@ -661,6 +661,21 @@ class AuthService {
     }
   }
 
+  Future<GeneralResponseModel> markNotifications(
+      {required List<String> id}) async {
+    final token = await getToken();
+    try {
+      final response = await apiService.patch(
+          token: token,
+          endpoint: Config.markNotificationsEndpoint,
+          body: {"ids": id});
+
+      return response!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 //groupdeails
   Future<GroupdetailsResponse> getGroupDetailsById({required String id}) async {
     final token = await getToken();
