@@ -6,20 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
 import 'package:sharepact_app/api/model/bank/bank_model.dart';
-import 'package:sharepact_app/api/model/bank/getBank_model.dart';
-import 'package:sharepact_app/api/model/categories/categoryByid.dart';
+import 'package:sharepact_app/api/model/bank/get_bank_model.dart';
+import 'package:sharepact_app/api/model/categories/category_byid.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
 import 'package:sharepact_app/api/model/groupDetails/groupdetails.dart';
-import 'package:sharepact_app/api/model/groupDetails/joinRequest.dart';
+import 'package:sharepact_app/api/model/groupDetails/join_request.dart';
 import 'package:sharepact_app/api/model/list_of_groups/list_of_groups.dart';
 import 'package:sharepact_app/api/model/newmodel.dart';
-import 'package:sharepact_app/api/model/notification-model/notification-moddel.dart';
+import 'package:sharepact_app/api/model/notification-model/notification_moddel.dart';
 import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
+import 'package:sharepact_app/api/riverPod/provider.dart';
 import '../config.dart';
 
 class AuthService {
@@ -160,7 +161,13 @@ class AuthService {
         token: token,
         endpoint: Config.verifyTokenEndpoint,
       );
-      return generalResponseModelFromJson(response.body);
+
+      var body = jsonDecode(response.body);
+      return GeneralResponseModel(
+          code: response.statusCode,
+          message: '',
+          data: body['data'],
+          error: body["error"]);
     } on TimeoutException catch (_) {
       return GeneralResponseModel(
           code: 408, message: 'Request Timeout', data: null);
@@ -392,7 +399,6 @@ class AuthService {
         token: token,
         endpoint: Config.getBankEndpoint + userId,
       );
-      final body = jsonDecode(response.body);
       return bankResponseModelFromJson(response.body);
     } on TimeoutException catch (_) {
       return BankResponseModel(
@@ -573,7 +579,6 @@ class AuthService {
         token: token,
         endpoint: Config.getNotificationSettingEndpoint,
       );
-      final body = jsonDecode(response.body);
       return notificationConfigResponseFromJson(response.body);
     } on TimeoutException catch (_) {
       return NotificationConfigResponse(
@@ -598,7 +603,6 @@ class AuthService {
         token: token,
         endpoint: '${Config.getNotificationsEndpoint}&page=1&limit=$limit',
       );
-      final body = jsonDecode(response.body);
       return notificationModdelFromJson(response.body);
     } on TimeoutException catch (_) {
       return NotificationModdel(
@@ -762,7 +766,7 @@ class AuthService {
         "data": null
       };
       return GroupResponseList.fromJson(body);
-    } catch (e, stackTrace) {
+    } catch (e) {
       return GroupResponseList(
           code: 500, message: 'Something went wrong', data: null);
     }
@@ -841,11 +845,14 @@ class AuthService {
   Future<bool> isTokenValid() async {
     final preferences = await SharedPreferences.getInstance();
     final token = preferences.getString('token');
-    if (token == null) {
-      return false; // No token stored
-    } else {
-      return true;
+    await ref.read(profileProvider.notifier).checkTokenStatus(token: token!);
+    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
+    if (isTokenValid?.data != null) {
+      return true; // No token stored
+    } else if (isTokenValid?.error == "Error: Invalid token") {
+      return false;
     }
+    return false;
   }
 
   Future<String> getToken() async {

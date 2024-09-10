@@ -5,6 +5,7 @@ import 'package:sharepact_app/api/model/notificationmodel.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import 'package:sharepact_app/widgets/checkbox_row.dart';
 import 'package:shimmer/shimmer.dart';
@@ -32,8 +33,23 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
   bool subscriptionUpdates = false;
   bool paymentReminders = false;
   bool renewalAlerts = false;
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(message: 'Session expired', context: context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+  }
 
   Future<void> postdetils() async {
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
+      _handleSessionExpired();
+      return;
+    }
     try {
       await ref.read(profileProvider.notifier).patchMotificationSettings(
           loginAlert: loginAlert,

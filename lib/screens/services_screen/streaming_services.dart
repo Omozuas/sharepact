@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sharepact_app/api/model/categories/categoryByid.dart';
+import 'package:sharepact_app/api/model/categories/category_byid.dart';
 import 'package:sharepact_app/api/riverPod/categoryById.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -42,13 +42,9 @@ class _StreamingServicesScreenState
 
   Future<void> getserviceById() async {
     try {
-      await ref.read(profileProvider.notifier).getToken();
-      final myToken = ref.read(profileProvider).getToken.value;
-      await ref
-          .read(profileProvider.notifier)
-          .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-      if (isTokenValid!.code != 200) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }

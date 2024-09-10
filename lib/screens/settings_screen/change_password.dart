@@ -46,18 +46,12 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   Future<void> _updatePassword(
       {required String newPassword, required String currentPassword}) async {
     try {
-      await ref.read(profileProvider.notifier).getToken();
-      final myToken = ref.read(profileProvider).getToken.value;
-      await ref
-          .read(profileProvider.notifier)
-          .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
-
-      if (isTokenValid.value!.code != 200) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }
-
       await ref.read(profileProvider.notifier).changeProfilePassword(
             currentPassword: currentPassword,
             newPassword: newPassword,
@@ -82,9 +76,9 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   Future<void> logOut() async {
     try {
-      final tokenValid =
-          await ref.read(profileProvider.notifier).validateToken();
-      if (!tokenValid) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }
@@ -100,16 +94,20 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
           if (pUpdater.value!.code == 200) {
             await _clearSessionData();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-            );
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            }
           } else {
             showErrorPopup(message: message, context: context);
           }
         } else {
-          showErrorPopup(
-              message: "Logout failed. Please try again.", context: context);
+          if (mounted) {
+            showErrorPopup(
+                message: "Logout failed. Please try again.", context: context);
+          }
         }
       }
     } catch (e) {

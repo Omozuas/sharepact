@@ -25,37 +25,23 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
   final TextEditingController codeController = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.microtask(() => getserviceById());
   }
 
   Future<void> getserviceById() async {
     try {
-      await ref.read(profileProvider.notifier).getToken();
-      final myToken = ref.read(profileProvider).getToken.value;
-      await ref
-          .read(profileProvider.notifier)
-          .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus;
-
-      if (isTokenValid.value!.code != 200) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }
-      await _fetchbyId();
-    } catch (e) {
-    }
-  }
-
-  Future<void> _fetchbyId() async {
-    try {
       await ref.read(profileProvider.notifier).getServiceById(id: widget.id!);
-      final categories = ref.read(profileProvider).getServiceById;
-      setState(() {
-        // ser = categories!.data!.services!;
-      });
     } catch (e) {
+      if (mounted) {
+        showErrorPopup(context: context, message: e.toString());
+      }
     }
   }
 
@@ -104,6 +90,13 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
   Future<void> _joinGroup(
       {required String roomId, required String message}) async {
     try {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
+        _handleSessionExpired();
+        return;
+      }
+
       await ref
           .read(profileProvider.notifier)
           .joinAGroup(groupCode: roomId, message: message);
@@ -520,8 +513,11 @@ class PlanCard extends StatelessWidget {
   final String price;
   final List<String> features;
 
-  PlanCard(
-      {required this.planName, required this.price, required this.features});
+  const PlanCard(
+      {super.key,
+      required this.planName,
+      required this.price,
+      required this.features});
 
   @override
   Widget build(BuildContext context) {

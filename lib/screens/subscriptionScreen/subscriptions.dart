@@ -2,14 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
-import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/subscription_provider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/components/subscription_card.dart';
@@ -56,14 +58,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   Future<void> getAll() async {
     try {
-      await ref.read(profileProvider.notifier).getToken();
-      final myToken = ref.read(profileProvider).getToken.value;
-      await ref
-          .read(profileProvider.notifier)
-          .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-
-      if (isTokenValid?.data['valid'] != true) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }
@@ -264,7 +261,37 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                   filterMembers(); // Apply filter based on the current search term
                 }
                 if (activeSub!.isEmpty) {
-                  return const Center(child: Text('No Active Subscription'));
+                  return Center(
+                    heightFactor: 1.5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Lottie.asset("assets/empty.json"),
+                        Text(
+                          "No Active Subscripton yet",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                            color: AppColors.textColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          "You're all caught up! No Active Subscripton at the moment. Check back later for updates",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                            color: AppColors.textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 return filterSub.isEmpty
                     ? Center(

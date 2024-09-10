@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 
 class PopupContentWidget extends StatelessWidget {
-  final String title, actionBtnText, subtext, icon, closeBtnText;
-  final VoidCallback onPressed;
+  final String? title, actionBtnText, subtext, icon, closeBtnText;
+  final VoidCallback? onPressed, onPressed2;
   final Color buttonColor;
 
   const PopupContentWidget({
@@ -13,9 +13,10 @@ class PopupContentWidget extends StatelessWidget {
     required this.title,
     required this.actionBtnText,
     required this.onPressed,
+    this.onPressed2,
     this.buttonColor = AppColors.primaryColor,
     required this.subtext,
-    required this.icon,
+    this.icon,
     this.closeBtnText = 'Cancel',
   });
 
@@ -32,16 +33,18 @@ class PopupContentWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            icon,
-            height: 48,
-            width: 48,
-          ),
+          icon != null
+              ? SvgPicture.asset(
+                  icon!,
+                  height: 48,
+                  width: 48,
+                )
+              : Container(),
           const SizedBox(
             height: 10,
           ),
           Text(
-            title,
+            title!,
             textAlign: TextAlign.center,
             style: GoogleFonts.lato(
                 color: AppColors.textColor,
@@ -52,7 +55,7 @@ class PopupContentWidget extends StatelessWidget {
             height: 10,
           ),
           Text(
-            subtext,
+            subtext!,
             textAlign: TextAlign.center,
             style: GoogleFonts.lato(
               color: AppColors.textColor,
@@ -70,7 +73,7 @@ class PopupContentWidget extends StatelessWidget {
                 backgroundColor: buttonColor,
               ),
               onPressed: onPressed,
-              child: Text(actionBtnText),
+              child: Text(actionBtnText!),
             ),
           ),
           const SizedBox(
@@ -90,11 +93,12 @@ class PopupContentWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: onPressed2 ??
+                  () {
+                    Navigator.of(context).pop();
+                  },
               child: Text(
-                closeBtnText,
+                closeBtnText!,
                 style: GoogleFonts.lato(
                   color: AppColors.primaryColor,
                   fontSize: 14,

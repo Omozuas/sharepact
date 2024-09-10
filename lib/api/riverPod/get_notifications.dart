@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/api/model/notification-model/notification-moddel.dart';
+import 'package:sharepact_app/api/model/notification-model/notification_moddel.dart';
 
 class Notificationsprovider
     extends AutoDisposeAsyncNotifier<NotificationModdel?> {

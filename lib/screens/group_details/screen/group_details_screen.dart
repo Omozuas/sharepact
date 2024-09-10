@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sharepact_app/api/riverPod/getjoinRequest.dart';
-import 'package:sharepact_app/api/riverPod/groupDetailsProvider.dart';
+import 'package:lottie/lottie.dart';
+import 'package:sharepact_app/api/riverPod/getjoin_request.dart';
+import 'package:sharepact_app/api/riverPod/group_details_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
@@ -130,7 +131,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             await ref
                 .refresh(groupJoinRequestprovider.notifier)
                 .getGroupJoinRequestById(id: widget.id!);
-            showSuccess(message: message!, context: context);
+            if (mounted) {
+              showSuccess(message: message!, context: context);
+            }
           } else {
             showErrorPopup(message: message, context: context);
           }
@@ -646,8 +649,29 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                                   );
                                 });
                           }
-                          return const Center(
-                            child: Text('No Active Request'),
+                          return Column(
+                            children: [
+                              Text(
+                                "No Join Request yet",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: AppColors.textColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Lottie.asset("assets/empty.json",
+                                  width: 170, height: 170),
+                              Text(
+                                "You're all caught up! No Join Request at the moment. Check back later for updates",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: AppColors.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
                           );
                         },
                         error: (e, s) {
@@ -958,43 +982,44 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Individual Share',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            text: isLoading
-                                ? ''
-                                : '${(res.value?.data?.individualShare)?.round() ?? 0} NGN',
-                            style: GoogleFonts.lato(
-                              color: AppColors.primaryColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "/month",
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text(
+                    //       'Individual Share',
+                    //       style: GoogleFonts.lato(
+                    //         color: AppColors.textColor,
+                    //         fontSize: 14,
+                    //         fontWeight: FontWeight.w400,
+                    //       ),
+                    //     ),
+                    //     RichText(
+                    //       text: TextSpan(
+                    //         text: isLoading
+                    //             ? ''
+                    //             : '${(res.value?.data?.individualShare)?.round() ?? 0} NGN',
+                    //         style: GoogleFonts.lato(
+                    //           color: AppColors.primaryColor,
+                    //           fontSize: 14,
+                    //           fontWeight: FontWeight.w600,
+                    //         ),
+                    //         children: [
+                    //           TextSpan(
+                    //             text: "/month",
+                    //             style: GoogleFonts.lato(
+                    //               color: AppColors.textColor,
+                    //               fontSize: 12,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+
+                    // const SizedBox(
+                    //   height: 5,
+                    // ),
                     if (res.value?.data?.admin?.id == userId1)
                       InkWell(
                         onTap: () {
@@ -1211,7 +1236,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             textController: codeController,
             title: "SubscriptionCost ",
             subtext: "Please enter your new SubscriptionCost",
-            hintText: 'Enter code',
+            hintText: 'Enter SubscriptionCost',
             btnText: isLoading ? 'proceeding...' : 'Proceed',
             onPressed: isLoading
                 ? () {}
@@ -1271,7 +1296,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             await ref
                 .refresh(groupJoinRequestprovider.notifier)
                 .getGroupJoinRequestById(id: widget.id!);
-            showSuccess(message: message!, context: context);
+            if (mounted) {
+              showSuccess(message: message!, context: context);
+            }
             codeController.clear();
           } else {
             showErrorPopup(message: message, context: context);
@@ -1308,7 +1335,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             await ref
                 .refresh(groupJoinRequestprovider.notifier)
                 .getGroupJoinRequestById(id: widget.id!);
-            showSuccess(message: message!, context: context);
+            if (mounted) {
+              showSuccess(message: message!, context: context);
+            }
           } else {
             showErrorPopup(message: message, context: context);
           }
@@ -1344,7 +1373,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             await ref
                 .refresh(groupJoinRequestprovider.notifier)
                 .getGroupJoinRequestById(id: widget.id!);
-            showSuccess(message: message!, context: context);
+            if (mounted) {
+              showSuccess(message: message!, context: context);
+            }
           } else {
             showErrorPopup(message: message, context: context);
           }

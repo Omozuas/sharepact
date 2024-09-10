@@ -115,15 +115,16 @@ class MemberRequestCard1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 161,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      margin: const EdgeInsets.only(right: 20),
+      width: 150,
+
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      // margin: const EdgeInsets.only(right: 20),
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.borderColor),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         children: [
           ClipRRect(
               borderRadius: BorderRadius.circular(100),
@@ -171,7 +172,7 @@ class MemberRequestCard1 extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 10,
+            height: 4,
           ),
           SizedBox(
             width: double.infinity,

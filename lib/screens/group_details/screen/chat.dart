@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
 import 'package:sharepact_app/api/riverPod/chat_provider.dart';
-import 'package:sharepact_app/api/riverPod/groupDetailsProvider.dart';
+import 'package:sharepact_app/api/riverPod/group_details_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/api/socket/socket_services.dart';
@@ -246,6 +248,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           child: res2.when(
                               data: (data) {
                                 final item = data?.data?.members;
+
                                 if (item != null && item.isNotEmpty) {
                                   return ListView.builder(
                                       shrinkWrap: true,
@@ -262,21 +265,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                         );
                                       });
                                 }
-                                return ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: 3,
-                                    itemBuilder: (context, index) {
-                                      return Shimmer.fromColors(
-                                          baseColor: AppColors.accent,
-                                          highlightColor:
-                                              AppColors.primaryColor,
-                                          child: const CircleAvatar(
-                                            backgroundImage: AssetImage(
-                                                'assets/profile.png'), // Replace with the path to your image
-                                            radius: 12,
-                                          ));
-                                    });
+                                return Container();
                               },
                               error: (e, s) {
                                 return ListView.builder(
@@ -309,10 +298,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                           radius: 12,
                                         ));
                                   }))),
-                      Text(
-                          '+ ${((res2.value?.data?.members?.length ?? 0) - 3).clamp(0, double.infinity).toInt()} More',
-                          style: const TextStyle(
-                              color: Colors.grey, fontSize: 12)),
+                      if (((res2.value?.data?.members?.length ?? 0) - 3)
+                              .clamp(0, double.infinity)
+                              .toInt() !=
+                          0)
+                        Text(
+                            '+ ${((res2.value?.data?.members?.length ?? 0) - 3).clamp(0, double.infinity).toInt()} More',
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12)),
                     ],
                   ),
                 ],
@@ -409,7 +402,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 }
                               });
                         }
-                        return Container();
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "No Active Chat yet",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Lottie.asset("assets/empty.json"),
+                            Text(
+                              "You're all caught up! No Active Chat at the moment. Start a chat",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        );
                       },
                       error: (e, s) {
                         return Text('Error: $e');

@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/api/model/bank/getBank_model.dart';
+import 'package:sharepact_app/api/model/bank/get_bank_model.dart';
 
 class GetAllBankProvider extends AutoDisposeAsyncNotifier<GetAllBanks?> {
   @override

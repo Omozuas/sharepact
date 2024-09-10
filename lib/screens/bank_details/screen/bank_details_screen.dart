@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/model/bank/bank_model.dart';
-import 'package:sharepact_app/api/riverPod/getAllBanks.dart';
-import 'package:sharepact_app/api/riverPod/getBankDetails.dart';
+import 'package:sharepact_app/api/riverPod/get_all_banks.dart';
+import 'package:sharepact_app/api/riverPod/get_bank_details.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/bank_details/controller/bank_details_controller.dart';
@@ -47,11 +47,9 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
 
     if (mounted) {
       if (res.value != null) {
-        final message = res.value?.message;
         final item = res.value;
         if (item?.code == 200) {
           ref.read(bankDetailsProvider.notifier).showBankDetails = true;
-          showSuccess(message: message!, context: context);
         } else {
           ref.watch(bankDetailsProvider);
           ref.read(bankDetailsProvider.notifier).showBankDetails = false;

@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/settings_screen/change_avatar.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
@@ -29,11 +29,9 @@ class EditProfileState extends ConsumerState<EditProfile> {
     if (emailController.text.isEmpty) {
       showErrorPopup(context: context, message: 'email Required');
     }
-    await ref.read(profileProvider.notifier).getToken();
-    final myToken = ref.read(profileProvider).getToken.value;
-    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-    if (isTokenValid!.code == 401) {
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
       _handleSessionExpired();
       return;
     }
@@ -68,18 +66,14 @@ class EditProfileState extends ConsumerState<EditProfile> {
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     Future.microtask(() => _fetchUserData());
   }
 
   UserModel? _userModel;
   Future<void> _fetchUserData() async {
-    await ref.read(profileProvider.notifier).getToken();
-    final myToken = ref.read(profileProvider).getToken.value;
-    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-
-    if (isTokenValid!.code != 200) {
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
       _handleSessionExpired();
       return;
     }
@@ -150,7 +144,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Icon(Icons.arrow_back_ios)),
+                            child: const Icon(Icons.arrow_back_ios)),
                         Text(
                           "Edit Profile",
                           style: GoogleFonts.lato(
@@ -241,7 +235,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(

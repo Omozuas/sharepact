@@ -8,6 +8,7 @@ class GeneralResponseModel {
   final String? message;
   final dynamic data;
   final Errors? errors;
+  final String? error;
   final bool? status;
   final String? resource;
 
@@ -16,19 +17,20 @@ class GeneralResponseModel {
     this.message,
     this.data,
     this.errors,
+    this.error,
     this.status,
     this.resource,
   });
 
   factory GeneralResponseModel.fromJson(Map<String, dynamic> json) {
     return GeneralResponseModel(
-      code: json["code"],
-      message: json["message"],
-      data: json['data'],
-      errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
-      status: json["status"],
-      resource: json["resource"],
-    );
+        code: json["code"],
+        message: json["message"],
+        data: json['data'],
+        errors: json["errors"] != null ? Errors.fromJson(json["errors"]) : null,
+        status: json["status"],
+        resource: json["resource"],
+        error: json["error"]);
   }
   Map<String, dynamic> toJson() => {
         "code": code,
@@ -37,6 +39,7 @@ class GeneralResponseModel {
         "errors": errors?.toJson(),
         "status": status,
         "resource": resource,
+        "error": error
       };
 
   GeneralResponseModel copyWith({
@@ -44,6 +47,7 @@ class GeneralResponseModel {
     String? message,
     dynamic data,
     Errors? errors,
+    String? error,
     bool? status,
     String? resource,
   }) {
@@ -52,6 +56,7 @@ class GeneralResponseModel {
       message: message ?? this.message,
       data: data ?? this.data,
       errors: errors ?? this.errors,
+      error: error ?? this.error,
       status: status ?? this.status,
       resource: resource ?? this.resource,
     );
@@ -59,7 +64,7 @@ class GeneralResponseModel {
 
   @override
   String toString() {
-    return 'GeneralResponseModel(code: $code, message: $message, data: $data, errors: $errors, status: $status, resource: $resource)';
+    return 'GeneralResponseModel(code: $code, message: $message, data: $data, errors: $errors, error: $error, status: $status, resource: $resource)';
   }
 
   @override
@@ -70,6 +75,7 @@ class GeneralResponseModel {
         other.message == message &&
         other.data == data &&
         other.errors == errors &&
+        other.error == error &&
         other.status == status &&
         other.resource == resource;
   }
@@ -80,6 +86,7 @@ class GeneralResponseModel {
         message.hashCode ^
         data.hashCode ^
         errors.hashCode ^
+        error.hashCode ^
         status.hashCode ^
         resource.hashCode;
   }

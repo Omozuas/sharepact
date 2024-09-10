@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:sharepact_app/api/riverPod/getNotifications.dart';
+import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/screens/notification/controller/notification_controller.dart';
 import 'package:sharepact_app/screens/notification/model/notification_model.dart';

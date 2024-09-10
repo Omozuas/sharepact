@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
-import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/subscription_provider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/bank_details/screen/bank_details_screen.dart';
@@ -17,7 +16,7 @@ import 'package:sharepact_app/screens/settings_screen/notification_settings.dart
 import 'package:sharepact_app/screens/settings_screen/privacy_policy.dart';
 import 'package:sharepact_app/screens/settings_screen/support_screen.dart';
 import 'package:sharepact_app/screens/settings_screen/terms_and_conditions.dart';
-import 'package:sharepact_app/utils/app_colors/app_colors.dart';
+import 'package:sharepact_app/widgets/widgets.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -327,207 +326,6 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class PopupContentWidget extends ConsumerStatefulWidget {
-  final String title, actionBtnText;
-  final VoidCallback onPressed;
-  final Color buttonColor;
-  const PopupContentWidget({
-    super.key,
-    required this.title,
-    required this.actionBtnText,
-    required this.onPressed,
-    this.buttonColor = AppColors.primaryColor,
-  });
-
-  @override
-  ConsumerState createState() => PopupContentWidgetState();
-}
-
-class PopupContentWidgetState extends ConsumerState<PopupContentWidget> {
-  @override
-  Widget build(BuildContext context) {
-    final isLoading = ref.watch(profileProvider).logout.isLoading;
-
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            widget.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.lato(
-              color: AppColors.textColor02,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.buttonColor,
-              ),
-              onPressed: isLoading ? () {} : widget.onPressed,
-              child: Text(isLoading ? "Logging Out" : widget.actionBtnText),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 1,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                    color: AppColors.primaryColor,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.lato(
-                  color: AppColors.primaryColor,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PopupContentWidget1 extends ConsumerStatefulWidget {
-  final String title, actionBtnText;
-  final VoidCallback onPressed;
-  final Color buttonColor;
-  const PopupContentWidget1({
-    super.key,
-    required this.title,
-    required this.actionBtnText,
-    required this.onPressed,
-    this.buttonColor = AppColors.primaryColor,
-  });
-
-  @override
-  ConsumerState createState() => PopupContentWidgetState();
-}
-
-class PopupContent1WidgetState extends ConsumerState<PopupContentWidget> {
-  @override
-  Widget build(BuildContext context) {
-    final isDeleting = ref.watch(profileProvider).deleteAccount.isLoading;
-
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            widget.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.lato(
-              color: AppColors.textColor02,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.buttonColor,
-              ),
-              onPressed: isDeleting ? () {} : widget.onPressed,
-              child: Text(isDeleting ? "Deletin..." : widget.actionBtnText),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 1,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                    color: AppColors.primaryColor,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.lato(
-                  color: AppColors.primaryColor,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const SettingsTile(
-      {super.key,
-      required this.icon,
-      required this.title,
-      required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: Colors.black),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
     );
   }
 }

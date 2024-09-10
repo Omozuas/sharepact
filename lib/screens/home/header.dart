@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/screens/settings_screen/edit_profile.dart';
 import 'package:sharepact_app/screens/notification/screen/notification_screen.dart';
 

@@ -4,9 +4,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class PushNotificationService {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  
+
   final _androidChannel = const AndroidNotificationChannel(
-    "high_importance_channel", 
+    "high_importance_channel",
     "High Importance Notifications",
     description: "This channel is used for important notifications",
     importance: Importance.defaultImportance,
@@ -16,13 +16,16 @@ class PushNotificationService {
 
   Future<String?> generateDeviceToken() async {
     String? token = await firebaseMessaging.getToken();
+    // ignore: avoid_print
+    print({'device': token});
     return token;
   }
 
   Future<void> initLocalNotification() async {
     // iOS and Android settings
     const iOS = DarwinInitializationSettings();
-    const android = AndroidInitializationSettings('@drawable/launcher_icon'); // For Android only
+    const android = AndroidInitializationSettings(
+        '@drawable/launcher_icon'); // For Android only
 
     const settings = InitializationSettings(android: android, iOS: iOS);
 
@@ -52,14 +55,17 @@ class PushNotificationService {
       return; // No need to proceed if permissions are denied
     }
 
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
 
     // App is terminated
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? remoteMessage) {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? remoteMessage) {
       handleMessage(remoteMessage);
     });
 
@@ -98,8 +104,7 @@ class PushNotificationService {
     }
   }
 
-  Future<void> handleBackgroundMessages(RemoteMessage message) async {
-  }
+  Future<void> handleBackgroundMessages(RemoteMessage message) async {}
 
   Future<void> initNotification() async {
     await firebaseMessaging.requestPermission();

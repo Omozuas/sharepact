@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
+import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
 import '../../responsive_helpers.dart';
@@ -33,6 +34,12 @@ class SupportScreenState extends ConsumerState<SupportScreen> {
     }
     if (userNmae.isEmpty) {
       showErrorPopup(message: "userName is required", context: context);
+      return;
+    }
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
+      _handleSessionExpired();
       return;
     }
     try {
@@ -69,6 +76,16 @@ class SupportScreenState extends ConsumerState<SupportScreen> {
             message: e.toString().replaceAll('Exception: ', ''),
             context: context);
       }
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (mounted) {
+      showErrorPopup(message: 'Session expired', context: context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
     }
   }
 

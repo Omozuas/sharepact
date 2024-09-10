@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends ConsumerStatefulWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
@@ -11,11 +12,16 @@ class BottomNavBar extends StatelessWidget {
   });
 
   @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends ConsumerState<BottomNavBar> {
+  @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      currentIndex: selectedIndex,
-      onTap: onItemTapped,
+      currentIndex: widget.selectedIndex,
+      onTap: widget.onItemTapped,
       selectedItemColor: Colors.blue,
       unselectedItemColor: Colors.grey,
       items: const [
@@ -23,7 +29,7 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.home),
           label: 'Home',
         ),
-      BottomNavigationBarItem(
+        BottomNavigationBarItem(
           icon: Icon(Icons.subscriptions),
           label: 'My Subscriptions',
         ),

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/api/model/groupDetails/joinRequest.dart';
+import 'package:sharepact_app/api/model/groupDetails/join_request.dart';
 
 class GroupJoinRequestprovider
     extends AutoDisposeAsyncNotifier<GroupJoinRequestResponse?> {

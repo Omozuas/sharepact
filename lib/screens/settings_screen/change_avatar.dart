@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/providers/settings_provider.dart';
@@ -21,17 +21,14 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
   List<String>? avaters1;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.microtask(() => _fetechAlAvaters());
   }
 
   Future<void> _fetechAlAvaters() async {
-    await ref.read(profileProvider.notifier).getToken();
-    final myToken = ref.read(profileProvider).getToken.value;
-    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus;
-    if (isTokenValid.value!.code != 200) {
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
       _handleSessionExpired();
       return;
     }
@@ -66,12 +63,9 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
   }
 
   Future<void> update() async {
-    await ref.read(profileProvider.notifier).getToken();
-    final myToken = ref.read(profileProvider).getToken.value;
-    await ref.read(profileProvider.notifier).checkTokenStatus(token: myToken!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-
-    if (isTokenValid!.code == 401) {
+    await ref.read(profileProvider.notifier).validateToken();
+    final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+    if (isTokenValid == false) {
       _handleSessionExpired();
       return;
     }
@@ -186,7 +180,7 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
                                       .read(userProvider.notifier)
                                       .getUserDetails();
                                 },
-                                child: Icon(Icons.arrow_back_ios)),
+                                child: const Icon(Icons.arrow_back_ios)),
                             Text(
                               "Change Avatar",
                               style: GoogleFonts.lato(

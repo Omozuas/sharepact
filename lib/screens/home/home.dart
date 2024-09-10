@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -8,11 +7,11 @@ import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
-import 'package:sharepact_app/api/riverPod/getNotifications.dart';
+import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
-import 'package:sharepact_app/api/riverPod/subscriptionProvider.dart';
-import 'package:sharepact_app/api/riverPod/userProvider.dart';
+import 'package:sharepact_app/api/riverPod/subscription_provider.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
 import 'package:sharepact_app/screens/home/components/service_widget.dart';
@@ -21,7 +20,6 @@ import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/screens/home/header.dart';
 import 'package:sharepact_app/screens/services_screen/streaming_services.dart'; // Import the StreamingServicesScreen
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
-import 'package:sharepact_app/utils/app_images/app_images.dart';
 import 'package:shimmer/shimmer.dart';
 // Import MySubscriptionsScreen
 
@@ -48,33 +46,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> getAll() async {
     try {
-      await ref.read(profileProvider.notifier).getToken();
-      final myToken = ref.read(profileProvider).getToken.value;
-      await ref
-          .read(profileProvider.notifier)
-          .checkTokenStatus(token: myToken!);
-      final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-      if (isTokenValid?.code != 200) {
+      await ref.read(profileProvider.notifier).validateToken();
+      final isTokenValid = ref.read(profileProvider).isTokenValid.value;
+      if (isTokenValid == false) {
         _handleSessionExpired();
         return;
       }
       // await _fetchUserData();
       await _fetchCategories();
       await _fetchActiveSubscriptions();
+      await _fetchUserData();
     } catch (e) {
       // final e1 = e as UserResponseModel;
       _handleError(e.toString());
     }
   }
 
-  // Future<void> _fetchUserData() async {
-  //   await ref.read(profileProvider.notifier).getUserDetails();
-  //   final user = ref.watch(profileProvider).getUser;
-  //   if (user.error != null) {
-  //     _handleError(user.error.toString());
-  //     return;
-  //   }
-  // }
+  Future<void> _fetchUserData() async {
+    await ref.read(userProvider.notifier).getUserDetails();
+    final user = ref.watch(userProvider);
+    if (user.error != null) {
+      _handleError(user.error.toString());
+      return;
+    }
+  }
 
   Future<void> _fetchCategories() async {
     await ref.read(categoryProvider.notifier).getListCategories();
