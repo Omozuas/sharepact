@@ -33,7 +33,7 @@ class Config {
 
   //subscription Endpoint
   static const String getActiveSubscriptionsEndpoint =
-      '/api/groups?subscription_status=inactive';
+      '/api/groups?oneTimePayment=false&active=true';
   // '/api/groups?subscription_status=active';
   static const String getInActiveSubscriptionsEndpoint =
       '/api/groups?subscription_status=inactive';
