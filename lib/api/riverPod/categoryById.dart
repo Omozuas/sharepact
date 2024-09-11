@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
-import 'package:sharepact_app/api/model/categories/categoryByid.dart';
+import 'package:sharepact_app/api/model/categories/category_byid.dart';
 
 class CategorybyidProvider
     extends AutoDisposeAsyncNotifier<CategorybyidResponsModel?> {
