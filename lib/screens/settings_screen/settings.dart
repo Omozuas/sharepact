@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
@@ -159,6 +160,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.watch(subscriptionProvider);
     ref.watch(notificationConfigProvider);
     ref.watch(groupListprovider);
+    ref.watch(notificationsprovider);
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       padding: const EdgeInsets.only(bottom: 16.0, left: 20, right: 20),

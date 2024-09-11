@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/subscription_provider.dart';
 import 'package:sharepact_app/api/riverPod/user_provider.dart';
@@ -68,6 +69,7 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
     ref.watch(userProvider);
     ref.watch(categoryProvider);
     ref.watch(subscriptionProvider);
+    ref.watch(notificationsprovider);
     final isLoading = ref.read(groupListprovider).isLoading;
     return RefreshIndicator(
       onRefresh: () async {
