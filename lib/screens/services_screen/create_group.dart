@@ -166,7 +166,9 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
           subscriptionCost: subscriptionCost,
           numberOfMembers: numberOfMembersString,
           oneTimePayment: isOneTimePayment,
-          existingGroup: isExistingGroup);
+          existingGroup: isExistingGroup,
+          nextSubscriptionDate: isExistingGroup ? selectedDate : null, // Pass selectedDate if applicable
+);
       final res = ref.read(profileProvider).createGroup.value;
       if (res?.code == 201) {
         if (mounted) {
@@ -563,12 +565,12 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
-                hintText: 'Select plan',
+                hintText: 'Select member',
                 trailing: DropdownButton<String>(
                   icon: const Icon(HeroiconsOutline.chevronDown),
                   padding:
                       EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>['1', '2', '3', '4', '5', '6']
+                  items: <String>['2', '3', '4', '5', '6']
                       .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,

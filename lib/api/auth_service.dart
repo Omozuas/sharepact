@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/api_service.dart';
 import 'package:sharepact_app/api/model/bank/bank_model.dart';
@@ -495,30 +496,44 @@ class AuthService {
   }
 
 //group
-  Future<GeneralResponseModel> createGroup(
-      {required String serviceId,
-      required String groupName,
-      required int numberOfMembers,
-      required bool existingGroup,
-      required int subscriptionCost,
-      required bool oneTimePayment}) async {
-    final token = await getToken();
-    try {
-      final response = await apiService
-          .post(token: token, endpoint: Config.createGroupEndpoint, body: {
-        "serviceId": serviceId,
-        "groupName": groupName,
-        "subscriptionCost": subscriptionCost,
-        "numberOfMembers": numberOfMembers,
-        "existingGroup": existingGroup,
-        "oneTimePayment": existingGroup
-      });
+Future<GeneralResponseModel> createGroup({
+  required String serviceId,
+  required String groupName,
+  required int numberOfMembers,
+  required bool existingGroup,
+  required int subscriptionCost,
+  required bool oneTimePayment,
+  DateTime? nextSubscriptionDate, // Add this parameter
+}) async {
+  final token = await getToken();
+  try {
+    // Prepare the request body
+    Map<String, dynamic> body = {
+      "serviceId": serviceId,
+      "groupName": groupName,
+      "subscriptionCost": subscriptionCost,
+      "numberOfMembers": numberOfMembers,
+      "existingGroup": existingGroup,
+      "oneTimePayment": oneTimePayment,
+    };
 
-      return response!;
-    } catch (e) {
-      rethrow;
+    // Conditionally add nextSubscriptionDate if existingGroup is true
+    if (existingGroup && nextSubscriptionDate != null) {
+      body['nextSubscriptionDate'] = DateFormat('yyyy-MM-dd').format(nextSubscriptionDate);
     }
+
+    final response = await apiService.post(
+      token: token,
+      endpoint: Config.createGroupEndpoint,
+      body: body, // Use the body with conditional date
+    );
+
+    return response!;
+  } catch (e) {
+    rethrow;
   }
+}
+
 
   /// contact service
   Future<GeneralResponseModel> contactService({

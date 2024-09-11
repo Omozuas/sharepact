@@ -317,30 +317,37 @@ class AuthServiceProvider
   }
 
   //group
-  Future<void> createGroup(
-      {required String serviceId,
-      required String groupName,
-      required int numberOfMembers,
-      required bool existingGroup,
-      required int subscriptionCost,
-      required bool oneTimePayment}) async {
-    final auth = ref.read(authServiceProvider);
-    try {
-      state = state.copyWith(
-        createGroup: const AsyncLoading(),
-      );
-      final response = await auth.createGroup(
-          serviceId: serviceId,
-          groupName: groupName,
-          numberOfMembers: numberOfMembers,
-          oneTimePayment: oneTimePayment,
-          subscriptionCost: subscriptionCost,
-          existingGroup: existingGroup);
-      state = state.copyWith(createGroup: AsyncData(response));
-    } catch (e) {
-      state = state.copyWith(createGroup: AsyncError(e, StackTrace.current));
-    }
+Future<void> createGroup({
+  required String serviceId,
+  required String groupName,
+  required int numberOfMembers,
+  required bool existingGroup,
+  required int subscriptionCost,
+  required bool oneTimePayment,
+  DateTime? nextSubscriptionDate, // Add the date as optional
+}) async {
+  final auth = ref.read(authServiceProvider);
+  try {
+    state = state.copyWith(
+      createGroup: const AsyncLoading(),
+    );
+    
+    // Call the auth service with the nextSubscriptionDate conditionally
+    final response = await auth.createGroup(
+      serviceId: serviceId,
+      groupName: groupName,
+      numberOfMembers: numberOfMembers,
+      oneTimePayment: oneTimePayment,
+      subscriptionCost: subscriptionCost,
+      existingGroup: existingGroup,
+      nextSubscriptionDate: nextSubscriptionDate, // Pass the date
+    );
+
+    state = state.copyWith(createGroup: AsyncData(response));
+  } catch (e) {
+    state = state.copyWith(createGroup: AsyncError(e, StackTrace.current));
   }
+}
 
   Future<void> leaveGroup({
     required String roomId,
