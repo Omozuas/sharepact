@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/push_notification/push_notification_service.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/email_verification.dart';
@@ -22,7 +23,8 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey =
       GlobalKey<FormState>(); // Add GlobalKey for form state
-
+  final PushNotificationService pushNotificationService =
+      PushNotificationService();
   bool _isPasswordObscured = true;
 
   void _togglePasswordVisibility() {
@@ -34,11 +36,11 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _login() async {
     final String email = emailController.text;
     final String password = passwordController.text;
+    final deviceToken = await pushNotificationService.generateDeviceToken();
     if (_formKey.currentState?.validate() ?? false) {
       try {
-        await ref
-            .read(profileProvider.notifier)
-            .loginUser(email: email, password: password);
+        await ref.read(profileProvider.notifier).loginUser(
+            email: email, password: password, deviceToken: deviceToken!);
 
         final pUpdater = ref.read(profileProvider).login;
         // Navigate to home screen if login is successful

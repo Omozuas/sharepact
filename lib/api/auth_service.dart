@@ -21,7 +21,6 @@ import 'package:sharepact_app/api/model/servicemodel/servicemodel.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/listOfAvaterUrl.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
-import 'package:sharepact_app/api/riverPod/provider.dart';
 import '../config.dart';
 
 class AuthService {
@@ -73,11 +72,17 @@ class AuthService {
   }
 
   Future<GeneralResponseModel> signin(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required String deviceToken}) async {
     try {
       final response = await apiService.post(
         endpoint: Config.signinEndpoint,
-        body: {'email': email, 'password': password},
+        body: {
+          'email': email,
+          'password': password,
+          'deviceToken': deviceToken
+        },
       );
       saveToken(response);
       return response!;
@@ -496,44 +501,44 @@ class AuthService {
   }
 
 //group
-Future<GeneralResponseModel> createGroup({
-  required String serviceId,
-  required String groupName,
-  required int numberOfMembers,
-  required bool existingGroup,
-  required int subscriptionCost,
-  required bool oneTimePayment,
-  DateTime? nextSubscriptionDate, // Add this parameter
-}) async {
-  final token = await getToken();
-  try {
-    // Prepare the request body
-    Map<String, dynamic> body = {
-      "serviceId": serviceId,
-      "groupName": groupName,
-      "subscriptionCost": subscriptionCost,
-      "numberOfMembers": numberOfMembers,
-      "existingGroup": existingGroup,
-      "oneTimePayment": oneTimePayment,
-    };
+  Future<GeneralResponseModel> createGroup({
+    required String serviceId,
+    required String groupName,
+    required int numberOfMembers,
+    required bool existingGroup,
+    required int subscriptionCost,
+    required bool oneTimePayment,
+    DateTime? nextSubscriptionDate, // Add this parameter
+  }) async {
+    final token = await getToken();
+    try {
+      // Prepare the request body
+      Map<String, dynamic> body = {
+        "serviceId": serviceId,
+        "groupName": groupName,
+        "subscriptionCost": subscriptionCost,
+        "numberOfMembers": numberOfMembers,
+        "existingGroup": existingGroup,
+        "oneTimePayment": oneTimePayment,
+      };
 
-    // Conditionally add nextSubscriptionDate if existingGroup is true
-    if (existingGroup && nextSubscriptionDate != null) {
-      body['nextSubscriptionDate'] = DateFormat('yyyy-MM-dd').format(nextSubscriptionDate);
+      // Conditionally add nextSubscriptionDate if existingGroup is true
+      if (existingGroup && nextSubscriptionDate != null) {
+        body['nextSubscriptionDate'] =
+            DateFormat('yyyy-MM-dd').format(nextSubscriptionDate);
+      }
+
+      final response = await apiService.post(
+        token: token,
+        endpoint: Config.createGroupEndpoint,
+        body: body, // Use the body with conditional date
+      );
+
+      return response!;
+    } catch (e) {
+      rethrow;
     }
-
-    final response = await apiService.post(
-      token: token,
-      endpoint: Config.createGroupEndpoint,
-      body: body, // Use the body with conditional date
-    );
-
-    return response!;
-  } catch (e) {
-    rethrow;
   }
-}
-
 
   /// contact service
   Future<GeneralResponseModel> contactService({
@@ -858,16 +863,15 @@ Future<GeneralResponseModel> createGroup({
   }
 
   Future<bool> isTokenValid() async {
-    final preferences = await SharedPreferences.getInstance();
-    final token = preferences.getString('token');
-    await ref.read(profileProvider.notifier).checkTokenStatus(token: token!);
-    final isTokenValid = ref.read(profileProvider).checkTokenstatus.value;
-    if (isTokenValid?.data != null) {
-      return true; // No token stored
-    } else if (isTokenValid?.error == "Error: Invalid token") {
-      return false;
+    final token = await getToken();
+
+    final v = await validateInterntToken(token: token);
+    if (v.code == 200) {
+      return true; // token stored
+    } else if (v.code == 401) {
+      return false; // expired token stored
     }
-    return false;
+    return false; // No token stored
   }
 
   Future<String> getToken() async {

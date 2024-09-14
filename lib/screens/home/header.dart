@@ -29,7 +29,7 @@ class _HeaderState extends ConsumerState<Header> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Hi ${user?.username}',
+                  'Hi ${user?.username ?? ''}',
                   style: const TextStyle(
                       fontSize: 16,
                       color: Colors.blue,
@@ -63,7 +63,7 @@ class _HeaderState extends ConsumerState<Header> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hi ${user?.username}',
+                'Hi ${user?.username ?? ''}',
                 style: const TextStyle(
                     fontSize: 16,
                     color: Colors.blue,
@@ -99,7 +99,7 @@ class _HeaderState extends ConsumerState<Header> {
                           ),
                           child: Center(
                             child: Text(
-                              '${notification.value?.data?.where((test) => test.read == false).length}',
+                              '${notification.value?.data?.where((test) => test.read == false).length ?? 0}',
                               style: const TextStyle(
                                   fontSize: 6, color: Colors.white),
                             ),

@@ -183,7 +183,7 @@ class PopupContent1WidgetState extends ConsumerState<PopupContentWidget> {
 }
 
 class SettingsTile extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String title;
   final VoidCallback onTap;
 
@@ -197,8 +197,13 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: Colors.black),
-      title: Text(title),
+      leading: icon,
+      title: Text(title,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xff5D6166),
+              )),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );

@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:sharepact_app/api/riverPod/user_provider.dart';
 
 class BottomNavBar extends ConsumerStatefulWidget {
   final int selectedIndex;
@@ -17,28 +21,48 @@ class BottomNavBar extends ConsumerStatefulWidget {
 
 class _BottomNavBarState extends ConsumerState<BottomNavBar> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    log('hi 1');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.watch(userProvider);
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       currentIndex: widget.selectedIndex,
       onTap: widget.onItemTapped,
       selectedItemColor: Colors.blue,
       unselectedItemColor: Colors.grey,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: SvgPicture.asset(
+            'assets/home.svg',
+            color: widget.selectedIndex == 0 ? Colors.blue : null,
+          ),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.subscriptions),
+          icon: SvgPicture.asset(
+            'assets/card.svg',
+            color: widget.selectedIndex == 1 ? Colors.blue : null,
+          ),
           label: 'My Subscriptions',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.group),
+          icon: SvgPicture.asset(
+            'assets/people.svg',
+            color: widget.selectedIndex == 2 ? Colors.blue : Colors.grey,
+          ),
           label: 'Groups',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
+          icon: SvgPicture.asset(
+            'assets/setting-2.svg',
+            color: widget.selectedIndex == 3 ? Colors.blue : Colors.grey,
+          ),
           label: 'Settings',
         ),
       ],

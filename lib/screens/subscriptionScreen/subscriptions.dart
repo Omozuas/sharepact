@@ -283,7 +283,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                           ),
                         ),
                         Text(
-                          "You're all caught up! No Active Subscripton at the moment. Check back later for updates",
+                          "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.lato(
                             color: AppColors.textColor,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
@@ -170,6 +171,20 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(
             height: 15,
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Settings',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xff5D6166),
+                      )),
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
@@ -184,7 +199,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
               padding: EdgeInsets.zero,
               children: [
                 SettingsTile(
-                  icon: Icons.person_outline,
+                  icon: SvgPicture.asset('assets/user-edit.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Edit Profile',
                   onTap: () async {
                     // Handle Edit Profile action
@@ -194,7 +210,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.lock_outline,
+                  icon: SvgPicture.asset('assets/lock.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Manage Passwords',
                   onTap: () {
                     // Handle Manage Passwords action
@@ -206,7 +223,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.lock_outline,
+                  icon: SvgPicture.asset('assets/bank.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Manage Bank Details',
                   onTap: () {
                     // Handle Manage Bank details
@@ -219,7 +237,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.notifications_outlined,
+                  icon: SvgPicture.asset('assets/notification-bing.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Notifications & Reminders',
                   onTap: () {
                     // Handle Notifications & Reminders action
@@ -240,7 +259,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.support_agent_outlined,
+                  icon: SvgPicture.asset('assets/message.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Support',
                   onTap: () {
                     // Handle Support action
@@ -253,7 +273,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.privacy_tip_outlined,
+                  icon: SvgPicture.asset('assets/security-user.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Privacy Policy',
                   onTap: () {
                     // Handle Privacy Policy action
@@ -266,7 +287,8 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const Divider(),
                 SettingsTile(
-                  icon: Icons.article_outlined,
+                  icon: SvgPicture.asset('assets/book.svg',
+                      width: 22, height: 22, color: const Color(0xff5D6166)),
                   title: 'Terms & Conditions',
                   onTap: () {
                     // Handle Terms & Conditions action
@@ -282,8 +304,14 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.black),
-            title: const Text('LogOut'),
+            leading: SvgPicture.asset('assets/logout.svg',
+                width: 22, height: 22, color: const Color(0xff5D6166)),
+            title: Text('LogOut',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff5D6166),
+                    )),
             onTap: () {
               showDialog(
                   context: context,
@@ -303,7 +331,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.delete_outline, color: Colors.red),
+            leading: SvgPicture.asset(
+              'assets/trash.svg',
+              width: 22,
+              height: 22,
+            ),
             title: const Text('Delete Account',
                 style: TextStyle(color: Colors.red)),
             onTap: () {

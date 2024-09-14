@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/auth_service.dart';
 import 'package:sharepact_app/api/model/general_respons_model.dart';
@@ -84,11 +84,14 @@ class AuthServiceProvider
   }
 
   Future<void> loginUser(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required String deviceToken}) async {
     final auth = ref.read(authServiceProvider);
     try {
       state = state.copyWith(login: const AsyncLoading());
-      final response = await auth.signin(email: email, password: password);
+      final response = await auth.signin(
+          email: email, password: password, deviceToken: deviceToken);
       state = state.copyWith(login: AsyncData(response));
     } catch (e) {
       state = state.copyWith(login: AsyncError(e, StackTrace.current));
@@ -135,16 +138,15 @@ class AuthServiceProvider
     }
   }
 
-  Future<bool> validateToken() async {
+  Future<void> validateToken() async {
     final auth = ref.read(authServiceProvider);
     try {
       state = state.copyWith(isTokenValid: const AsyncLoading());
       final response = await auth.isTokenValid();
+      log('...vLIDATETOKEN...$response');
       state = state.copyWith(isTokenValid: AsyncData(response));
-      return response;
     } catch (e) {
       state = state.copyWith(isTokenValid: AsyncError(e, StackTrace.current));
-      return false;
     }
   }
 
@@ -164,6 +166,7 @@ class AuthServiceProvider
     try {
       state = state.copyWith(getToken: const AsyncLoading());
       final response = await auth.getToken();
+      log('tokenP:$response');
       state = state.copyWith(getToken: AsyncData(response));
     } catch (e) {
       state = state.copyWith(getToken: AsyncError(e, StackTrace.current));
@@ -202,6 +205,7 @@ class AuthServiceProvider
     try {
       state = state.copyWith(checkTokenstatus: const AsyncLoading());
       final response = await auth.validateInterntToken(token: token);
+      log('status6:${response.code}');
       state = state.copyWith(checkTokenstatus: AsyncData(response));
     } catch (e) {
       state =
@@ -317,37 +321,37 @@ class AuthServiceProvider
   }
 
   //group
-Future<void> createGroup({
-  required String serviceId,
-  required String groupName,
-  required int numberOfMembers,
-  required bool existingGroup,
-  required int subscriptionCost,
-  required bool oneTimePayment,
-  DateTime? nextSubscriptionDate, // Add the date as optional
-}) async {
-  final auth = ref.read(authServiceProvider);
-  try {
-    state = state.copyWith(
-      createGroup: const AsyncLoading(),
-    );
-    
-    // Call the auth service with the nextSubscriptionDate conditionally
-    final response = await auth.createGroup(
-      serviceId: serviceId,
-      groupName: groupName,
-      numberOfMembers: numberOfMembers,
-      oneTimePayment: oneTimePayment,
-      subscriptionCost: subscriptionCost,
-      existingGroup: existingGroup,
-      nextSubscriptionDate: nextSubscriptionDate, // Pass the date
-    );
+  Future<void> createGroup({
+    required String serviceId,
+    required String groupName,
+    required int numberOfMembers,
+    required bool existingGroup,
+    required int subscriptionCost,
+    required bool oneTimePayment,
+    DateTime? nextSubscriptionDate, // Add the date as optional
+  }) async {
+    final auth = ref.read(authServiceProvider);
+    try {
+      state = state.copyWith(
+        createGroup: const AsyncLoading(),
+      );
 
-    state = state.copyWith(createGroup: AsyncData(response));
-  } catch (e) {
-    state = state.copyWith(createGroup: AsyncError(e, StackTrace.current));
+      // Call the auth service with the nextSubscriptionDate conditionally
+      final response = await auth.createGroup(
+        serviceId: serviceId,
+        groupName: groupName,
+        numberOfMembers: numberOfMembers,
+        oneTimePayment: oneTimePayment,
+        subscriptionCost: subscriptionCost,
+        existingGroup: existingGroup,
+        nextSubscriptionDate: nextSubscriptionDate, // Pass the date
+      );
+
+      state = state.copyWith(createGroup: AsyncData(response));
+    } catch (e) {
+      state = state.copyWith(createGroup: AsyncError(e, StackTrace.current));
+    }
   }
-}
 
   Future<void> leaveGroup({
     required String roomId,

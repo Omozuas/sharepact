@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
@@ -40,6 +42,7 @@ class _ControllerNavScreenState extends ConsumerState<ControllerNavScreen> {
   @override
   void initState() {
     super.initState();
+    log('hi 2');
     _selectedIndex = widget.initialIndex!;
     Future.microtask(() => getAll());
   }

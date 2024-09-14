@@ -13,7 +13,7 @@ import 'package:shimmer/shimmer.dart';
 
 class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
-
+  static const route = '/NotificationScreen';
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _NotificationScreenState();
@@ -194,6 +194,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                                   ),
                                 if (notify.subject ==
                                     'Email Verified Successfully')
+                                  SvgPicture.asset(
+                                    AppImages.successIcon,
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                if (notify.subject ==
+                                    'Your Group has been created')
                                   SvgPicture.asset(
                                     AppImages.peopleIcon,
                                     width: 24,

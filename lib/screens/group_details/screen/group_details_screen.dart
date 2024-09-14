@@ -660,10 +660,10 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              Lottie.asset("assets/empty.json",
+                              SvgPicture.asset("assets/manwithbinocular.svg",
                                   width: 170, height: 170),
                               Text(
-                                "You're all caught up! No Join Request at the moment. Check back later for updates",
+                                "You have no pending requests yet. Pending requests will appear hear once they’ve been sent.",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.lato(
                                   color: AppColors.textColor,

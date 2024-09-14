@@ -25,7 +25,6 @@ class SocketService {
     socket?.connect();
     // Handle successful connection
     socket?.onConnect((_) {
-
       // Listen for the reply from chat-message event
       socket?.on('chat-message', (data) {
         ref.read(chatProvider1.notifier).getMessages(data);
@@ -41,8 +40,7 @@ class SocketService {
     });
 
     // Handle disconnection
-    socket?.onDisconnect((_) {
-    });
+    socket?.onDisconnect((_) {});
   }
 
   // Function to send a message to a room
@@ -64,7 +62,7 @@ class SocketService {
 
   // Function to handle the reply from chat-message event
   Future<List<Message>> handleMessageResponse1(dynamic data) async {
-
+    // List<Message> singleChat = [];
     // Check if `data['messages']` is a list or a single message
     if (data['messages'] is List) {
       // If it's a list, parse each message in the list
@@ -90,8 +88,7 @@ class SocketService {
     // Sort messages by sentAt in ascending order (older messages at the top)
     singleChat.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
     // Debugging output
-    if (singleChat.isNotEmpty && singleChat.first.content != null) {
-    }
+    if (singleChat.isNotEmpty && singleChat.first.content != null) {}
 
     return singleChat;
   }

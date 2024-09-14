@@ -289,22 +289,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     "My Subscriptions",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ControllerNavScreen(
-                                    initialIndex: 1,
-                                  )));
-                    },
-                    child: const Text(
-                      "Show All",
-                      style: TextStyle(
-                          color: AppColors.primaryColor,
-                          decoration: TextDecoration.underline),
-                    ),
-                  )
+                  if (subscriptionModel.isNotEmpty)
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ControllerNavScreen(
+                                      initialIndex: 1,
+                                    )));
+                      },
+                      child: const Text(
+                        "Show All",
+                        style: TextStyle(
+                            color: AppColors.primaryColor,
+                            decoration: TextDecoration.underline),
+                      ),
+                    )
                 ],
               ),
               const SizedBox(height: 16),
@@ -408,7 +409,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             ),
                             Text(
-                              "You're all caught up! No Active Subscripton at the moment. Check back later for updates",
+                              "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.lato(
                                 color: AppColors.textColor,

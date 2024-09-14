@@ -17,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, this.roomId});
   final String? roomId;
+  static const route = '/ChatScreen';
   @override
   ConsumerState createState() => _ChatScreenState();
 }
@@ -356,6 +357,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Expanded(
                   child: res.when(
                       skipLoadingOnReload: true,
+                      skipLoadingOnRefresh: true,
                       data: (data) {
                         if (data != null && data.isNotEmpty) {
                           return ListView.builder(
@@ -718,9 +720,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Future<void> _maarkAsRead({required String roomId}) async {
     try {
-      await ref
-          .read(profileProvider.notifier)
-          .markGroupAsRead(groupId: roomId, messagesid: []);
+      await ref.read(profileProvider.notifier).markGroupAsRead(
+          groupId: roomId,
+          messagesid: singleChat.map((message) => message.id ?? '').toList());
 
       final pUpdater = ref.read(profileProvider).markGroupAsRead;
       // Navigate to home screen if login is successful
