@@ -101,7 +101,8 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
               res.when(
                   skipLoadingOnReload: true,
                   data: (data) {
-                    if (data?.data != null) {
+                    if (data?.data?.groups != null &&
+                        data!.data!.groups!.isNotEmpty) {
                       return Expanded(
                         child: ListView.builder(
                           shrinkWrap: true,
@@ -203,30 +204,33 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                     }
                     return Center(
                       heightFactor: 1.5,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Lottie.asset("assets/empty.json"),
-                          Text(
-                            "You haven't joined any groups yet",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.lato(
-                              color: AppColors.textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                      child: SizedBox(
+                        width: 290,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Lottie.asset("assets/empty.json"),
+                            Text(
+                              "You haven't joined any groups yet",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Your subscribed groups will appear here once you create or join a subscription group",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.lato(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                            Text(
+                              "Your subscribed groups will appear here once you create or join a subscription group",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: AppColors.textColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },

@@ -20,11 +20,13 @@ class SocketService {
       {required String token, required String userId, required String roomId}) {
     log('staert io');
     socket = Io.io(
-        Config.baseUrl,
+        Config.baseUrl1,
         Io.OptionBuilder()
             .setTransports(['websocket']) // For Flutter or Dart VM
             .disableAutoConnect() // Disable automatic connection
             .setExtraHeaders({"token": token})
+            .enableForceNew() // Ensure a fresh connection is established
+            .enableReconnection() // Auto-reconnect if connection is lost
             .build());
     // Connect to the server
     socket?.connect();

@@ -1,5 +1,6 @@
 class Config {
   static const String baseUrl = 'https://api.sharepact.com';
+  static const String baseUrl1 = 'wss://api.sharepact.com';
   static const Duration requestTimeout = Duration(seconds: 30);
   static const String appName = 'SharePact';
   static const String appVersion = '1.0.0';

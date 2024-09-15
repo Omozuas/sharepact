@@ -23,6 +23,13 @@ class PushNotificationService {
     description: "This channel is used for important notifications",
     importance: Importance.defaultImportance,
   );
+  final _iosChannel = const DarwinNotificationCategory(
+    'HIGH_IMPORTANCE',
+    options: <DarwinNotificationCategoryOption>{
+      DarwinNotificationCategoryOption.allowAnnouncement,
+      DarwinNotificationCategoryOption.allowInCarPlay,
+    },
+  );
 
   Future<String?> generateDeviceToken() async {
     String? token = await firebaseMessaging.getToken();
@@ -49,9 +56,11 @@ class PushNotificationService {
   }
 
   Future initLocalNotification() async {
-    const iOS = DarwinInitializationSettings();
+    var iOS = DarwinInitializationSettings(
+      notificationCategories: <DarwinNotificationCategory>[_iosChannel],
+    );
     const android = AndroidInitializationSettings('@drawable/launcher_icon');
-    const settings = InitializationSettings(
+    var settings = InitializationSettings(
       android: android,
       iOS: iOS,
     );
@@ -90,6 +99,7 @@ class PushNotificationService {
               channelDescription: _androidChannel.description,
               icon: '@drawable/launcher_icon',
             ),
+            iOS: const DarwinNotificationDetails(),
           ),
           payload: jsonEncode(message.toMap()),
         );
@@ -105,6 +115,7 @@ class PushNotificationService {
               channelDescription: _androidChannel.description,
               icon: '@drawable/launcher_icon',
             ),
+            iOS: const DarwinNotificationDetails(),
           ),
           payload: jsonEncode(message.toMap()),
         );
@@ -132,6 +143,7 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
     description: "This channel is used for important notifications",
     importance: Importance.defaultImportance,
   );
+
   final notification = message.notification;
   var data = jsonDecode(message.notification?.body ?? '{}');
   final body = NotificationBody.fromJson(data);
@@ -144,11 +156,11 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
       body.subject,
       NotificationDetails(
         android: AndroidNotificationDetails(
-          androidChannel.id,
-          androidChannel.name,
-          channelDescription: androidChannel.description,
-          icon: '@drawable/launcher_icon',
-        ),
+            androidChannel.id, androidChannel.name,
+            channelDescription: androidChannel.description,
+            icon: '@drawable/launcher_icon',
+            playSound: true),
+        iOS: const DarwinNotificationDetails(presentSound: true),
       ),
       payload: jsonEncode(message.toMap()),
     );
@@ -159,10 +171,14 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
       '${body2.message?.sender?.username ?? ''} : ${body2.message?.content ?? ''}',
       NotificationDetails(
         android: AndroidNotificationDetails(
+          playSound: true,
           androidChannel.id,
           androidChannel.name,
           channelDescription: androidChannel.description,
           icon: '@drawable/launcher_icon',
+        ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
         ),
       ),
       payload: jsonEncode(message.toMap()),
