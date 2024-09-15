@@ -23,10 +23,10 @@ class ChatProvider1
       final response =
           await chat.handleMessageResponse1(data: data, roomId: roomId);
       // Log API response to check if it's returning empty
-      log('Response from API: ${response.length}');
+      // log('Response from API: ${response.length}');
 // Add or append messages for the current room
       Map<String, List<Message>> chatRooms = state.value ?? {};
-      log(' chats$chatRooms');
+      // log(' chats$chatRooms');
       if (response.isNotEmpty) {
         List<Message> messages = chatRooms.putIfAbsent(roomId, () => []);
         // Filter and add new messages to avoid duplicates
@@ -36,7 +36,7 @@ class ChatProvider1
         messages.addAll(newMessages);
         messages.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
         state = AsyncData(chatRooms);
-        log('Updated messages for room $roomId');
+        // log('Updated messages for room $roomId');
         // if (chatRooms.containsKey(roomId)) {
         //   log('the chat${chatRooms[roomId]}');
 
