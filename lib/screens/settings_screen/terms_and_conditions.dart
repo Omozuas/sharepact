@@ -51,7 +51,7 @@ class TermsAndConditions extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            'These Terms and Conditions ("Terms") govern your use of our services. By accessing or using ',
+                            'These Terms and Conditions ("Terms") govern your use of the ',
                         style: GoogleFonts.lato(
                           color: AppColors.textColor01,
                           fontSize: 14,
@@ -67,7 +67,7 @@ class TermsAndConditions extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            ", you agree to comply with and be bound by these Terms.",
+                            ' mobile application ("App") and its associated services ("Services"). By accessing or using the App, you agree to comply with these Terms. Please read them carefully.',
                         style: GoogleFonts.lato(
                           color: AppColors.textColor,
                           fontSize: 14,
@@ -80,9 +80,9 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                //! Definitions
+                //! Account Registration
                 Text(
-                  "Definitions",
+                  " Account Registration",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -93,78 +93,42 @@ class TermsAndConditions extends StatelessWidget {
                   height: 10,
                 ),
         
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: '"Service": The  ',
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor01,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "SharePact ",
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'mobile app and associated services.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  'To use SharePact, you must register for an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(
+                 const SizedBox(
                   height: 10,
                 ),
-                const BulletPointWidget(
-                  text: '"User": Anyone who uses the Service.',
+                 //! Eligibility
+                Text(
+                  " Eligibility",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
         
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: '"Group": A collective purchasing group created on  ',
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor01,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "SharePact ",
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  'You must be at least 13 years old to use the App. By registering and using the App, you represent and warrant that you meet this age requirement.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(
+                 const SizedBox(
                   height: 10,
                 ),
-                const BulletPointWidget(
-                  text:
-                      '"Subscription": A paid service accessed through a Group.',
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //! User Responsibilities
+                //! Trusted Relationships
                 Text(
-                  "User Responsibilities",
+                  "Trusted Relationships",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -176,47 +140,30 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'Users must provide accurate information when creating a Group.',
+                      'SharePact is intended for use among family, friends, households, and other trusted individuals. By using the App, you agree to engage only with people you know and trust.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text:
-                          'Users must follow all rules and instructions provided by  ',
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor01,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "SharePact ",
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const BulletPointWidget(
+                  text:
+                      'No Responsibility for Scams: SharePact is not responsible for any losses, scams, or fraudulent activities that may occur as a result of interacting with strangers or individuals outside of your trusted circle.',
                 ),
+               
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'Users are responsible for maintaining the confidentiality of their account information.',
+                      'User Vigilance: You are responsible for ensuring that you interact only with people you trust, as SharePact does not verify the identity or trustworthiness of users.',
                 ),
         
                 const SizedBox(
                   height: 20,
                 ),
-                //! Group Creation and Management
+                 //! Payment Processing
                 Text(
-                  "Group Creation and Management",
+                  " Payment Processing",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -225,25 +172,21 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 const SizedBox(
                   height: 10,
-                ),
-                const BulletPointWidget(
-                  text:
-                      'Group creators are responsible for managing the Group, including inviting members and ensuring compliance with these Terms.',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const BulletPointWidget(
-                  text:
-                      'Groups must comply with all applicable laws and regulations.',
                 ),
         
-                const SizedBox(
+                Text(
+                  'All payments made through SharePact are processed by third-party payment providers. By using the App, you agree to the terms and conditions of the applicable payment provider. SharePact is not responsible for any issues arising from payment processing, including delays or errors.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
+                  ),
+                ),
+                 const SizedBox(
                   height: 20,
                 ),
-                //! Payment and Fees
+                 //! Fees and Charges
                 Text(
-                  " Payment and Fees",
+                  " Fees and Charges",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -252,97 +195,22 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 const SizedBox(
                   height: 10,
-                ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: 'All payments must be made through  ',
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor01,
-                        fontSize: 14,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "SharePact's ",
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'secure payment system.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const BulletPointWidget(
-                  text:
-                      'Users are responsible for any fees associated with their Subscription.',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const BulletPointWidget(
-                  text:
-                      'Group members share the cost of the Subscription, as outlined during Group creation.',
                 ),
         
-                const SizedBox(
-                  height: 20,
-                ),
-                //! Cancellation and Termination
                 Text(
-                  "Cancellation and Termination",
-                  textAlign: TextAlign.center,
+                  'SharePact may charge fees for certain features or services. All applicable fees will be disclosed to you before you make any payment. By using the App, you agree to pay all fees and charges associated with your use of the Services.',
                   style: GoogleFonts.lato(
-                      color: AppColors.textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const BulletPointWidget(
-                  text:
-                      'Groups can be canceled at any time through the app. Users will be responsible for any fees incurred up to the cancellation date.',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: "SharePact ",
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text:
-                              'reserves the right to terminate or suspend access to any Group or User for violations of these Terms or for any other reason at our discretion.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(
+                
+                 const SizedBox(
                   height: 20,
                 ),
-                //! Refunds
+                //! Non-Payment Consequences
                 Text(
-                  "Refunds",
+                  "Non-Payment Consequences",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -354,31 +222,63 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'Refund policies will vary depending on the Subscription service. Users should refer to the specific service’s terms for details.',
+                      'Group Member Non-Payment: If you fail to make a payment before the deadline, you will be automatically removed from the group and will forfeit your participation in that particular group purchase or subscription.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: "SharePact ",
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text:
-                              'is not responsible for refund policies of third-party Subscription services.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                  const BulletPointWidget(
+                  text:
+                      'Group Creator Non-Payment: If the group creator does not make their payment, they will not be eligible for disbursement of funds from the group.',
+                ),
+               
+                const SizedBox(
+                  height: 20,
+                ),
+ //! Disbursement Rules
+                Text(
+                  "Disbursement Rules",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                  text:
+                      ' Disbursement to the group creator will only be initiated when all group members have confirmed their access to the shared service or product.',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                  const BulletPointWidget(
+                  text:
+                      'SharePact reserves the right to withhold disbursement if there are disputes or unresolved issues among group members.',
+                ),
+               
+                const SizedBox(
+                  height: 20,
+                ),
+  //! Termination and Suspension
+                Text(
+                  "Termination and Suspension",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'SharePact reserves the right to suspend or terminate your account at any time, with or without notice, for violation of these Terms or for any other reason deemed necessary to protect the integrity of the platform.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(
@@ -396,51 +296,33 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: "SharePact ",
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text:
-                              'is not liable for any indirect, incidental, or consequential damages arising from the use of the Service.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  'To the fullest extent permitted by law, SharePact and its affiliates will not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the App or Services.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                BulletPointWidget(
-                  textWidget: RichText(
-                    text: TextSpan(
-                      text: "SharePact ",
-                      style: GoogleFonts.lato(
-                        color: AppColors.textColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text:
-                              'SharePact\'s total liability for any claims under these Terms is limited to the amount paid by the User for the Service.',
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor01,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                //! Termination and Suspension
+                Text(
+                  "Indemnification",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'You agree to indemnify and hold harmless SharePact, its affiliates, and their respective officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses arising out of your use of the App, your violation of these Terms, or your infringement of any rights of another person or entity.',
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(
@@ -459,7 +341,7 @@ class TermsAndConditions extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'Users’ personal information is protected according to our Privacy Policy, which is incorporated into these Terms by reference.',
+                  'Your use of SharePact is subject to our Privacy Policy, which outlines how we collect, use, and protect your personal information.',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,
@@ -470,7 +352,7 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 //! Changes to Terms
                 Text(
-                  "Changes to Terms",
+                  "Changes to the Terms",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -491,7 +373,7 @@ class TermsAndConditions extends StatelessWidget {
                     children: [
                       TextSpan(
                         text:
-                            'reserves the right to modify these Terms at any time. Users will be notified of any changes, and continued use of the Service constitutes acceptance of the revised Terms.',
+                            'We may modify these Terms at any time. If we make changes, we will notify you by revising the "Effective Date" at the top of these Terms. Your continued use of the App after the changes become effective constitutes your acceptance of the revised Terms.',
                         style: GoogleFonts.lato(
                           color: AppColors.textColor01,
                           fontSize: 14,
@@ -516,7 +398,7 @@ class TermsAndConditions extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'These Terms are governed by and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law principles.',
+                  'These Terms are governed by and construed in accordance with the laws of Nigeria, without regard to its conflict of law principles.',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,
@@ -538,7 +420,7 @@ class TermsAndConditions extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'For any questions or concerns about these Terms, please contact us at [Contact Information].',
+                  'If you have any questions about these Terms, please contact us at support@sharepact.com.',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,

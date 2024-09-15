@@ -304,7 +304,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               ),
               SizedBox(height: height * .01),
               Text(
-                'Invite friends and family to share the cost of your favorite subscriptions. Save more by creating a group and unlocking bulk discounts together',
+                'Invite friends and family to share the cost of your favorite subscriptions. Save more by creating a group.',
                 style: GoogleFonts.lato(
                   color: const Color(0xff343A40),
                   fontSize: 14,
@@ -350,7 +350,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: 'spotify',
+                                  text: 'Creators',
                                   style: GoogleFonts.lato(
                                     color: Colors.blue,
                                     fontSize: 16,
@@ -362,7 +362,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                     },
                                 ),
                                 TextSpan(
-                                  text: ' or ',
+                                  text: ' and ',
                                   style: GoogleFonts.lato(
                                     color: const Color(0xff343A40),
                                     fontSize: 14,
@@ -370,7 +370,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: 'Apple music',
+                                  text: 'Members',
                                   style: GoogleFonts.lato(
                                     color: Colors.blue,
                                     fontSize: 16,
@@ -388,7 +388,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                     fontWeight: FontWeight.w400,
                                   ),
                                   text:
-                                      ' subscriptions, an agent will be managing the group and is counted as a member',
+                                      'you both agree that this formation of group is for sharing payments with trusted friends, families, and households',
                                 ),
                               ],
                             ),
@@ -787,7 +787,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               const Divider(),
               SizedBox(height: height * .02),
               Text(
-                'By creating a new subscription group, you agree to the following terms and conditions:',
+                'By creating a new group, you agree to the following terms and conditions:',
                 style: GoogleFonts.lato(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,

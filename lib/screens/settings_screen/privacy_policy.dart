@@ -44,7 +44,7 @@ class PrivacyPolicy extends StatelessWidget {
                     children: [
                       TextSpan(
                         text:
-                            'values your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our mobile app and services ("Service").',
+                            'is committed to protecting your privacy and handling your personal information with care. This Privacy Policy outlines how we collect, use, and protect your information when you use our mobile application and services.',
                         style: GoogleFonts.lato(
                           color: AppColors.textColor01,
                           fontSize: 14,
@@ -70,14 +70,21 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'Personal Information: When you create an account or join a group, we may collect information such as your name, email address, and payment details.',
+                      'Personal Information: When you sign up for SharePact, we collect your email address and password for account creation and authentication.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'Usage Data: We collect information about how you use our Service, including the pages you visit, the actions you take, and the devices you use to access the Service.',
+                      'Payment Information: We facilitate payments through invoices that include a link to Flutterwave for processing your payments securely.',
+                ),
+                 const SizedBox(
+                  height: 10,
+                ),
+                 const BulletPointWidget(
+                  text:
+                      'Bank Details: If you are a group owner or creator, we collect bank details to process disbursements.',
                 ),
         
                 const SizedBox(
@@ -98,21 +105,21 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'To Provide and Improve Our Service: We use your information to create and manage your account, process transactions, and enhance the user experience.',
+                      'To Provide Services: We use your email to create and manage your account, process payments, and facilitate group interactions.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'To Communicate with You: We may use your contact information to send you updates, respond to inquiries, and provide customer support.',
+                      'To Manage Payments: We use your bank details to disburse funds to group creators as necessary.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'To Ensure Security: We use your data to detect and prevent fraud, unauthorized access, and other security issues.',
+                      'To Communicate: We use your email address to send you account-related updates, invoices, and reminders.',
                 ),
         
                 const SizedBox(
@@ -133,14 +140,14 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'With Group Members: Your name and basic information may be shared with other members of your subscription group',
+                      'With Payment Processors: We may share payment information with Flutterwave to process payments securely.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'With Third-Party Services: We may share your data with third-party service providers to facilitate payments, manage subscriptions, and perform other functions on our behalf.',
+                      'For Disbursements: We use bank details to handle disbursements to group creators.',
                 ),
                 const SizedBox(
                   height: 10,
@@ -155,7 +162,7 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 //! Data Security
                 Text(
-                  "Data Security",
+                  "Security",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: AppColors.textColor,
@@ -166,7 +173,7 @@ class PrivacyPolicy extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'We implement industry-standard security measures to protect your personal information from unauthorized access, alteration, and disclosure.',
+                  'We implement industry-standard security measures to protect your personal information, including encryption and secure storage practices. However, please note that no online transmission or storage method is completely secure.',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,
@@ -177,7 +184,7 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 //! Your Rights
                 Text(
-                  "Your Rights",
+                  "Your Choices",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                     color: AppColors.textColor,
@@ -190,14 +197,14 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
                 const BulletPointWidget(
                   text:
-                      'Access and Correction: You have the right to access and update your personal information at any time.',
+                      'Access and Update: You can access and update your email address and other personal information through the app settings.',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 const BulletPointWidget(
                   text:
-                      'Deletion: You can request the deletion of your account and personal data by contacting us at [Contact Information].',
+                      'Opt-Out: You can choose not to receive communications by unticking the notifications and also delete your account in the app.',
                 ),
                 const SizedBox(
                   height: 10,
@@ -215,7 +222,7 @@ class PrivacyPolicy extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on our app and updating the effective date.',
+                  'We may update this Privacy Policy occasionally. Any changes will be posted on this page with a revised effective date. We encourage you to review this policy periodically',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,
@@ -237,7 +244,7 @@ class PrivacyPolicy extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'If you have any questions or concerns about this Privacy Policy, please contact us at [Contact Information].',
+                  'If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at: Email: support@sharepact.com',
                   style: GoogleFonts.lato(
                     color: AppColors.textColor01,
                     fontSize: 14,

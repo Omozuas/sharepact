@@ -748,7 +748,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                               ),
                             ),
                             Text(
-                              'This toggle can only be activated once every group member has made their payment',
+                              'This toggle can only be activated once every group member is ready to subscribe or pay (i.e receive their invoice)',
                               style: GoogleFonts.lato(
                                 color: AppColors.textColor02,
                                 fontSize: 10,
@@ -787,7 +787,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Confirm Group Status',
+                              'Confirm Your Status',
                               style: GoogleFonts.lato(
                                 color: AppColors.textColor,
                                 fontSize: 14,
@@ -795,7 +795,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                               ),
                             ),
                             Text(
-                              'This toggle can only be activated once every group member has made their payment',
+                              'This toggle can only be activated if you confirm you have access to the subscription or in agreement (i.e if is a one-time payment)',
                               style: GoogleFonts.lato(
                                 color: AppColors.textColor02,
                                 fontSize: 10,
