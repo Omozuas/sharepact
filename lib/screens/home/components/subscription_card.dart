@@ -29,9 +29,10 @@ class SubscriptionCard extends StatelessWidget {
       height: 187,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8)),
         border: Border.all(width: 1, color: Colors.grey[300]!),
       ),
       child: Column(
@@ -131,20 +132,47 @@ class SubscriptionCard extends StatelessWidget {
             ),
           ),
           // const Spacer(), // Add a Spacer to push the button to the bottom
-
-          Container(
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            height: 28,
-            padding: const EdgeInsets.symmetric(horizontal: 13),
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: Color(0XFFD1D4D7))),
-            ),
-            child: Text(
-              'Next payment: $nextpayment ',
-              style: const TextStyle(fontSize: 8, color: Colors.grey),
+          const SizedBox(
+            height: 8,
+          ),
+          const Divider(
+            color: Color.fromRGBO(209, 212, 215, 1),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 3, bottom: 3, left: 8, right: 8),
+            child: Row(
+              children: [
+                const Text(
+                  'Next payment :',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  ' $nextpayment ',
+                  style: const TextStyle(
+                      fontSize: 10,
+                      color: Color.fromARGB(255, 75, 74, 74),
+                      fontWeight: FontWeight.w600),
+                ),
+              ],
             ),
           ),
+          // Container(
+          //   alignment: Alignment.centerLeft,
+          //   width: double.infinity,
+          //   height: 28,
+          //   padding: const EdgeInsets.symmetric(horizontal: 13),
+          //   decoration: const BoxDecoration(
+          //     border: Border(top: BorderSide(color: Color(0XFFD1D4D7))),
+          //   ),
+          //   child: Text(
+          //     'Next payment : $nextpayment ',
+          //     style: const TextStyle(fontSize: 8, color: Colors.grey),
+          //   ),
+          // ),
         ],
       ),
     );

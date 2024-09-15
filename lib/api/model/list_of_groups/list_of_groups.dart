@@ -338,6 +338,7 @@ class Member {
       };
 }
 
+// ignore: constant_identifier_names
 enum SubscriptionStatus { ACTIVE, INACTIVE }
 
 final subscriptionStatusValues = EnumValues({

@@ -151,6 +151,23 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('My Subscriptions',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xff5D6166),
+                        )),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             Container(
               width: double.infinity,
               height: 53,
@@ -192,7 +209,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                       crossAxisCount: 2,
                       mainAxisSpacing: 18,
                       crossAxisSpacing: 12,
-                      mainAxisExtent: 170),
+                      mainAxisExtent: 187),
                   itemCount: 5,
                   itemBuilder: (context, index) {
                     return const Opacity(
@@ -227,7 +244,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 18,
                                 crossAxisSpacing: 12,
-                                mainAxisExtent: 170),
+                                mainAxisExtent: 187),
                         itemCount: 2,
                         itemBuilder: (context, index) {
                           return const Opacity(
@@ -265,33 +282,36 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                 if (activeSub!.isEmpty) {
                   return Center(
                     heightFactor: 1.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Lottie.asset("assets/empty.json"),
-                        Text(
-                          "No Active Subscripton yet",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                    child: SizedBox(
+                      width: 290,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 20,
                           ),
-                        ),
-                        Text(
-                          "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                            color: AppColors.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                          Lottie.asset("assets/empty.json"),
+                          Text(
+                            "No Active Subscripton yet",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              color: AppColors.textColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                          Text(
+                            "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              color: AppColors.textColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -309,7 +329,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 18,
                                   crossAxisSpacing: 12,
-                                  mainAxisExtent: 170),
+                                  mainAxisExtent: 187),
                           itemCount: loaging
                               ? filterSub.length + 10
                               : filterSub.length,

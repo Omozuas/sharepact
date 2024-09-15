@@ -8,7 +8,6 @@ import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/group_details_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
-import 'package:sharepact_app/api/socket/socket_services.dart';
 import 'package:sharepact_app/screens/group_details/screen/group_details_screen.dart';
 import 'package:sharepact_app/screens/home/controllerNav.dart';
 import 'package:sharepact_app/utils/app_colors/app_colors.dart';
@@ -65,7 +64,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void dispose() {
     super.dispose();
 
-    singleChat.clear();
     _scrollController.dispose();
   }
 
@@ -124,7 +122,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         .read(chatStateProvider.notifier)
         .getMessagess(roomId: widget.roomId!, limit: 50, cursor: null);
     _scrollToBottom();
-    // singleChat.clear();
+    // chatRooms[widget.roomId]?.clear();
   }
 
   Future<void> getGroupDetails() async {
@@ -177,6 +175,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final res = ref.watch(chatProvider1);
     ref.watch(chatStateProvider);
+
     final res2 = ref.watch(groupdetailsprovider);
     final isLoading = ref.watch(groupdetailsprovider).isLoading;
     // ignore: deprecated_member_use
@@ -189,6 +188,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 builder: (context) => const ControllerNavScreen(
                       initialIndex: 2,
                     )));
+
         return false;
       },
       child: Scaffold(
@@ -247,6 +247,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           height: 20,
                           width: 70,
                           child: res2.when(
+                              skipLoadingOnReload: true,
+                              skipLoadingOnRefresh: true,
                               data: (data) {
                                 final item = data?.data?.members;
 
@@ -359,19 +361,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       skipLoadingOnReload: true,
                       skipLoadingOnRefresh: true,
                       data: (data) {
-                        if (data != null && data.isNotEmpty) {
+                        // The specific roomId you're looking for
+
+                        final roomChat = data?[widget.roomId];
+                        // log('roomChat ;$roomChat');
+                        if (roomChat != null && roomChat.isNotEmpty) {
                           return ListView.builder(
                               itemCount: _isLoadingMore
-                                  ? data.length + 20
-                                  : data.length,
+                                  ? roomChat.length + 20
+                                  : roomChat.length,
                               shrinkWrap: true,
                               controller: _scrollController,
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: const EdgeInsets.all(16),
                               itemBuilder: (context, index) {
-                                var item1 = data[index];
+                                var item1 = roomChat[index];
                                 // Show loading indicator when loading more messages
-
+                                // log('item ;$item1');
                                 if (item1.sender?.id != userId) {
                                   return _buildReceivedMessage1(
                                       context: context,
@@ -404,30 +410,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 }
                               });
                         }
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "No Active Chat yet",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                        return SizedBox(
+                          width: 230,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "No Active Chat yet",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: AppColors.textColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            Lottie.asset("assets/empty.json"),
-                            Text(
-                              "You're all caught up! No Active Chat at the moment. Start a chat",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
+                              Lottie.asset("assets/empty.json"),
+                              Text(
+                                "You're all caught up! No Active Chat at the moment. Start a chat",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: AppColors.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       },
                       error: (e, s) {
@@ -614,9 +624,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 2),
             Text(time,
                 style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 10),
           ],
         ),
       ],
@@ -656,9 +667,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 2),
             Text(time,
                 style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 10),
           ],
         ),
         const SizedBox(width: 8),
@@ -720,9 +732,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Future<void> _maarkAsRead({required String roomId}) async {
     try {
-      await ref.read(profileProvider.notifier).markGroupAsRead(
-          groupId: roomId,
-          messagesid: singleChat.map((message) => message.id ?? '').toList());
+      await ref
+          .read(profileProvider.notifier)
+          .markGroupAsRead(groupId: roomId, messagesid: []
+              //  singleChat.map((message) => message.id ?? '').toList()
+              );
 
       final pUpdater = ref.read(profileProvider).markGroupAsRead;
       // Navigate to home screen if login is successful

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/chat_model.dart';
 import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
@@ -5,7 +7,9 @@ import 'package:sharepact_app/config.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 // import 'package:socket_io_client/socket_io_client.dart';
 
-List<Message> singleChat = [];
+// List<Message> singleChat = [];
+// List<Message> singleChat = [];
+// Map<String, List<Message>> chatRooms = {};
 
 class SocketService {
   Io.Socket? socket;
@@ -14,6 +18,7 @@ class SocketService {
 
   void connect(
       {required String token, required String userId, required String roomId}) {
+    log('staert io');
     socket = Io.io(
         Config.baseUrl,
         Io.OptionBuilder()
@@ -26,14 +31,20 @@ class SocketService {
     // Handle successful connection
     socket?.onConnect((_) {
       // Listen for the reply from chat-message event
+      log('onconnnected');
       socket?.on('chat-message', (data) {
-        ref.read(chatProvider1.notifier).getMessages(data);
+        ref
+            .read(chatProvider1.notifier)
+            .getMessages(data: data, roomId: roomId);
       });
 
       // Listen for the reply after fetching messages (messages-{userId})
       socket?.on('messages-$userId', (data) {
         // final res = handleMessagesResponse(data);
-        ref.read(chatProvider1.notifier).getMessages(data);
+
+        ref
+            .read(chatProvider1.notifier)
+            .getMessages(data: data, roomId: roomId);
       });
 
       socket?.emit('join-group-chat', roomId);
@@ -61,8 +72,10 @@ class SocketService {
   }
 
   // Function to handle the reply from chat-message event
-  Future<List<Message>> handleMessageResponse1(dynamic data) async {
-    // List<Message> singleChat = [];
+  Future<List<Message>> handleMessageResponse1(
+      {required dynamic data, required String roomId}) async {
+    List<Message> singleChat = [];
+
     // Check if `data['messages']` is a list or a single message
     if (data['messages'] is List) {
       // If it's a list, parse each message in the list
@@ -87,8 +100,6 @@ class SocketService {
     }
     // Sort messages by sentAt in ascending order (older messages at the top)
     singleChat.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
-    // Debugging output
-    if (singleChat.isNotEmpty && singleChat.first.content != null) {}
 
     return singleChat;
   }

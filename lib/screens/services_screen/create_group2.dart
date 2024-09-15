@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
@@ -139,13 +140,14 @@ class _CreateGroup2State extends ConsumerState<CreateGroup2> {
         oneTimePaymentSt.toLowerCase() == 'yes' ? true : false;
     try {
       await ref.read(profileProvider.notifier).createGroup(
-          serviceId: serviceId,
-          groupName: groupNameController.text,
-          subscriptionCost: subscriptionCost,
-          numberOfMembers: numberOfMembersString,
-          oneTimePayment: isOneTimePayment,
-          existingGroup: isExistingGroup,
-          nextSubscriptionDate: isExistingGroup ? selectedDate : null,);
+            serviceId: serviceId,
+            groupName: groupNameController.text,
+            subscriptionCost: subscriptionCost,
+            numberOfMembers: numberOfMembersString,
+            oneTimePayment: isOneTimePayment,
+            existingGroup: isExistingGroup,
+            nextSubscriptionDate: isExistingGroup ? selectedDate : null,
+          );
       final res = ref.read(profileProvider).createGroup.value;
       if (res?.code == 201) {
         if (mounted) {
@@ -243,6 +245,17 @@ class _CreateGroup2State extends ConsumerState<CreateGroup2> {
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
       return;
+    }
+  }
+
+  final _url = Uri.parse('https://sharepact.com/terms');
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(
+      _url,
+      mode: LaunchMode.inAppWebView,
+      // browserConfiguration: const BrowserConfiguration(showTitle: true),
+    )) {
+      throw Exception('Could not launch $_url');
     }
   }
 
@@ -548,8 +561,7 @@ class _CreateGroup2State extends ConsumerState<CreateGroup2> {
                   icon: const Icon(HeroiconsOutline.chevronDown),
                   padding:
                       EdgeInsets.only(left: width * .04, right: width * .04),
-                  items: <String>[ '2', '3', '4', '5', '6']
-                      .map((String value) {
+                  items: <String>['2', '3', '4', '5', '6'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
@@ -786,7 +798,12 @@ class _CreateGroup2State extends ConsumerState<CreateGroup2> {
                             color: const Color(0xff5D6166)),
                       ),
                       TextSpan(
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            setState(() {
+                              _launchUrl();
+                            });
+                          },
                         text: ' Read Full Terms and Conditions',
                         style: GoogleFonts.lato(
                           fontSize: 14,

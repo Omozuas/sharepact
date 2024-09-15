@@ -22,6 +22,27 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  bool _isPasswordObscured = true;
+  bool _isPasswordObscured1 = true;
+  bool _isPasswordObscured2 = true;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordObscured = !_isPasswordObscured;
+    });
+  }
+
+  void _togglePasswordVisibility1() {
+    setState(() {
+      _isPasswordObscured1 = !_isPasswordObscured1;
+    });
+  }
+
+  void _togglePasswordVisibility2() {
+    setState(() {
+      _isPasswordObscured2 = !_isPasswordObscured2;
+    });
+  }
 
   Future<void> checkStatus() async {
     final String currentPassword = currentPasswordController.text;
@@ -193,18 +214,26 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               SizedBox(height: responsiveHeight(context, 0.005)),
               TextField(
                 controller: currentPasswordController,
+                obscureText: _isPasswordObscured,
                 decoration: InputDecoration(
-                  hintText: 'Enter password',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xff5D6166),
+                    hintText: 'Enter password',
+                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xff5D6166),
+                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide:
+                          const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordObscured
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xffBBC0C3), width: 1),
-                  ),
-                  contentPadding: const EdgeInsets.all(20),
-                ),
+                      onPressed: _togglePasswordVisibility,
+                    )),
               ),
               const SizedBox(
                 height: 10,
@@ -218,18 +247,26 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               SizedBox(height: responsiveHeight(context, 0.005)),
               TextField(
                 controller: newPasswordController,
+                obscureText: _isPasswordObscured1,
                 decoration: InputDecoration(
-                  hintText: 'Re-type password',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xff5D6166),
+                    hintText: 'Re-type password',
+                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xff5D6166),
+                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide:
+                          const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordObscured1
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xffBBC0C3), width: 1),
-                  ),
-                  contentPadding: const EdgeInsets.all(20),
-                ),
+                      onPressed: _togglePasswordVisibility1,
+                    )),
               ),
               const SizedBox(
                 height: 10,
@@ -243,18 +280,26 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               SizedBox(height: responsiveHeight(context, 0.005)),
               TextField(
                 controller: confirmPasswordController,
+                obscureText: _isPasswordObscured2,
                 decoration: InputDecoration(
-                  hintText: 'Re-type password',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xff5D6166),
+                    hintText: 'Re-type password',
+                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xff5D6166),
+                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide:
+                          const BorderSide(color: Color(0xffBBC0C3), width: 1),
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordObscured2
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        const BorderSide(color: Color(0xffBBC0C3), width: 1),
-                  ),
-                  contentPadding: const EdgeInsets.all(20),
-                ),
+                      onPressed: _togglePasswordVisibility2,
+                    )),
               ),
               SizedBox(height: responsiveHeight(context, 0.04)),
               SizedBox(
@@ -265,7 +310,7 @@ class ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                         context: context,
                         builder: (ctx) {
                           return LogOutAfterUpdateDialog(
-                              text: const Text('continnue'),
+                              text: const Text('continue'),
                               onTap: () {
                                 checkStatus();
                                 Navigator.pop(ctx);
@@ -344,7 +389,7 @@ class _LogOutAfterUpdateDialogState
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text('cancle'),
+                    child: const Text('cancel'),
                   ),
                 ),
                 const SizedBox(width: 8),

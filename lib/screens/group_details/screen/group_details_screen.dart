@@ -607,6 +607,18 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
               const SizedBox(
                 height: 10,
               ),
+              Text(
+                "Pending Requests : ${res1.value?.data?.length ?? 0}",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  color: AppColors.textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               if (res1.value?.message !=
                   'Only the group admin can view join requests')
                 SizedBox(
@@ -649,29 +661,37 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                                   );
                                 });
                           }
-                          return Column(
-                            children: [
-                              Text(
-                                "No Join Request yet",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          return Center(
+                            child: SizedBox(
+                              width: 275,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "No Join Request yet",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.lato(
+                                      color: AppColors.textColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Lottie.asset("assets/empty.json",
+                                      width: 170, height: 170),
+                                  Text(
+                                    "You have no pending requests yet. Pending requests will appear hear once they’ve been sent.",
+                                    textAlign: TextAlign.center,
+                                    softWrap: true,
+                                    style: GoogleFonts.lato(
+                                      color: AppColors.textColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SvgPicture.asset("assets/manwithbinocular.svg",
-                                  width: 170, height: 170),
-                              Text(
-                                "You have no pending requests yet. Pending requests will appear hear once they’ve been sent.",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
+                            ),
                           );
                         },
                         error: (e, s) {

@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
+import 'package:sharepact_app/api/riverPod/group_details_provider.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
@@ -161,6 +164,9 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.watch(subscriptionProvider);
     ref.watch(notificationConfigProvider);
     ref.watch(groupListprovider);
+    ref.watch(groupdetailsprovider);
+    ref.watch(chatProvider1);
+    ref.watch(chatStateProvider);
     ref.watch(notificationsprovider);
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
@@ -200,7 +206,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 SettingsTile(
                   icon: SvgPicture.asset('assets/user-edit.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Edit Profile',
                   onTap: () async {
                     // Handle Edit Profile action
@@ -211,7 +221,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/lock.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Manage Passwords',
                   onTap: () {
                     // Handle Manage Passwords action
@@ -224,7 +238,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/bank.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Manage Bank Details',
                   onTap: () {
                     // Handle Manage Bank details
@@ -238,7 +256,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/notification-bing.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Notifications & Reminders',
                   onTap: () {
                     // Handle Notifications & Reminders action
@@ -260,7 +282,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/message.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Support',
                   onTap: () {
                     // Handle Support action
@@ -274,7 +300,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/security-user.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Privacy Policy',
                   onTap: () {
                     // Handle Privacy Policy action
@@ -288,7 +318,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(),
                 SettingsTile(
                   icon: SvgPicture.asset('assets/book.svg',
-                      width: 22, height: 22, color: const Color(0xff5D6166)),
+                      // ignore: deprecated_member_use
+                      width: 22,
+                      height: 22,
+                      // ignore: deprecated_member_use
+                      color: const Color(0xff5D6166)),
                   title: 'Terms & Conditions',
                   onTap: () {
                     // Handle Terms & Conditions action
@@ -305,7 +339,11 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           const Divider(),
           ListTile(
             leading: SvgPicture.asset('assets/logout.svg',
-                width: 22, height: 22, color: const Color(0xff5D6166)),
+                // ignore: deprecated_member_use
+                width: 22,
+                height: 22,
+                // ignore: deprecated_member_use
+                color: const Color(0xff5D6166)),
             title: Text('LogOut',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 15,

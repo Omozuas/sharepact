@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
-import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/subscription_provider.dart';
@@ -69,8 +69,8 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
     final res = ref.watch(groupListprovider);
     ref.watch(userProvider);
     ref.watch(categoryProvider);
-    ref.watch(chatProvider1);
     ref.watch(subscriptionProvider);
+    ref.watch(chatStateProvider);
     ref.watch(notificationsprovider);
     final isLoading = ref.read(groupListprovider).isLoading;
     return RefreshIndicator(
@@ -81,6 +81,23 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
           padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
           child: Column(
             children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('My Groups',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xff5D6166),
+                          )),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               res.when(
                   skipLoadingOnReload: true,
                   data: (data) {
@@ -132,23 +149,33 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            item.groupName!,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                          Text(item.groupName!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: const Color.fromRGBO(
+                                                        52, 58, 64, 1),
+                                                  )),
+                                          const SizedBox(
+                                            height: 5,
                                           ),
                                           if (item.latestMessage?.sender!
                                                   .username !=
                                               null)
                                             Text(
-                                              '${item.latestMessage?.sender?.username!} :${item.latestMessage?.content!}',
-                                              style: const TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.grey,
-                                              ),
+                                              '${item.latestMessage?.sender?.username!} : ${item.latestMessage?.content!}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: const Color.fromRGBO(
+                                                        93, 97, 102, 1),
+                                                  ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                         ],
@@ -182,7 +209,7 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                         children: [
                           Lottie.asset("assets/empty.json"),
                           Text(
-                            "No Active Group yet",
+                            "You haven't joined any groups yet",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.lato(
                               color: AppColors.textColor,
@@ -191,7 +218,7 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                             ),
                           ),
                           Text(
-                            "You're all caught up! No Active Group at the moment. Create a Group",
+                            "Your subscribed groups will appear here once you create or join a subscription group",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.lato(
                               color: AppColors.textColor,

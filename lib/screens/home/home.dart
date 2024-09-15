@@ -322,7 +322,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             crossAxisCount: 2,
                             mainAxisSpacing: 18,
                             crossAxisSpacing: 12,
-                            mainAxisExtent: 170),
+                            mainAxisExtent: 187),
                     itemCount: 6,
                     itemBuilder: (context, index) {
                       return const Opacity(
@@ -357,7 +357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 18,
                                   crossAxisSpacing: 12,
-                                  mainAxisExtent: 170),
+                                  mainAxisExtent: 187),
                           itemCount: 2,
                           itemBuilder: (context, index) {
                             return const Opacity(
@@ -394,30 +394,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     });
                   }
                   return subscriptionModel.isEmpty
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Lottie.asset("assets/empty.json"),
-                            Text(
-                              "No Active Subscripton yet",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      ? Center(
+                          child: SizedBox(
+                            width: 300,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Lottie.asset("assets/empty.json"),
+                                Text(
+                                  "No Active Subscripton yet",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.lato(
+                                    color: AppColors.textColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              "You haven't joined any subscription groups yet. Start by creating or joining a group to enjoy shared subscription benefits",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
+                          ),
                         )
                       : filterSub.isEmpty
                           ? Center(
@@ -431,7 +436,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       crossAxisCount: 2,
                                       mainAxisSpacing: 18,
                                       crossAxisSpacing: 12,
-                                      mainAxisExtent: 170),
+                                      mainAxisExtent: 187),
                               itemCount:
                                   filterSub.length > 6 ? 6 : filterSub.length,
                               itemBuilder: (context, index) {

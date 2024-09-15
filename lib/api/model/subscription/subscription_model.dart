@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sharepact_app/api/model/error_model.dart';
 import 'package:sharepact_app/api/model/subscription/ServiceModel.dart';
 import 'package:sharepact_app/api/model/subscription/admin.dart';
-import 'package:sharepact_app/api/model/subscription/joinRequest_model.dart';
+import 'package:sharepact_app/api/model/subscription/join_request_model.dart';
 import 'package:sharepact_app/api/model/subscription/subMembers_model.dart';
 
 class SubscriptionResponseModel {

@@ -34,13 +34,11 @@ class PushNotificationService {
   void handleMessage(RemoteMessage? message) {
     log('handleMessage');
     if (message == null) return;
-    log("Title:${message.notification?.title}");
-    log("Body:${message.notification?.body}");
+
     var data = jsonDecode(message.notification?.body ?? '{}');
-    final body = NotificationBody.fromJson(data);
+
     final body2 = ChatNotification.fromJson(data);
-    log("Body2:${body.type}");
-    log("Payload:${message.data}");
+
     if (data['type'] == "notification") {
       navigatorKey.currentState
           ?.pushNamed(NotificationScreen.route, arguments: message);
@@ -99,7 +97,7 @@ class PushNotificationService {
         _localNotifications.show(
           notification.hashCode,
           body2.group?.groupName ?? '',
-          '${body2.message?.sender?.username ?? ''}:${body2.message?.content ?? ''}',
+          '${body2.message?.sender?.username ?? ''} : ${body2.message?.content ?? ''}',
           NotificationDetails(
             android: AndroidNotificationDetails(
               _androidChannel.id,
@@ -158,7 +156,7 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
     localNotifications.show(
       notification.hashCode,
       body2.group?.groupName ?? '',
-      '${body2.message?.sender?.username ?? ''}:${body2.message?.content ?? ''}',
+      '${body2.message?.sender?.username ?? ''} : ${body2.message?.content ?? ''}',
       NotificationDetails(
         android: AndroidNotificationDetails(
           androidChannel.id,
