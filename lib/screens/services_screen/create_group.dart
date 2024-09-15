@@ -106,15 +106,19 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   }
 
   final _url = Uri.parse('https://sharepact.com/terms');
-  Future<void> _launchUrl() async {
+  Future<void> _launchUrl(BuildContext context) async {
     if (!await launchUrl(
       _url,
       mode: LaunchMode.inAppWebView,
       // browserConfiguration: const BrowserConfiguration(showTitle: true),
     )) {
-      throw Exception('Could not launch $_url');
+      // throw Exception('Could not launch $_url');
+      if (context.mounted) {
+        showErrorPopup(context: context, message: 'Could not launch $_url');
+      }
     }
   }
+
   // void _showPrivacyDialog() {
   //   showDialog(
   //     context: context,
@@ -666,7 +670,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               ),
               if (oneTimePayment)
                 AppInputField(
-                  headerText: 'Do you have an Existing Group?',
+                  headerText: 'Do you have an Existing Subscription?',
                   style: GoogleFonts.lato(
                     color: const Color(0xff343A40),
                     fontSize: 16,
@@ -829,7 +833,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             setState(() {
-                              _launchUrl();
+                              _launchUrl(context);
                             });
                           },
                         text: ' Read Full Terms and Conditions',

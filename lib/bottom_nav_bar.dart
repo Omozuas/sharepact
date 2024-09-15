@@ -54,14 +54,15 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             'assets/people.svg',
-            color: widget.selectedIndex == 2 ? Colors.blue : Colors.grey,
+            colorFilter: ColorFilter.mode(widget.selectedIndex == 2 ? Colors.blue : Colors.grey, BlendMode.srcIn),
           ),
           label: 'Groups',
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             'assets/setting-2.svg',
-            color: widget.selectedIndex == 3 ? Colors.blue : Colors.grey,
+            colorFilter: ColorFilter.mode(widget.selectedIndex == 3 ? Colors.blue : Colors.grey, BlendMode.srcIn),
+
           ),
           label: 'Settings',
         ),

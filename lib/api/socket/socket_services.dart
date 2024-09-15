@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/chat_model.dart';
 import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
 import 'package:sharepact_app/config.dart';
-import 'package:socket_io_client/socket_io_client.dart' as Io;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 // import 'package:socket_io_client/socket_io_client.dart';
 
 // List<Message> singleChat = [];
@@ -12,16 +12,16 @@ import 'package:socket_io_client/socket_io_client.dart' as Io;
 // Map<String, List<Message>> chatRooms = {};
 
 class SocketService {
-  Io.Socket? socket;
+  io.Socket? socket;
   SocketService(this.ref);
   final Ref ref;
 
   void connect(
       {required String token, required String userId, required String roomId}) {
     log('staert io');
-    socket = Io.io(
+    socket = io.io(
         Config.baseUrl1,
-        Io.OptionBuilder()
+        io.OptionBuilder()
             .setTransports(['websocket']) // For Flutter or Dart VM
             .disableAutoConnect() // Disable automatic connection
             .setExtraHeaders({"token": token})

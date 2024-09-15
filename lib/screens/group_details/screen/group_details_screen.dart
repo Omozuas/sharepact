@@ -343,7 +343,11 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                           children: [
                             InkWell(
                                 onTap: () {
-                                  Share.share(data.data!.groupCode!);
+                                  if (data.data?.groupCode != null) {
+                                    final message =
+                                        'Join our group using the code: ${data.data!.groupCode!}';
+                                    Share.share(message);
+                                  }
                                 },
                                 child: SvgPicture.asset(AppImages.shareIcon)),
                             Text(
