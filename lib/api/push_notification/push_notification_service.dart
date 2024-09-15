@@ -86,12 +86,18 @@ class PushNotificationService {
       var data = jsonDecode(message.notification?.body ?? '{}');
       final body = NotificationBody.fromJson(data);
       final body2 = ChatNotification.fromJson(data);
+
       if (notification == null) return;
+      String title = body.name ?? "New Notification";
+      String bodyText = body.subject ?? "You have a message";
+      String title1 = body2.group?.groupName ?? "New Notification";
+      String formattedBodyText =
+          "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
       if (data['type'] == "notification") {
         _localNotifications.show(
           notification.hashCode,
-          body.name,
-          body.subject,
+          title,
+          bodyText,
           NotificationDetails(
             android: AndroidNotificationDetails(
               _androidChannel.id,
@@ -106,8 +112,8 @@ class PushNotificationService {
       } else if (data['type'] == "chat") {
         _localNotifications.show(
           notification.hashCode,
-          body2.group?.groupName ?? '',
-          '${body2.message?.sender?.username ?? ''} : ${body2.message?.content ?? ''}',
+          title1,
+          formattedBodyText,
           NotificationDetails(
             android: AndroidNotificationDetails(
               _androidChannel.id,
@@ -149,11 +155,17 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
   final body = NotificationBody.fromJson(data);
   final body2 = ChatNotification.fromJson(data);
   if (notification == null) return;
+  String title = body.name ?? "New Notification";
+  String bodyText = body.subject ?? "You have a message";
+  String title1 = body2.group?.groupName ?? "New Notification";
+  String formattedBodyText =
+      "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
+
   if (data['type'] == "notification") {
     localNotifications.show(
       notification.hashCode,
-      body.name,
-      body.subject,
+      title,
+      bodyText,
       NotificationDetails(
         android: AndroidNotificationDetails(
             androidChannel.id, androidChannel.name,
@@ -167,8 +179,8 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
   } else if (data['type'] == "chat") {
     localNotifications.show(
       notification.hashCode,
-      body2.group?.groupName ?? '',
-      '${body2.message?.sender?.username ?? ''} : ${body2.message?.content ?? ''}',
+      title1,
+      formattedBodyText,
       NotificationDetails(
         android: AndroidNotificationDetails(
           playSound: true,

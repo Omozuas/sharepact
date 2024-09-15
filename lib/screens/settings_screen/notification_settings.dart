@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/model/notificationmodel.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/settingsN/otification.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -131,6 +133,8 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
   Widget build(BuildContext context) {
     final nitificationSetting = ref.watch(notificationConfigProvider);
     final isLoading = ref.watch(profileProvider).motificationSettings.isLoading;
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

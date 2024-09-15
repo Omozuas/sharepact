@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/services_screen/create_group.dart';
@@ -139,6 +141,8 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final services = ref.watch(profileProvider).getServiceById;
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
 import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
@@ -70,6 +71,7 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
     ref.watch(userProvider);
     ref.watch(categoryProvider);
     ref.watch(subscriptionProvider);
+    ref.watch(chatProvider1);
     ref.watch(chatStateProvider);
     ref.watch(notificationsprovider);
     final isLoading = ref.read(groupListprovider).isLoading;
@@ -108,10 +110,10 @@ class GroupsScreenState extends ConsumerState<GroupsScreen> {
                           shrinkWrap: true,
                           controller: _scrollController,
                           itemCount: loaging
-                              ? data!.data!.groups!.length + 10
-                              : data?.data?.groups?.length,
+                              ? data.data!.groups!.length + 10
+                              : data.data?.groups?.length,
                           itemBuilder: (context, index) {
-                            final item = data?.data?.groups?[index];
+                            final item = data.data?.groups?[index];
                             return InkWell(
                               onTap: () {
                                 Navigator.push(

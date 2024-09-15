@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
@@ -283,6 +285,8 @@ class _CreateGroup2State extends ConsumerState<CreateGroup2> {
     final services = ref.watch(profileProvider).getServiceById;
     final isLoading = ref.watch(profileProvider).postBankDetails.isLoading;
     final categories = ref.watch(categorybyidProvider);
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

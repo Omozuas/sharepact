@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -120,6 +122,8 @@ class EditProfileState extends ConsumerState<EditProfile> {
     final isLoading1 =
         ref.watch(profileProvider).updateUserNameAndEmail.isLoading;
     final userDetails = ref.watch(userProvider);
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return RefreshIndicator(
       onRefresh: () async {
         _fetchUserData();

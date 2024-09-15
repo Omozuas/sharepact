@@ -7,6 +7,8 @@ import 'package:sharepact_app/api/model/categories/listOfCategories.dart';
 import 'package:sharepact_app/api/model/subscription/subscription_model.dart';
 import 'package:sharepact_app/api/model/user/user_model.dart';
 import 'package:sharepact_app/api/riverPod/categoryProvider.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/group_list.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
@@ -158,6 +160,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.watch(notificationsprovider);
     ref.watch(profileProvider).checkTokenstatus;
     ref.watch(groupListprovider);
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return SingleChildScrollView(
       child: RefreshIndicator(
         onRefresh: () async {

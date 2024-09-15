@@ -38,12 +38,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         .read(chatStateProvider.notifier)
         .connect(token: myToken!, userId: myid!, roomId: widget.roomId!);
     _getAllMessage();
+    _scrollToBottom();
     getGroupDetails();
+    _scrollToBottom();
   }
 
   @override
   void initState() {
     super.initState();
+    _scrollToBottom();
     Future.microtask(() => getToken());
     _scrollController.addListener(_onScroll);
     _scrollToBottom();
@@ -178,6 +181,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     final res2 = ref.watch(groupdetailsprovider);
     final isLoading = ref.watch(groupdetailsprovider).isLoading;
+
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
@@ -396,7 +400,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                           true; // Mark that the scroll has been performed
                                     }
                                   });
-
+                                  // _scrollToBottom();
                                   return _buildSentMessage1(
                                       context: context,
                                       message: item1.content!,

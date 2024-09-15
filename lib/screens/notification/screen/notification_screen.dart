@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/get_notifications.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/screens/notification/controller/notification_controller.dart';
@@ -90,6 +92,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     final notifications = ref.watch(notificationProvider);
     final notification = ref.watch(notificationsprovider);
     final isLoading = ref.watch(notificationsprovider).isLoading;
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

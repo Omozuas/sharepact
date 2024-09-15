@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:heroicons_flutter/heroicons_flutter.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
@@ -263,6 +265,8 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
     final width = MediaQuery.of(context).size.width;
     final services = ref.watch(profileProvider).getServiceById;
     final isLoading = ref.watch(profileProvider).postBankDetails.isLoading;
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

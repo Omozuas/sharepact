@@ -10,7 +10,7 @@ class ChatProvider1
     extends AutoDisposeAsyncNotifier<Map<String, List<Message>>?> {
   @override
   Future<Map<String, List<Message>>?> build() async {
-    return null;
+    return {};
   }
 
   Future<void> getMessages(
@@ -26,35 +26,47 @@ class ChatProvider1
       log('Response from API: ${response.length}');
 // Add or append messages for the current room
       Map<String, List<Message>> chatRooms = state.value ?? {};
+      log(' chats$chatRooms');
       if (response.isNotEmpty) {
-        if (chatRooms.containsKey(roomId)) {
-          log('the chat${chatRooms[roomId]}');
+        List<Message> messages = chatRooms.putIfAbsent(roomId, () => []);
+        // Filter and add new messages to avoid duplicates
+        var newMessages = response
+            .where((m) => !messages.any((em) => em.id == m.id))
+            .toList();
+        messages.addAll(newMessages);
+        messages.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
+        state = AsyncData(chatRooms);
+        log('Updated messages for room $roomId');
+        // if (chatRooms.containsKey(roomId)) {
+        //   log('the chat${chatRooms[roomId]}');
 
-          // Fetch existing messages for the room
-          List<Message> existingMessages = chatRooms[roomId]!;
+        //   // Fetch existing messages for the room
+        //   List<Message> existingMessages = chatRooms[roomId]!;
 
-          // Avoid duplicates by checking message ID
-          for (var message in response) {
-            if (!existingMessages
-                .any((existingMessage) => existingMessage.id == message.id)) {
-              existingMessages.add(message);
-            }
-          }
+        //   // Avoid duplicates by checking message ID
+        //   for (var message in response) {
+        //     if (!existingMessages
+        //         .any((existingMessage) => existingMessage.id == message.id)) {
+        //       existingMessages.add(message);
+        //     }
+        //   }
 
-          // Sort messages by sentAt to maintain the correct order
-          existingMessages.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
-          chatRooms[roomId] = existingMessages;
-        } else {
-          // If room does not exist, add it with the fetched messages
-          chatRooms[roomId] = response;
-        }
+        //   // Sort messages by sentAt to maintain the correct order
+        //   existingMessages.sort((a, b) => a.sentAt!.compareTo(b.sentAt!));
+        //   chatRooms[roomId] = existingMessages;
+        //   state = AsyncData(chatRooms);
+        // } else {
+        //   // If room does not exist, add it with the fetched messages
+        //   chatRooms[roomId] = response;
+        //   state = AsyncData(chatRooms);
+        // }
         log('chat:$chatRooms');
       } else {
         log('No new messages for room $roomId.');
       }
 
       // Notify UI about the update
-      state = AsyncData(chatRooms);
+      // state = AsyncData(chatRooms);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }

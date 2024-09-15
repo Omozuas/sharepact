@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/riverPod/user_provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
@@ -111,7 +113,8 @@ class _ChangeAvatarScreenState extends ConsumerState<ChangeAvatarScreen> {
     final isLoading = ref.watch(profileProvider).updateAvater.isLoading;
     var avatarIndex = ref.watch(avatarProvider);
     final all = ref.read(profileProvider).getAllAvater;
-
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     return Scaffold(
       backgroundColor: AppColors.skyBlue,
       body: SafeArea(

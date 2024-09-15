@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
@@ -92,6 +94,8 @@ class SupportScreenState extends ConsumerState<SupportScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(profileProvider).contactService.isLoading;
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {

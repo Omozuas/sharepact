@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sharepact_app/api/model/categories/category_byid.dart';
 import 'package:sharepact_app/api/riverPod/categoryById.dart';
+import 'package:sharepact_app/api/riverPod/chat2_provider.dart';
+import 'package:sharepact_app/api/riverPod/chat_provider.dart';
 import 'package:sharepact_app/api/riverPod/provider.dart';
 import 'package:sharepact_app/api/snackbar/snackbar_respones.dart';
 import 'package:sharepact_app/screens/authScreen/login.dart';
@@ -92,6 +94,8 @@ class _StreamingServicesScreenState
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(categorybyidProvider);
+    ref.watch(chatStateProvider);
+    ref.watch(chatProvider1);
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
