@@ -40,6 +40,9 @@ class PushNotificationService {
 
   void handleMessage(RemoteMessage? message) {
     log('handleMessage');
+    log('data ${message?.data}');
+    log('notifytit ${message?.notification?.title}');
+    log('notifybodyt ${message?.notification?.body}');
     if (message == null) return;
 
     var data = jsonDecode(message.notification?.body ?? '{}');
@@ -83,49 +86,49 @@ class PushNotificationService {
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessages);
     FirebaseMessaging.onMessage.listen((message) {
       final notification = message.notification;
-      var data = jsonDecode(message.notification?.body ?? '{}');
-      final body = NotificationBody.fromJson(data);
-      final body2 = ChatNotification.fromJson(data);
-
+      // var data = jsonDecode(message.notification?.body ?? '{}');
+      // final body = NotificationBody.fromJson(data);
+      // final body2 = ChatNotification.fromJson(data);
+      log('...main$notification');
       if (notification == null) return;
-      String title = body.name ?? "New Notification";
-      String bodyText = body.subject ?? "You have a message";
-      String title1 = body2.group?.groupName ?? "New Notification";
-      String formattedBodyText =
-          "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
-      if (data['type'] == "notification") {
-        _localNotifications.show(
-          notification.hashCode,
-          title,
-          bodyText,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              _androidChannel.id,
-              _androidChannel.name,
-              channelDescription: _androidChannel.description,
-              icon: '@drawable/launcher_icon',
-            ),
-            iOS: const DarwinNotificationDetails(),
+      // String title = body.name ?? "New Notification";
+      // String bodyText = body.subject ?? "You have a message";
+      // String title1 = body2.group?.groupName ?? "New Notification";
+      // String formattedBodyText =
+      //     "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
+      // if (data['type'] == "notification") {
+      _localNotifications.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _androidChannel.id,
+            _androidChannel.name,
+            channelDescription: _androidChannel.description,
+            icon: '@drawable/launcher_icon',
           ),
-          payload: jsonEncode(message.toMap()),
-        );
-      } else if (data['type'] == "chat") {
-        _localNotifications.show(
-          notification.hashCode,
-          title1,
-          formattedBodyText,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              _androidChannel.id,
-              _androidChannel.name,
-              channelDescription: _androidChannel.description,
-              icon: '@drawable/launcher_icon',
-            ),
-            iOS: const DarwinNotificationDetails(),
+          iOS: const DarwinNotificationDetails(),
+        ),
+        payload: jsonEncode(message.toMap()),
+      );
+      // } else if (data['type'] == "chat") {
+      _localNotifications.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _androidChannel.id,
+            _androidChannel.name,
+            channelDescription: _androidChannel.description,
+            icon: '@drawable/launcher_icon',
           ),
-          payload: jsonEncode(message.toMap()),
-        );
-      }
+          iOS: const DarwinNotificationDetails(),
+        ),
+        payload: jsonEncode(message.toMap()),
+      );
+      // }
     });
   }
 
@@ -151,49 +154,50 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
   );
 
   final notification = message.notification;
-  var data = jsonDecode(message.notification?.body ?? '{}');
-  final body = NotificationBody.fromJson(data);
-  final body2 = ChatNotification.fromJson(data);
+  // var data = jsonDecode(message.notification?.body ?? '{}');
+  // final body = NotificationBody.fromJson(data);
+  log('...backgroung$notification');
+  // final body2 = ChatNotification.fromJson(data);
   if (notification == null) return;
-  String title = body.name ?? "New Notification";
-  String bodyText = body.subject ?? "You have a message";
-  String title1 = body2.group?.groupName ?? "New Notification";
-  String formattedBodyText =
-      "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
+  // String title = body.name ?? "New Notification";
+  // String bodyText = body.subject ?? "You have a message";
+  // String title1 = body2.group?.groupName ?? "New Notification";
+  // String formattedBodyText =
+  //     "${body2.message?.sender?.username ?? 'Someone'} : ${body2.message?.content ?? 'You have a new message'}";
 
-  if (data['type'] == "notification") {
-    localNotifications.show(
-      notification.hashCode,
-      title,
-      bodyText,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-            androidChannel.id, androidChannel.name,
-            channelDescription: androidChannel.description,
-            icon: '@drawable/launcher_icon',
-            playSound: true),
-        iOS: const DarwinNotificationDetails(presentSound: true),
-      ),
-      payload: jsonEncode(message.toMap()),
-    );
-  } else if (data['type'] == "chat") {
-    localNotifications.show(
-      notification.hashCode,
-      title1,
-      formattedBodyText,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          playSound: true,
-          androidChannel.id,
-          androidChannel.name,
+  // if (data['type'] == "notification") {
+  localNotifications.show(
+    notification.hashCode,
+    notification.title,
+    notification.body,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+          androidChannel.id, androidChannel.name,
           channelDescription: androidChannel.description,
           icon: '@drawable/launcher_icon',
-        ),
-        iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-        ),
+          playSound: true),
+      iOS: const DarwinNotificationDetails(presentSound: true),
+    ),
+    payload: jsonEncode(message.toMap()),
+  );
+  // } else if (data['type'] == "chat") {
+  localNotifications.show(
+    notification.hashCode,
+    notification.title,
+    notification.body,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        playSound: true,
+        androidChannel.id,
+        androidChannel.name,
+        channelDescription: androidChannel.description,
+        icon: '@drawable/launcher_icon',
       ),
-      payload: jsonEncode(message.toMap()),
-    );
-  }
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+      ),
+    ),
+    payload: jsonEncode(message.toMap()),
+  );
+  // }
 }

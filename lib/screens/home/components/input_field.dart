@@ -23,7 +23,8 @@ class AppInputField extends StatelessWidget {
   final bool removeSpace;
   final bool readOnly;
   final BoxConstraints? constraints;
-
+  final InputBorder? border;
+  final EdgeInsetsGeometry? contentPadding;
   AppInputField({
     super.key,
     this.validator,
@@ -36,9 +37,11 @@ class AppInputField extends StatelessWidget {
     this.hintStyle,
     this.password = false,
     this.style,
+    this.border,
     this.inputFormatters,
     this.trailingTapped,
     this.onTap,
+    this.contentPadding,
     this.borderColor,
     this.borderWidth,
     this.removeSpace = false,
@@ -67,7 +70,8 @@ class AppInputField extends StatelessWidget {
           keyboardType: keyboardType,
           obscureText: password,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.all(14),
+            border: border,
+            contentPadding: contentPadding ?? const EdgeInsets.all(14),
             prefixIcon: leading,
             prefixIconConstraints:
                 readOnly ? BoxConstraints(minWidth: width * .12) : constraints,

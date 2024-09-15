@@ -431,6 +431,12 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
+                        // border: OutlineInputBorder(
+                        //   borderRadius: BorderRadius.circular(16),
+                        //   borderSide: const BorderSide(
+                        //       color: Color(0xffBBC0C3), width: 1),
+                        // ),
+                        // contentPadding: const EdgeInsets.all(20),
                         hintText: 'Select Bank Name',
                         trailing: DropdownSearch<String>(
                           popupProps: PopupProps.menu(
@@ -456,10 +462,7 @@ class _BankDetailsScreenState extends ConsumerState<BankDetailsScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              contentPadding: EdgeInsets.only(
-                                left: width * .05,
-                                right: width * .05,
-                              ),
+                              contentPadding: const EdgeInsets.all(20),
                               hintText: 'Select Bank Name',
                             ),
                           ),

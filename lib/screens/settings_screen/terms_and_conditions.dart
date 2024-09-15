@@ -33,6 +33,16 @@ class TermsAndConditions extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Text(
+                  "Effective Date: 12-september-2024 ",
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor01,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
                 RichText(
                   text: TextSpan(
                     text: "Welcome to ",
@@ -92,7 +102,7 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-        
+
                 Text(
                   'To use SharePact, you must register for an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.',
                   style: GoogleFonts.lato(
@@ -100,10 +110,10 @@ class TermsAndConditions extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                 //! Eligibility
+                //! Eligibility
                 Text(
                   " Eligibility",
                   textAlign: TextAlign.center,
@@ -115,7 +125,7 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-        
+
                 Text(
                   'You must be at least 13 years old to use the App. By registering and using the App, you represent and warrant that you meet this age requirement.',
                   style: GoogleFonts.lato(
@@ -123,7 +133,79 @@ class TermsAndConditions extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
+                  height: 10,
+                ),
+                //! Trusted Relationships
+                Text(
+                  "Group Creation and Participation",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "a. Group Creator Responsibilities",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                  text:
+                      'The group creator sets the payment deadlines and other group rules.',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                    text:
+                        'If the group creator fails to make their payment before the set deadline, they will not be eligible to receive disbursement from the group.'),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                    text:
+                        'Disbursement to the group creator will only occur once all group members have confirmed access to the shared service or product.'),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Text(
+                  "b. Group Member Responsibilities",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                    text:
+                        'Group members must make their payments before the deadline set by the group creator.'),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                    text:
+                        'Failure to pay before the deadline will result in automatic removal from the group, and you will not have access to the shared service or product.'),
+                const SizedBox(
+                  height: 10,
+                ),
+                const BulletPointWidget(
+                    text:
+                        'Group members must confirm receipt or access to the shared service or product as required for disbursement to the group creator.'),
+                const SizedBox(
                   height: 10,
                 ),
                 //! Trusted Relationships
@@ -145,11 +227,11 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                  const BulletPointWidget(
+                const BulletPointWidget(
                   text:
                       'No Responsibility for Scams: SharePact is not responsible for any losses, scams, or fraudulent activities that may occur as a result of interacting with strangers or individuals outside of your trusted circle.',
                 ),
-               
+
                 const SizedBox(
                   height: 10,
                 ),
@@ -157,11 +239,11 @@ class TermsAndConditions extends StatelessWidget {
                   text:
                       'User Vigilance: You are responsible for ensuring that you interact only with people you trust, as SharePact does not verify the identity or trustworthiness of users.',
                 ),
-        
+
                 const SizedBox(
                   height: 20,
                 ),
-                 //! Payment Processing
+                //! Payment Processing
                 Text(
                   " Payment Processing",
                   textAlign: TextAlign.center,
@@ -173,7 +255,7 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-        
+
                 Text(
                   'All payments made through SharePact are processed by third-party payment providers. By using the App, you agree to the terms and conditions of the applicable payment provider. SharePact is not responsible for any issues arising from payment processing, including delays or errors.',
                   style: GoogleFonts.lato(
@@ -181,10 +263,10 @@ class TermsAndConditions extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                 //! Fees and Charges
+                //! Fees and Charges
                 Text(
                   " Fees and Charges",
                   textAlign: TextAlign.center,
@@ -196,7 +278,7 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-        
+
                 Text(
                   'SharePact may charge fees for certain features or services. All applicable fees will be disclosed to you before you make any payment. By using the App, you agree to pay all fees and charges associated with your use of the Services.',
                   style: GoogleFonts.lato(
@@ -204,8 +286,8 @@ class TermsAndConditions extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                
-                 const SizedBox(
+
+                const SizedBox(
                   height: 20,
                 ),
                 //! Non-Payment Consequences
@@ -227,15 +309,15 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                  const BulletPointWidget(
+                const BulletPointWidget(
                   text:
                       'Group Creator Non-Payment: If the group creator does not make their payment, they will not be eligible for disbursement of funds from the group.',
                 ),
-               
+
                 const SizedBox(
                   height: 20,
                 ),
- //! Disbursement Rules
+                //! Disbursement Rules
                 Text(
                   "Disbursement Rules",
                   textAlign: TextAlign.center,
@@ -254,15 +336,15 @@ class TermsAndConditions extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                  const BulletPointWidget(
+                const BulletPointWidget(
                   text:
                       'SharePact reserves the right to withhold disbursement if there are disputes or unresolved issues among group members.',
                 ),
-               
+
                 const SizedBox(
                   height: 20,
                 ),
-  //! Termination and Suspension
+                //! Termination and Suspension
                 Text(
                   "Termination and Suspension",
                   textAlign: TextAlign.center,
