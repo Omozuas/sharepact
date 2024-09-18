@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sharepact_app/api/push_notification/chat_notification.dart';
-import 'package:sharepact_app/api/push_notification/notification_body.dart';
 import 'package:sharepact_app/firebase_options.dart';
 import 'package:sharepact_app/main.dart';
 import 'package:sharepact_app/screens/group_details/screen/chat.dart';
@@ -172,11 +171,12 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
     notification.body,
     NotificationDetails(
       android: AndroidNotificationDetails(
-          androidChannel.id, androidChannel.name,
-          channelDescription: androidChannel.description,
-          icon: '@drawable/launcher_icon',
-          playSound: true),
-      iOS: const DarwinNotificationDetails(presentSound: true),
+        androidChannel.id,
+        androidChannel.name,
+        channelDescription: androidChannel.description,
+        icon: '@drawable/launcher_icon',
+      ),
+      iOS: const DarwinNotificationDetails(),
     ),
     payload: jsonEncode(message.toMap()),
   );
@@ -187,15 +187,12 @@ Future<void> handleBackgroundMessages(RemoteMessage message) async {
     notification.body,
     NotificationDetails(
       android: AndroidNotificationDetails(
-        playSound: true,
         androidChannel.id,
         androidChannel.name,
         channelDescription: androidChannel.description,
         icon: '@drawable/launcher_icon',
       ),
-      iOS: const DarwinNotificationDetails(
-        presentAlert: true,
-      ),
+      iOS: const DarwinNotificationDetails(),
     ),
     payload: jsonEncode(message.toMap()),
   );

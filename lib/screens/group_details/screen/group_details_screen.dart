@@ -615,15 +615,17 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
               const SizedBox(
                 height: 10,
               ),
-              Text(
-                "Pending Requests : ${res1.value?.data?.length ?? 0}",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.lato(
-                  color: AppColors.textColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              if (res1.value?.message !=
+                  'Only the group admin can view join requests')
+                Text(
+                  "Pending Requests : ${res1.value?.data?.length ?? 0}",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    color: AppColors.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
               const SizedBox(
                 height: 10,
               ),
