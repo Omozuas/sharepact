@@ -48,14 +48,21 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
-
+     signingConfigs {
+        release {
+        keyAlias 'my-key-alias' 
+        keyPassword 'sharepact'    
+        storeFile file('my-release-key.jks') 
+        storePassword 'sharepact' 
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
-            minifyEnabled false  // Consider setting to false temporarily to check issues
-            shrinkResources true
+            signingConfig signingConfigs.release
+            minifyEnabled false // Disable shrinking for now
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
