@@ -940,7 +940,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'SubScriptionCost',
+                          'Subscription Cost',
                           style: GoogleFonts.lato(
                             color: AppColors.textColor,
                             fontSize: 14,
