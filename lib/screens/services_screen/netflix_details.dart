@@ -158,7 +158,7 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
             },
           ),
           title: Text(services.hasValue
-              ? '${services.value?.data?.serviceName}'
+              ? services.value?.data?.serviceName ?? ''
               : 'loadind....'),
         ),
         body: SingleChildScrollView(
@@ -251,7 +251,7 @@ class _NetflixDetailsScreenState extends ConsumerState<NetflixDetailsScreen> {
                     return SizedBox(
                       width: double.infinity,
                       child: Text(
-                        '${services?.data?.serviceDescription}',
+                        services?.data?.serviceDescription ?? '',
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,

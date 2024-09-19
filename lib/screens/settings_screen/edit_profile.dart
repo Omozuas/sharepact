@@ -250,9 +250,7 @@ class EditProfileState extends ConsumerState<EditProfile> {
                     ),
                   ),
                   Text(
-                    isLoading
-                        ? "Janedoe@gmail.com"
-                        : "${_userModel?.email ?? 'loading...'} ",
+                    isLoading ? "loading..." : "${_userModel?.email ?? ''} ",
                     style: GoogleFonts.lato(
                       color: AppColors.textColor,
                       fontSize: 14,
@@ -327,8 +325,8 @@ class EditProfileState extends ConsumerState<EditProfile> {
                           readOnly: true,
                           decoration: InputDecoration(
                             hintText: isLoading
-                                ? 'Janedoe@gmail.com'
-                                : "${_userModel?.email ?? 'loading...'} ",
+                                ? 'loading...'
+                                : "${_userModel?.email ?? ''} ",
                             hintStyle: Theme.of(context)
                                 .textTheme
                                 .bodyMedium

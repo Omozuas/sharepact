@@ -49,20 +49,23 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar> {
             'assets/card.svg',
             color: widget.selectedIndex == 1 ? Colors.blue : null,
           ),
-          label: 'My Subscriptions',
+          label: 'Subscriptions',
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             'assets/people.svg',
-            colorFilter: ColorFilter.mode(widget.selectedIndex == 2 ? Colors.blue : Colors.grey, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+                widget.selectedIndex == 2 ? Colors.blue : Colors.grey,
+                BlendMode.srcIn),
           ),
           label: 'Groups',
         ),
         BottomNavigationBarItem(
           icon: SvgPicture.asset(
             'assets/setting-2.svg',
-            colorFilter: ColorFilter.mode(widget.selectedIndex == 3 ? Colors.blue : Colors.grey, BlendMode.srcIn),
-
+            colorFilter: ColorFilter.mode(
+                widget.selectedIndex == 3 ? Colors.blue : Colors.grey,
+                BlendMode.srcIn),
           ),
           label: 'Settings',
         ),

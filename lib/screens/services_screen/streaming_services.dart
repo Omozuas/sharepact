@@ -111,7 +111,7 @@ class _StreamingServicesScreenState
         appBar: AppBar(
           title: Text(
             categories.hasValue
-                ? "${categories.value?.data?.category?.categoryName ?? 'Loading...'} Services"
+                ? "${categories.value?.data?.category?.categoryName ?? ''} Services"
                 : 'Loading... Services',
             style: TextStyle(
               fontSize: responsiveWidth(context, 0.05),
@@ -137,7 +137,7 @@ class _StreamingServicesScreenState
                         if (v == null || v.isEmpty) {
                           return Center(
                             child: Text(
-                                'No ${categories?.data?.category?.categoryName ?? 'Loading...'} Service'),
+                                'No ${categories?.data?.category?.categoryName ?? ''} Service'),
                           );
                         }
 
