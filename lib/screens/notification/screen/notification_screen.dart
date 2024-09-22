@@ -217,6 +217,12 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                                     width: 24,
                                     height: 24,
                                   ),
+                                if (notify.subject == 'A Member has left Group')
+                                  SvgPicture.asset(
+                                    AppImages.peopleIcon,
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 const SizedBox(
                                   width: 20,
                                 ),
