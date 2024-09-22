@@ -42,5 +42,6 @@
 # Keep enum classes and their methods
 -keepclassmembers enum * {
     public static **[] values();
-    public static ** value of(java.lang.String);
+    public static ** valueOf(java.lang.String);
 }
+

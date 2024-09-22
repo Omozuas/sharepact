@@ -210,6 +210,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                                     width: 24,
                                     height: 24,
                                   ),
+                                if (notify.subject ==
+                                    'Someone wants to join your group')
+                                  SvgPicture.asset(
+                                    AppImages.peopleIcon,
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 const SizedBox(
                                   width: 20,
                                 ),

@@ -298,42 +298,42 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
                       );
                     },
                   ),
-                  // const Divider(),
-                  // SettingsTile(
-                  //   icon: SvgPicture.asset('assets/security-user.svg',
-                  //       // ignore: deprecated_member_use
-                  //       width: 22,
-                  //       height: 22,
-                  //       // ignore: deprecated_member_use
-                  //       color: const Color(0xff5D6166)),
-                  //   title: 'Privacy Policy',
-                  //   onTap: () {
-                  //     // Handle Privacy Policy action
-                  //     Navigator.of(context).push(
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const PrivacyPolicy(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  // const Divider(),
-                  // SettingsTile(
-                  //   icon: SvgPicture.asset('assets/book.svg',
-                  //       // ignore: deprecated_member_use
-                  //       width: 22,
-                  //       height: 22,
-                  //       // ignore: deprecated_member_use
-                  //       color: const Color(0xff5D6166)),
-                  //   title: 'Terms & Conditions',
-                  //   onTap: () {
-                  //     // Handle Terms & Conditions action
-                  //     Navigator.of(context).push(
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const TermsAndConditions(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                  const Divider(),
+                  SettingsTile(
+                    icon: SvgPicture.asset('assets/security-user.svg',
+                        // ignore: deprecated_member_use
+                        width: 22,
+                        height: 22,
+                        // ignore: deprecated_member_use
+                        color: const Color(0xff5D6166)),
+                    title: 'Privacy Policy',
+                    onTap: () {
+                      // Handle Privacy Policy action
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const PrivacyPolicy(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  SettingsTile(
+                    icon: SvgPicture.asset('assets/book.svg',
+                        // ignore: deprecated_member_use
+                        width: 22,
+                        height: 22,
+                        // ignore: deprecated_member_use
+                        color: const Color(0xff5D6166)),
+                    title: 'Terms & Conditions',
+                    onTap: () {
+                      // Handle Terms & Conditions action
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const TermsAndConditions(),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
