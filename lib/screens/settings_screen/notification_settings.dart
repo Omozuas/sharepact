@@ -274,59 +274,60 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightGrey,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Subscription Notifications',
-                                style: GoogleFonts.lato(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CheckboxRow(
-                                text: 'Subscription Updates',
-                                provider: false,
-                                onChanged: (value) {
-                                  //  = value!;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CheckboxRow(
-                                text: 'Payment Reminders',
-                                onChanged: (value) {
-                                  //  = value!;
-                                },
-                                provider: false,
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CheckboxRow(
-                                text: 'Renewal Alerts',
-                                onChanged: (value) {
-                                  //  = value!;
-                                },
-                                provider: false,
-                              ),
-                            ],
-                          ),
-                        ),
+                        // const SizedBox(
+                        //   height: 10,
+                        // ),
+                        // Container(
+                        //   padding: const EdgeInsets.all(20),
+                        //   decoration: BoxDecoration(
+                        //     color: AppColors.lightGrey,
+                        //     borderRadius: BorderRadius.circular(12),
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(
+                        //         'Subscription Notifications',
+                        //         style: GoogleFonts.lato(
+                        //           color: AppColors.textColor,
+                        //           fontSize: 14,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       CheckboxRow(
+                        //         text: 'Subscription Updates',
+                        //         provider: false,
+                        //         onChanged: (value) {
+                        //           //  = value!;
+                        //         },
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       CheckboxRow(
+                        //         text: 'Payment Reminders',
+                        //         onChanged: (value) {
+                        //           //  = value!;
+                        //         },
+                        //         provider: false,
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 20,
+                        //       ),
+                        //       CheckboxRow(
+                        //         text: 'Renewal Alerts',
+                        //         onChanged: (value) {
+                        //           //  = value!;
+                        //         },
+                        //         provider: false,
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+
                         const SizedBox(
                           height: 20,
                         ),
@@ -464,59 +465,59 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: AppColors.lightGrey,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Subscription Notifications',
-                                  style: GoogleFonts.lato(
-                                    color: AppColors.textColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                CheckboxRow(
-                                  text: 'Subscription Updates',
-                                  provider: false,
-                                  onChanged: (value) {
-                                    //  = value!;
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                CheckboxRow(
-                                  text: 'Payment Reminders',
-                                  onChanged: (value) {
-                                    //  = value!;
-                                  },
-                                  provider: false,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                CheckboxRow(
-                                  text: 'Renewal Alerts',
-                                  onChanged: (value) {
-                                    //  = value!;
-                                  },
-                                  provider: false,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          // Container(
+                          //   padding: const EdgeInsets.all(20),
+                          //   decoration: BoxDecoration(
+                          //     color: AppColors.lightGrey,
+                          //     borderRadius: BorderRadius.circular(12),
+                          //   ),
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Text(
+                          //         'Subscription Notifications',
+                          //         style: GoogleFonts.lato(
+                          //           color: AppColors.textColor,
+                          //           fontSize: 14,
+                          //           fontWeight: FontWeight.w600,
+                          //         ),
+                          //       ),
+                          //       const SizedBox(
+                          //         height: 20,
+                          //       ),
+                          //       CheckboxRow(
+                          //         text: 'Subscription Updates',
+                          //         provider: false,
+                          //         onChanged: (value) {
+                          //           //  = value!;
+                          //         },
+                          //       ),
+                          //       const SizedBox(
+                          //         height: 20,
+                          //       ),
+                          //       CheckboxRow(
+                          //         text: 'Payment Reminders',
+                          //         onChanged: (value) {
+                          //           //  = value!;
+                          //         },
+                          //         provider: false,
+                          //       ),
+                          //       const SizedBox(
+                          //         height: 20,
+                          //       ),
+                          //       CheckboxRow(
+                          //         text: 'Renewal Alerts',
+                          //         onChanged: (value) {
+                          //           //  = value!;
+                          //         },
+                          //         provider: false,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // const SizedBox(
+                          //   height: 20,
+                          // ),
                           SizedBox(
                             height: responsiveHeight(context, 0.08),
                             child: ElevatedButton(
@@ -674,65 +675,65 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightGrey,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Subscription Notifications',
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Subscription Updates',
-                              provider: subscriptionUpdates,
-                              onChanged: (value) {
-                                setState(() {
-                                  subscriptionUpdates = value!;
-                                });
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Payment Reminders',
-                              onChanged: (value) {
-                                setState(() {
-                                  paymentReminders = value!;
-                                });
-                              },
-                              provider: paymentReminders,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Renewal Alerts',
-                              onChanged: (value) {
-                                setState(() {
-                                  renewalAlerts = value!;
-                                });
-                              },
-                              provider: renewalAlerts,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      // Container(
+                      //   padding: const EdgeInsets.all(20),
+                      //   decoration: BoxDecoration(
+                      //     color: AppColors.lightGrey,
+                      //     borderRadius: BorderRadius.circular(12),
+                      //   ),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text(
+                      //         'Subscription Notifications',
+                      //         style: GoogleFonts.lato(
+                      //           color: AppColors.textColor,
+                      //           fontSize: 14,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Subscription Updates',
+                      //         provider: subscriptionUpdates,
+                      //         onChanged: (value) {
+                      //           setState(() {
+                      //             subscriptionUpdates = value!;
+                      //           });
+                      //         },
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Payment Reminders',
+                      //         onChanged: (value) {
+                      //           setState(() {
+                      //             paymentReminders = value!;
+                      //           });
+                      //         },
+                      //         provider: paymentReminders,
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Renewal Alerts',
+                      //         onChanged: (value) {
+                      //           setState(() {
+                      //             renewalAlerts = value!;
+                      //           });
+                      //         },
+                      //         provider: renewalAlerts,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 20,
+                      // ),
                       SizedBox(
                         height: responsiveHeight(context, 0.08),
                         child: ElevatedButton(
@@ -862,59 +863,59 @@ class NotificationSettingsState extends ConsumerState<NotificationSettings> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightGrey,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Subscription Notifications',
-                              style: GoogleFonts.lato(
-                                color: AppColors.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Subscription Updates',
-                              provider: false,
-                              onChanged: (value) {
-                                //  = value!;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Payment Reminders',
-                              onChanged: (value) {
-                                //  = value!;
-                              },
-                              provider: false,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            CheckboxRow(
-                              text: 'Renewal Alerts',
-                              onChanged: (value) {
-                                //  = value!;
-                              },
-                              provider: false,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      // Container(
+                      //   padding: const EdgeInsets.all(20),
+                      //   decoration: BoxDecoration(
+                      //     color: AppColors.lightGrey,
+                      //     borderRadius: BorderRadius.circular(12),
+                      //   ),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text(
+                      //         'Subscription Notifications',
+                      //         style: GoogleFonts.lato(
+                      //           color: AppColors.textColor,
+                      //           fontSize: 14,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Subscription Updates',
+                      //         provider: false,
+                      //         onChanged: (value) {
+                      //           //  = value!;
+                      //         },
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Payment Reminders',
+                      //         onChanged: (value) {
+                      //           //  = value!;
+                      //         },
+                      //         provider: false,
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CheckboxRow(
+                      //         text: 'Renewal Alerts',
+                      //         onChanged: (value) {
+                      //           //  = value!;
+                      //         },
+                      //         provider: false,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 20,
+                      // ),
                     ],
                   ),
                 );
