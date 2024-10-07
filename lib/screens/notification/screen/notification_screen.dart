@@ -223,6 +223,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                                     width: 24,
                                     height: 24,
                                   ),
+                                if (notify.subject ==
+                                    'Reminder to make payment')
+                                  SvgPicture.asset(
+                                    AppImages.walletIcon,
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 const SizedBox(
                                   width: 20,
                                 ),
