@@ -356,7 +356,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                 TextSpan(
                                   text: 'Creators',
                                   style: GoogleFonts.lato(
-                                    color: Colors.blue,
+                                    color: const Color(0xff343A40),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -376,7 +376,7 @@ class CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                                 TextSpan(
                                   text: 'Members',
                                   style: GoogleFonts.lato(
-                                    color: Colors.blue,
+                                    color: const Color(0xff343A40),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                   ),
